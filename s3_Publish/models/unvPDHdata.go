@@ -39,6 +39,8 @@ func GetUnvPublishedData(publishID string, isOwner bool, subscriber string, subT
 	fmt.Println("====================>>>>>>>>>>>>>>>>>", pp, bp, ssp, ap, cp, rp, op, prp)
 
 	if pp || bp || ssp || ap || cp || rp || prp {
+		pd1 := pd[1:]
+		pd = pd1[:len(pd)-2] //+ pd1[:1]
 		resp = map[string]interface{}{"Profile": pd}
 		fmt.Printf("\n============== %s =================== \n", resp["Jobs"])
 		return customError, resp, "Profile"
