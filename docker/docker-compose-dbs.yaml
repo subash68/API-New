@@ -1,0 +1,52 @@
+version: "3"
+services:
+  mysql:
+    image: mysql:latest
+    volumes:
+      - ../cr-registration/database/init.sql:/docker-entrypoint-initdb.d/init.sql:rw
+      - ../mysql_data:/var/lib/mysql:rw
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: PGK_CampusHiring
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    tty: true
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - ../redis_data:/data
+    ports:
+      - "6379:6379"
+    tty: true
+  auth:
+    container_name: auth
+    restart: always
+    build:
+      context: ../cr-auth/.
+      target: dev
+    volumes:
+      - ../cr-auth:/cr-auth
+    command: "CompileDaemon -build='go build -o auth' -command=./auth"
+    depends_on:
+      mysql:
+        condition: service_healthy
+  registration:
+    container_name: registration
+    restart: always
+    build:
+      context: ../cr-registration/.
+      target: dev
+    volumes:
+      - ../cr-registration:/cr-reg
+    ports:
+      - "8080:8080"
+    command: "CompileDaemon -build='go build -o reg' -command=./reg"
+    depends_on:
+      mysql:
+        condition: service_healthy

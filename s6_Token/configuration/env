@@ -1,0 +1,12 @@
+{
+    "DB_USER_NAME":"admin",
+    "DB_PASSWORD":"Zc8ycxrKfMLJEIipGrkC",
+    "DB_DATABASE_NAME":"CollabToHire",
+    "TKN_BLNC":"Token_Balance",
+    "TKN_ALLOC":"Tokens_Allocated",
+    "TKN_TRANSAC":"Tokens_Transacted",
+    "DB_HOST":"database-1.cbiyeet4pu7p.ap-south-1.rds.amazonaws.com",
+    "DB_PORT":3306,
+    "AUTH_SER_HOST":"auth_service",
+    "AUTH_SER_PORT":8080
+}

@@ -1,0 +1,7 @@
+{
+    "DB_REDIS_ADDRESS":"redis",
+    "DB_REDIS_PORT":"6379",
+    "DB_REDIS_PASS":"",
+    "DB_REDIS_DB":0,
+    "JWT_ACCESS_SECRET": "cGdrY3Jqd2t5ZnJkdmR0dG5n"
+}

@@ -1,0 +1,87 @@
+version: "3"
+services:
+  # Redis db to store authentication information, tokens, validating tokens
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - ../redis_data:/data
+    tty: true
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  # Authenticate service - Authorizes the requests based on JWT tokens
+  auth_service:
+    image: s1-auth:dev
+    container_name: auth_service
+    restart: always
+    build:
+      context: ../s2_Auth/.
+      target: dev
+    volumes:
+      - ../s2_Auth:/cr-auth
+    command: "CompileDaemon -build='go build -o auth' -command=./auth"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Onboarding all the users and Autheticates/Verifies using Sms and Email Otps
+  onboard_service:
+    image: s2-onboarding:dev
+    container_name: onboard_service
+    restart: always
+    build:
+      context: ../s1_Onboarding/.
+      target: dev
+    volumes:
+      - ../s1_Onboarding:/Onboarding
+    command: "CompileDaemon -build='go build -o onboarding' -command=./onboarding"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Profile view and updates
+  profile_service:
+    image: s3-profile:dev
+    container_name: profile_service
+    restart: always
+    build:
+      context: ../s4_Profile/.
+      target: dev
+    volumes:
+      - ../s4_Profile:/cr-profile
+    command: "CompileDaemon -build='go build -o profile' -command=./profile"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Corporate Publish information
+  publish_service:
+    image: s4-publish:dev
+    container_name: publish_service
+    restart: always
+    build:
+      context: ../s3_Publish/.
+      target: dev
+    volumes:
+      - ../s3_Publish:/cr-publish
+    command: "CompileDaemon -build='go build -o publish' -command=./publish"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Nginx reverse Proxy to hide the Underlying Services.
+  apigateway:
+    image: apigateway
+    container_name: apigateway
+    restart: always
+    build:
+      context: ../nginx/.
+    ports:
+      - "80:80"
+    depends_on:
+      redis:
+        condition: service_healthy

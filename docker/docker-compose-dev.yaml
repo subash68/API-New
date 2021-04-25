@@ -1,0 +1,150 @@
+version: "3"
+services:
+  #  Sql database for storing application data
+  # mysql:
+  #   image: mysql:latest
+  #   volumes:
+  #     - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql:rw
+  #     - ../mysql_data:/var/lib/mysql:rw
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: PGK_CampusHiring
+  #     MYSQL_USER: docker
+  #     MYSQL_PASSWORD: docker
+  #   container_name: mysql
+  #   tty: true
+  #   healthcheck:
+  #     test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+  #     interval: 1s
+  #     timeout: 3s
+  #     retries: 50
+
+  # Redis db to store authentication information, tokens, validating tokens
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - ../redis_data:/data
+    tty: true
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  auth_service:
+    image: cr-auth:dev
+    container_name: auth_service
+    restart: always
+    build:
+      context: ../s2_Auth/.
+      target: dev
+    volumes:
+      - ../s2_Auth:/cr-auth
+    command: "CompileDaemon -build='go build -o auth' -command=./auth"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  publish_service:
+    image: cr-publish:dev
+    container_name: publish_service
+    restart: always
+    build:
+      context: ../s3_Publish/.
+      target: dev
+    volumes:
+      - ../s3_Publish:/cr-publish
+    command: "CompileDaemon -build='go build -o publish' -command=./publish"
+    depends_on:
+      redis:
+        condition: service_healthy
+      # mysql:
+      #   condition: service_healthy
+
+  profile_service:
+    image: cr-profile:dev
+    container_name: profile_service
+    restart: always
+    build:
+      context: ../s4_Profile/.
+      target: dev
+    volumes:
+      - ../s4_Profile:/cr-profile
+    command: "CompileDaemon -build='go build -o profile' -command=./profile"
+    # ports:
+    #   - 8081:8080
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  onboard_service:
+    image: s1-onboarding:dev
+    container_name: onboard_service
+    restart: always
+    build:
+      context: ../s1_Onboarding/.
+      target: dev
+    volumes:
+      - ../s1_Onboarding:/Onboarding
+    command: "CompileDaemon -build='go build -o onboarding' -command=./onboarding"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  subcription_service:
+    image: s5-subcription:dev
+    container_name: subcription_service
+    restart: always
+    build:
+      context: ../s5_Subcription/.
+      target: dev
+    volumes:
+      - ../s5_Subcription:/ch-subscription
+    command: "CompileDaemon -build='go build -o subscription' -command=./subscription"
+
+  token_service:
+    image: s6-token:dev
+    container_name: token_service
+    restart: always
+    build:
+      context: ../s6_Token/.
+      target: dev
+    volumes:
+      - ../s6_Token:/ch-token
+    command: "CompileDaemon -build='go build -o token' -command=./token"
+
+  pg_service:
+    image: s5-pg:dev
+    container_name: pg_service
+    restart: always
+    build:
+      context: ../s7_PaymentGateway/.
+      target: dev
+    volumes:
+      - ../s7_PaymentGateway:/ch-paymentgateway
+    command: "CompileDaemon -build='go build -o paymentgateway' -command=./paymentgateway"
+    # ports:
+    #   - 8080:8080
+    # mysql:
+    #   condition: service_healthy
+  ui_service:
+    image: pgkui
+    container_name: ui_service
+    restart: always
+
+  apigateway:
+    image: apigateway
+    container_name: apigateway
+    restart: always
+    build:
+      context: ../nginx/.
+    ports:
+      - "8080:80"
+    depends_on:
+      redis:
+        condition: service_healthy
+      # mysql:
+      #   condition: service_healthy
+# docker-compose -f docker-compose-dev.yaml up -d auth_service publish_service profile_service onboard_service subcription_service token_service pg_service ui_service
+# docker-compose -f docker-compose-dev.yaml up -d apigateway
