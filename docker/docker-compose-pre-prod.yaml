@@ -22,7 +22,7 @@ services:
       target: dev
     volumes:
       - ../s2_Auth:/cr-auth
-      - /cr-auth/auth
+      - ../s2_Auth/auth
     command: "CompileDaemon -build='go build -o auth' -command=./auth"
     depends_on:
       redis:
@@ -37,7 +37,7 @@ services:
       target: dev
     volumes:
       - ../s3_Publish:/cr-publish
-      - /cr-publish/publish
+      - ../s3_Publish/publish
     command: "CompileDaemon -build='go build -o publish' -command=./publish"
     depends_on:
       redis:
@@ -54,7 +54,7 @@ services:
       target: dev
     volumes:
       - ../s4_Profile:/cr-profile
-      - /cr-profile/profile
+      - ../s4_Profile/profile
     command: "CompileDaemon -build='go build -o profile' -command=./profile"
     # ports:
     #   - 8081:8080
@@ -71,7 +71,7 @@ services:
       target: dev
     volumes:
       - ../s1_Onboarding:/Onboarding
-      - /Onboarding/onboarding
+      - ../s1_Onboarding/onboarding
     command: "CompileDaemon -build='go build -o onboarding' -command=./onboarding"
     depends_on:
       redis:
@@ -86,7 +86,7 @@ services:
       target: dev
     volumes:
       - ../s5_Subcription:/ch-subscription
-      - /ch-subscription/subscription
+      - ../s5_Subcription/subscription
     command: "CompileDaemon -build='go build -o subscription' -command=./subscription"
 
   token_service:
@@ -98,7 +98,7 @@ services:
       target: dev
     volumes:
       - ../s6_Token:/ch-token
-      - /ch-token/token
+      - ../s6_Token/token
     command: "CompileDaemon -build='go build -o token' -command=./token"
 
   pg_service:
@@ -110,7 +110,7 @@ services:
       target: dev
     volumes:
       - ../s7_PaymentGateway:/ch-paymentgateway
-      - /ch-paymentgateway/paymentgateway
+      - ../s7_PaymentGateway/paymentgateway
     command: "CompileDaemon -build='go build -o paymentgateway' -command=./paymentgateway"
     # ports:
     #   - 8080:8080
