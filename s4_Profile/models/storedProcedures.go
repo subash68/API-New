@@ -74,5 +74,13 @@ func CreateSP() {
 		"STU_INTERSHIP_DLT":        "DELETE from " + dbConfig.DbDatabaseName + "." + dbConfig.StuIntershipsDbName + " WHERE id=? AND Stakeholder_ID=?",
 		"STU_INTERSHIP_GETALL":     "SELECT id,InternshipName,NameOfOrganisation,FieldOfWork,CityOfOrganisation,Start_Date,End_Date,Description,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate from " + dbConfig.DbDatabaseName + "." + dbConfig.StuIntershipsDbName + " WHERE Stakeholder_ID=?",
 		"UNV_SUB_DATA_IN_SRH":      "SELECT a.Publisher_Stakeholder_ID,a.DateOfSubscription,a.Publish_ID,a.Transaction_ID,d.GeneralNote FROM CollabToHire.Corp_SubscriptionHistory as a,CollabToHire.Univ_PublishHistory AS d where d.Publish_ID=a.Publish_ID AND  a.Subscriber_Stakeholder_ID=? AND a.Publisher_Stakeholder_ID=?",
+		"STU_Awards_INS":           "INSERT INTO " + dbConfig.DbDatabaseName + "." + dbConfig.StuAwardsDbName + " (Stakeholder_ID,AwardRecognitionName,AwardRecognition_Date,IssuingAuthority,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate) VALUES(?,?,?,?,?,?,?,?) ",
+		"STU_Awards_UPD":           "Update " + dbConfig.DbDatabaseName + "." + dbConfig.StuAwardsDbName + " SET AwardRecognitionName=?,AwardRecognition_Date=?,IssuingAuthority=?,AttachFile=?,LastUpdatedDate=? WHERE id=? AND Stakeholder_ID=?",
+		"STU_Awards_DLT":           "DELETE from " + dbConfig.DbDatabaseName + "." + dbConfig.StuAwardsDbName + " WHERE id=? AND Stakeholder_ID=?",
+		"STU_Awards_GETALL":        "SELECT id,AwardRecognitionName,AwardRecognition_Date,IssuingAuthority,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate from " + dbConfig.DbDatabaseName + "." + dbConfig.StuAwardsDbName + " WHERE Stakeholder_ID=?",
+		"STU_Competitions_INS":     "INSERT INTO " + dbConfig.DbDatabaseName + "." + dbConfig.StuCompetitionDbName + " (Stakeholder_ID,CompetitionName,Competition_Date,CompetitionRank,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate) VALUES(?,?,?,?,?,?,?,?) ",
+		"STU_Competitions_UPD":     "Update " + dbConfig.DbDatabaseName + "." + dbConfig.StuCompetitionDbName + " SET CompetitionName=?,Competition_Date=?,CompetitionRank=?,AttachFile=?,LastUpdatedDate=? WHERE id=? AND Stakeholder_ID=?",
+		"STU_Competitions_DLT":     "DELETE from " + dbConfig.DbDatabaseName + "." + dbConfig.StuCompetitionDbName + " WHERE id=? AND Stakeholder_ID=?",
+		"STU_Competitions_GETALL":  "SELECT id,CompetitionName,Competition_Date,CompetitionRank,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate from " + dbConfig.DbDatabaseName + "." + dbConfig.StuCompetitionDbName + " WHERE Stakeholder_ID=?",
 	}
 }

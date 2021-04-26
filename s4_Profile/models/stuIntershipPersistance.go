@@ -41,9 +41,9 @@ func (si *StudentAllInternshipModel) GetAllInternships() error {
 		if err != nil {
 			return fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}
-		if newSl.EndDate == "0001-01-01T00:00:00Z" {
-			newSl.EndDate = ""
-		}
+		// if newSl.EndDate == "0001-01-01T00:00:00Z" {
+		// 	newSl.EndDate = ""
+		// }
 		si.Internships = append(si.Internships, newSl)
 	}
 

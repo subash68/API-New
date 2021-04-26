@@ -140,7 +140,7 @@ func (oi *OtherInformationModel) GetAllOI(query string) (oiArray []OtherInformat
 	defer hcRows.Close()
 	for hcRows.Next() {
 		var newOI OtherInformationModel
-		err = hcRows.Scan(&newOI.ID, &newOI.Title, &newOI.Information, &newOI.Attachment, &newOI.CreationDate, &newOI.LastUpdatedDate, &newOI.PublishedFlag)
+		err = hcRows.Scan(&newOI.ID, &newOI.Title, &newOI.Information, &newOI.Attachment, &newOI.CreationDate, &newOI.LastUpdatedDate, &newOI.PublishedFlag, &newOI.PublishID)
 		if err != nil {
 			return oiArray, fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}

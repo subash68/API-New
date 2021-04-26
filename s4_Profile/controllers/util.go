@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jaswanth-gorripati/PGK/s4_Profile/models"
@@ -90,4 +91,16 @@ func ErrCheck(ctx context.Context, result models.DbModelError) models.RespErrMod
 
 	return respErrMsg
 
+}
+
+func getInterfaceValues(s ...interface{}) (val []interface{}) {
+
+	v := reflect.ValueOf(s[0])
+	typeOfS := v.Type()
+	for i := 0; i < v.NumField(); i++ {
+		if typeOfS.Field(i).Name != "ID" {
+			val = append(val, v.Field(i).Interface())
+		}
+	}
+	return val
 }

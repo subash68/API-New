@@ -19,7 +19,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/efficientgo/tools/core v0.0.0-20210122140009-1d4f98713811 // indirect
 	github.com/gin-contrib/cors v1.3.1 // indirect
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.1
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/jaswanth-gorripati/PGK/s7_PaymentGateway/configuration v0.0.0-00010101000000-000000000000

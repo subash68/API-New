@@ -50,9 +50,9 @@ type StudentMasterDb struct {
 	Password                   string     `form:"password" json:"password,omitempty" binding:"required,min=8,max=15" binding:"required"`
 	PrimaryPhoneVerified       bool       `form:"primaryPhoneVerified" json:"primaryPhoneVerified"`
 	PrimaryEmailVerified       bool       `form:"primaryEmailVerified" json:"primaryEmailVerified"`
-	DateOfJoining              time.Time  `json:"dateOfJoining,omitempty"`
+	DateOfJoining              time.Time  `json:"dateOfJoining,omitempty" time_format="2006-12-01T21:23:34.409Z"`
 	ProfilePicture             []byte     `form:"-" json:"profilePicture"`
-	AccountExpiryDate          time.Time  `form:"-" json:"accountExpiryDate"`
+	AccountExpiryDate          time.Time  `form:"-" json:"accountExpiryDate" time_format="2006-12-01T21:23:34.409Z"`
 	AboutMeNullable            NullString `json:"-"`
 	AboutMe                    string     `form:"aboutMe" json:"aboutMe"`
 }
@@ -157,8 +157,8 @@ type StudentInternshipModel struct {
 	OrganizationName string    `form:"organizationName" json:"organizationName" binding:"required"`
 	OrganizationCity string    `form:"organizationCity" json:"organizationCity" binding:"required"`
 	FieldOfWork      string    `form:"fieldOfWork" json:"fieldOfWork" binding:"required"`
-	StartDate        string    `form:"startDate" json:"startDate" binding:"required"`
-	EndDate          string    `form:"endDate" json:"endDate"  binding:"required"`
+	StartDate        time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	EndDate          time.Time `form:"endDate" json:"endDate"  binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Description      string    `form:"description" json:"description"`
 	Attachment       []byte    `form:"attachment" json:"attachment"`
 	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
@@ -170,6 +170,44 @@ type StudentInternshipModel struct {
 type StudentAllInternshipModel struct {
 	StakeholderID string                   `form:"-" json:"-"`
 	Internships   []StudentInternshipModel `form:"internships" json:"internships" binding:"dive"`
+}
+
+// StudentAwardsModel ...
+type StudentAwardsModel struct {
+	StakeholderID    string    `form:"-" json:"-"`
+	ID               int       `form:"-" json:"id"`
+	RecognitionName  string    `form:"recognitionName" json:"recognitionName" binding:"required"`
+	RecognitionDate  time.Time `form:"recognitionDate" json:"recognitionDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	IssuingAuthority string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
+	Attachment       []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
+	CreationDate     time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllAwardsModel ...
+type StudentAllAwardsModel struct {
+	StakeholderID string               `form:"-" json:"-"`
+	Awards        []StudentAwardsModel `form:"awards" json:"awards" binding:"dive"`
+}
+
+// StudentCompetitionModel ...
+type StudentCompetitionModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	Date            time.Time `form:"date" json:"date" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Rank            string    `form:"rank" json:"rank" binding:"required"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllCompetitionModel ...
+type StudentAllCompetitionModel struct {
+	StakeholderID string                    `form:"-" json:"-"`
+	Competitions  []StudentCompetitionModel `form:"competitions" json:"competitions" binding:"dive"`
 }
 
 // StudentContactInfoModel ...

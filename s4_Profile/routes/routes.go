@@ -139,6 +139,18 @@ func InitialzeRoutes() *gin.Engine {
 	stu.PATCH("/internship/:id", controllers.UpdateInternship)
 	stu.DELETE("/internship/:id", controllers.DeleteInternship)
 
+	// Student Awards
+	stu.POST("/awards", controllers.StudentAwards.AddAwards)
+	stu.GET("/awards", controllers.StudentAwards.GetAllAwards)
+	stu.PATCH("/awards/:id", controllers.StudentAwards.UpdateAwards)
+	stu.DELETE("/awards/:id", controllers.StudentAwards.DeleteAwards)
+
+	// Student Competition
+	stu.POST("/competition", controllers.StudentCompetitions.AddCompetitions)
+	stu.GET("/competition", controllers.StudentCompetitions.GetAllCompetitions)
+	stu.PATCH("/competition/:id", controllers.StudentCompetitions.UpdateCompetitions)
+	stu.DELETE("/competition/:id", controllers.StudentCompetitions.DeleteCompetitions)
+
 	// Student complete profile
 	stu.GET("/completeProfile", controllers.GetStudentProfile)
 
