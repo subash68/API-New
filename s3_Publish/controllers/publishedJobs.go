@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -13,7 +14,7 @@ import (
 
 // AddPJResp ...
 type AddPJResp struct {
-	PjID string `json:"pjID"`
+	PjID []string `json:"pjID"`
 }
 
 // AddPublishedJobs ...
@@ -55,8 +56,19 @@ func AddPublishedJobs(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		}
+		pubIDs := insertJob.SuccessResp["pjIDs"]
+		pubIDs = pubIDs[1 : len(pubIDs)-1]
+		arrayPubIDs := strings.Split(pubIDs, " ")
+		for i := 0; i < len(pj.PublishedJobs); i++ {
+			reqBody := map[string]string{"senderID": ID.(string), "senderUserRole": "Corporate", "notificationType": "General", "content": "New Job has been published", "publishFlag": "true", "publishID": arrayPubIDs[i]}
+			resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
+			if err != nil {
+				fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
+			}
+			fmt.Println(resp)
+		}
 
-		c.JSON(http.StatusOK, AddPJResp{insertJob.SuccessResp["pjIDs"]})
+		c.JSON(http.StatusOK, AddPJResp{arrayPubIDs})
 		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})

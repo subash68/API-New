@@ -57,6 +57,12 @@ func PublishProfile(c *gin.Context) {
 			return
 		}
 		//
+		reqBody := map[string]string{"senderID": up.StakeholderID, "senderUserRole": "University", "notificationType": "General", "content": "Profile has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
+		if err != nil {
+			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
+		}
+		fmt.Println(resp)
 		c.JSON(http.StatusOK, PubHCResp{"Profile has been Published", insertJob.SuccessResp["publishID"]})
 		return
 	}
@@ -120,6 +126,12 @@ func PublishUnvOI(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		}
+		reqBody := map[string]string{"senderID": up.StakeholderID, "senderUserRole": "University", "notificationType": "General", "content": "Other Information has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
+		if err != nil {
+			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
+		}
+		fmt.Println(resp)
 		//
 		c.JSON(http.StatusOK, PubHCResp{"Information with title" + up.Title + " has been Published", insertJob.SuccessResp["publishID"]})
 		return

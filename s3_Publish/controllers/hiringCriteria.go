@@ -339,6 +339,13 @@ func PublishHiringCriteria(c *gin.Context) {
 		return
 	}
 
+	reqBody := map[string]string{"senderID": hc.StakeholderID, "senderUserRole": "Corporate", "notificationType": "General", "content": "Hiring Criteria has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+	resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
+	if err != nil {
+		fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
+	}
+	fmt.Println(resp)
+
 	fmt.Printf("\n HC : %+v\n", hc)
 
 	c.JSON(http.StatusOK, PubHCResp{"Hiring Criteria With ID :" + hc.HiringCriteriaID + " has been Published", insertJob.SuccessResp["publishID"]})

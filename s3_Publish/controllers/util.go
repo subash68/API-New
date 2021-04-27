@@ -3,10 +3,13 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jaswanth-gorripati/PGK/s3_Publish/configuration"
+	"github.com/jaswanth-gorripati/PGK/s3_Publish/middleware"
 	"github.com/jaswanth-gorripati/PGK/s3_Publish/models"
 	"gopkg.in/go-playground/validator.v8"
 )
@@ -91,4 +94,23 @@ func ErrCheck(ctx context.Context, result models.DbModelError) models.RespErrMod
 
 	return respErrMsg
 
+}
+
+// TokenDbResp ...
+type TokenDbResp struct {
+	Message string `json:"message"`
+}
+
+func makeTokenServiceCall(endpoint string, reqData map[string]string) (string, error) {
+	tokenConfig := configuration.NftConfig()
+	resBody, err := middleware.MakeInternalServiceCall(tokenConfig.Host, tokenConfig.Port, "POST", endpoint, reqData)
+	if err != nil {
+		return "", err
+	}
+	var tokenResp TokenDbResp
+	err = json.Unmarshal(resBody, &tokenResp)
+	if err != nil {
+		return "", err
+	}
+	return tokenResp.Message, nil
 }

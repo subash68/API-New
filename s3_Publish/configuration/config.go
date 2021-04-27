@@ -53,6 +53,12 @@ type AuthService struct {
 	Port int    `json:"AUTH_SER_PORT"`
 }
 
+// NftService ...
+type NftService struct {
+	Host string `json:"NFT_SER_HOST"`
+	Port int    `json:"NFT_SER_PORT"`
+}
+
 // EmailEnv ...
 type EmailEnv struct {
 	EmailClientID     string `json:"EMAIL_CLIENT_ID"`
@@ -85,6 +91,7 @@ type PaymentEnv struct {
 var emailConfig *EmailEnv
 var dbConfig *DbEnv
 var authService *AuthService
+var nftService *NftService
 var jwtConfig *JwtEnv
 var twilioConfig *TwilioEnv
 var paymentConfig *PaymentEnv
@@ -106,6 +113,11 @@ func DbConfig() DbEnv {
 // AuthConfig provides the URL for authenticate micro-service
 func AuthConfig() AuthService {
 	return *authService
+}
+
+// NftConfig provides the URL for authenticate micro-service
+func NftConfig() NftService {
+	return *nftService
 }
 
 // EmailConfig provide configuration details of Email service
@@ -154,6 +166,8 @@ func Config() {
 	err = json.Unmarshal(dat, &paymentConfig)
 
 	err = json.Unmarshal(dat, &authService)
+
+	err = json.Unmarshal(dat, &nftService)
 
 	if err != nil {
 

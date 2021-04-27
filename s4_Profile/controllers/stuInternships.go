@@ -45,6 +45,8 @@ func AddInternship(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, models.MessageResp{"Internship Saved"})
+		c.Abort()
+		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)

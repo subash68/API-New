@@ -131,6 +131,18 @@ services:
       - ../s7_PaymentGateway:/ch-paymentgateway
       - ../s7_PaymentGateway/paymentgateway
     command: "CompileDaemon -build='go build -o paymentgateway' -command=./paymentgateway"
+
+  notification_service:
+    image: s8-notification:dev
+    container_name: notification_service
+    restart: always
+    build:
+      context: ../s8_Notifications/.
+      target: dev
+    volumes:
+      - ../s8_Notifications:/notifications
+      - ../s8_Notifications/notifications
+    command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
     # ports:
     #   - 8080:8080
     # mysql:

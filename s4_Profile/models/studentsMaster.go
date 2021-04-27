@@ -210,6 +210,83 @@ type StudentAllCompetitionModel struct {
 	Competitions  []StudentCompetitionModel `form:"competitions" json:"competitions" binding:"dive"`
 }
 
+// StudentConfWorkshopModel ...
+type StudentConfWorkshopModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	Date            time.Time `form:"date" json:"date" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllConfWorkshopModel ...
+type StudentAllConfWorkshopModel struct {
+	StakeholderID string                     `form:"-" json:"-"`
+	ConfWorkshop  []StudentConfWorkshopModel `form:"confWorkshop" json:"confWorkshop" binding:"dive"`
+}
+
+// StudentExtraCurricularModel ...
+type StudentExtraCurricularModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllExtraCurricularModel ...
+type StudentAllExtraCurricularModel struct {
+	StakeholderID   string                        `form:"-" json:"-"`
+	ExtraCurricular []StudentExtraCurricularModel `form:"extraCurricular" json:"extraCurricular" binding:"dive"`
+}
+
+// StudentPatentsModel ...
+type StudentPatentsModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	PatentType      string    `form:"patentType" json:"patentType" binding:"required"`
+	PatentNumber    string    `form:"patentNumber" json:"patentNumber" binding:"required"`
+	PatentStatus    string    `form:"patentStatus" json:"patentStatus" binding:"required"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllPatentsModel ...
+type StudentAllPatentsModel struct {
+	StakeholderID string                `form:"-" json:"-"`
+	Patents       []StudentPatentsModel `form:"patents" json:"patents" binding:"dive"`
+}
+
+// StudentProjectsModel ...
+type StudentProjectsModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	ProjectAbstract string    `form:"projectAbstract" json:"projectAbstract" binding:"required"`
+	GuideName       string    `form:"guideName" json:"guideName"`
+	GuideEmail      string    `form:"guideEmail" json:"guideEmail"`
+	StartDate       time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	EndDate         time.Time `form:"endDate" json:"endDate,omitempty" time_format="2006-12-01T21:23:34.409Z"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllProjectsModel ...
+type StudentAllProjectsModel struct {
+	StakeholderID string                 `form:"-" json:"-"`
+	Projects      []StudentProjectsModel `form:"projects" json:"projects" binding:"dive"`
+}
+
 // StudentContactInfoModel ...
 type StudentContactInfoModel struct {
 	StakeholderID            string `form:"stakeholderID" json:"stakeholderID,omitempty"`

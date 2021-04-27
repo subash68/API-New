@@ -151,6 +151,30 @@ func InitialzeRoutes() *gin.Engine {
 	stu.PATCH("/competition/:id", controllers.StudentCompetitions.UpdateCompetitions)
 	stu.DELETE("/competition/:id", controllers.StudentCompetitions.DeleteCompetitions)
 
+	// Student ConferenceWorkshop
+	stu.POST("/confWorkshop", controllers.StudentConfWorkshop.AddConfWorkshop)
+	stu.GET("/confWorkshop", controllers.StudentConfWorkshop.GetAllConfWorkshop)
+	stu.PATCH("/confWorkshop/:id", controllers.StudentConfWorkshop.UpdateConfWorkshop)
+	stu.DELETE("/confWorkshop/:id", controllers.StudentConfWorkshop.DeleteConfWorkshop)
+
+	// Student ExtraCurricular
+	stu.POST("/extraCurricular", controllers.StudentExtraCurricular.AddExtraCurricular)
+	stu.GET("/extraCurricular", controllers.StudentExtraCurricular.GetAllExtraCurricular)
+	stu.PATCH("/extraCurricular/:id", controllers.StudentExtraCurricular.UpdateExtraCurricular)
+	stu.DELETE("/extraCurricular/:id", controllers.StudentExtraCurricular.DeleteExtraCurricular)
+
+	// Student Patents
+	stu.POST("/patents", controllers.StudentPatents.AddPatents)
+	stu.GET("/patents", controllers.StudentPatents.GetAllPatents)
+	stu.PATCH("/patents/:id", controllers.StudentPatents.UpdatePatents)
+	stu.DELETE("/patents/:id", controllers.StudentPatents.DeletePatents)
+
+	// Student Projects
+	stu.POST("/projects", controllers.StudentProjects.AddProjects)
+	stu.GET("/projects", controllers.StudentProjects.GetAllProjects)
+	stu.PATCH("/projects/:id", controllers.StudentProjects.UpdateProjects)
+	stu.DELETE("/projects/:id", controllers.StudentProjects.DeleteProjects)
+
 	// Student complete profile
 	stu.GET("/completeProfile", controllers.GetStudentProfile)
 
