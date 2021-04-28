@@ -116,6 +116,18 @@ services:
     #   - 8080:8080
     # mysql:
     #   condition: service_healthy
+  notification_service:
+    image: s8-notification:dev
+    container_name: notification_service
+    restart: always
+    build:
+      context: ../s8_Notifications/.
+      target: dev
+    volumes:
+      - ../s8_Notifications:/notifications
+      - ../s8_Notifications/notifications
+    command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
+
   ui_service:
     image: pgkui
     container_name: ui_service
