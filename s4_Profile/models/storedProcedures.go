@@ -98,5 +98,13 @@ func CreateSP() {
 		"STU_PROJECTS_UPD":            "Update " + dbConfig.DbDatabaseName + "." + dbConfig.StuProjectsDbName + " SET ProjectName=?,ProjectAbstract=?,GuideName=?,Guide_EmailID=?,Start_Date=?,End_Date=?,AttachFile=?,LastUpdatedDate=? WHERE id=? AND Stakeholder_ID=?",
 		"STU_PROJECTS_DLT":            "DELETE from " + dbConfig.DbDatabaseName + "." + dbConfig.StuProjectsDbName + " WHERE id=? AND Stakeholder_ID=?",
 		"STU_PROJECTS_GETALL":         "SELECT id,ProjectName,ProjectAbstract,ifnull(GuideName,''),ifnull(Guide_EmailID,''),Start_Date,End_Date,ifnull(AttachFile,''),EnabledFlag,CreationDate,LastUpdatedDate from " + dbConfig.DbDatabaseName + "." + dbConfig.StuProjectsDbName + " WHERE Stakeholder_ID=?",
+		"STU_PUBLICATIONS_INS":        "INSERT INTO " + dbConfig.DbDatabaseName + "." + dbConfig.StuPublicationsDbName + " (Stakeholder_ID,PublicationName,PublishingAuthority,Guide_Name,Guide_EmailID,Start_Date,End_Date,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate) VALUES(?,?,?,?,?,?,?,?,?,?,?) ",
+		"STU_PUBLICATIONS_UPD":        "Update " + dbConfig.DbDatabaseName + "." + dbConfig.StuPublicationsDbName + " SET PublicationName=?,PublishingAuthority=?,Guide_Name=?,Guide_EmailID=?,Start_Date=?,End_Date=?,AttachFile=?,LastUpdatedDate=? WHERE id=? AND Stakeholder_ID=?",
+		"STU_PUBLICATIONS_DLT":        "DELETE from " + dbConfig.DbDatabaseName + "." + dbConfig.StuPublicationsDbName + " WHERE id=? AND Stakeholder_ID=?",
+		"STU_PUBLICATIONS_GETALL":     "SELECT id,PublicationName,PublishingAuthority,Guide_Name,Guide_EmailID,Start_Date,End_Date,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate from " + dbConfig.DbDatabaseName + "." + dbConfig.StuPublicationsDbName + " WHERE Stakeholder_ID=?",
+		"STU_SCHOLARSHIPS_INS":        "INSERT INTO " + dbConfig.DbDatabaseName + "." + dbConfig.StuScholarshipsDbName + " (Stakeholder_ID,Scholarship_Name,ScholarshipGivenBy,Scholarship_Date,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate) VALUES(?,?,?,?,?,?,?,?) ",
+		"STU_SCHOLARSHIPS_UPD":        "Update " + dbConfig.DbDatabaseName + "." + dbConfig.StuScholarshipsDbName + " SET Scholarship_Name=?,ScholarshipGivenBy=?,Scholarship_Date=?,AttachFile=?,LastUpdatedDate=? WHERE id=? AND Stakeholder_ID=?",
+		"STU_SCHOLARSHIPS_DLT":        "DELETE from " + dbConfig.DbDatabaseName + "." + dbConfig.StuScholarshipsDbName + " WHERE id=? AND Stakeholder_ID=?",
+		"STU_SCHOLARSHIPS_GETALL":     "SELECT id,Scholarship_Name,ScholarshipGivenBy,Scholarship_Date,AttachFile,EnabledFlag,CreationDate,LastUpdatedDate from " + dbConfig.DbDatabaseName + "." + dbConfig.StuScholarshipsDbName + " WHERE Stakeholder_ID=?",
 	}
 }

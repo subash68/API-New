@@ -49,46 +49,48 @@ func AddHiringCriteria(c *gin.Context) {
 	var err error
 	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
 	if reqContentType != "application/json" || reqContentType == "" {
-		err = fmt.Errorf("Invalid content type %s , Required %s", reqContentType, "application/json")
-	} else {
-		binding.Validator = &defaultValidator{}
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		c.Abort()
+		return
+	}
+	binding.Validator = &defaultValidator{}
 
-		err = c.ShouldBindWith(&hc, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
+	err = c.ShouldBindWith(&hc, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
 
-		if len(hc.HiringCriterias) <= 0 {
-			err = fmt.Errorf("Require HiringCriterias in Array format")
+	if len(hc.HiringCriterias) <= 0 {
+		err = fmt.Errorf("Require HiringCriterias in Array format")
+	}
+	if err == nil {
+
+		ID, ok := c.Get("userID")
+		if !ok {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+			c.JSON(http.StatusUnprocessableEntity, resp)
+			return
 		}
-		if err == nil {
-
-			ID, ok := c.Get("userID")
-			if !ok {
-				resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
-				c.JSON(http.StatusUnprocessableEntity, resp)
+		fmt.Printf("\n=====================> HC: %+v\n", hc.HiringCriterias)
+		go func() {
+			select {
+			case insertJobChan := <-hc.Insert(ID.(string)):
+				jobdb <- insertJobChan
+			case <-ctx.Done():
 				return
 			}
-			fmt.Printf("\n=====================> HC: %+v\n", hc.HiringCriterias)
-			go func() {
-				select {
-				case insertJobChan := <-hc.Insert(ID.(string)):
-					jobdb <- insertJobChan
-				case <-ctx.Done():
-					return
-				}
-			}()
-			insertJob := <-jobdb
-			fmt.Printf("\n insertjob: %+v\n", insertJob)
-			if insertJob.ErrTyp != "000" {
-				resp := ErrCheck(ctx, insertJob)
-				c.Error(insertJob.Err)
-				c.JSON(http.StatusInternalServerError, resp)
-				c.Abort()
-				return
-			}
-
-			c.JSON(http.StatusOK, AddHCResp{insertJob.SuccessResp["hcIDs"]})
+		}()
+		insertJob := <-jobdb
+		fmt.Printf("\n insertjob: %+v\n", insertJob)
+		if insertJob.ErrTyp != "000" {
+			resp := ErrCheck(ctx, insertJob)
+			c.Error(insertJob.Err)
+			c.JSON(http.StatusInternalServerError, resp)
 			c.Abort()
 			return
 		}
+
+		c.JSON(http.StatusOK, AddHCResp{insertJob.SuccessResp["hcIDs"]})
+		c.Abort()
+		return
 	}
 
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
@@ -298,7 +300,7 @@ func DeleteHiringCriteria(c *gin.Context) {
 // PublishHiringCriteria ...
 func PublishHiringCriteria(c *gin.Context) {
 	successResp = map[string]string{}
-	var hc models.HiringCriteriaDB
+	var hc models.PublishHiringCriteriasModel
 	jobdb := make(chan models.DbModelError, 1)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -307,47 +309,55 @@ func PublishHiringCriteria(c *gin.Context) {
 
 	defer cancel()
 	defer close(jobdb)
-
-	hc.HiringCriteriaID = c.Param("hcID")
-	if hc.HiringCriteriaID == "" {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot fing Hiring criteria ID"), SuccessResp: successResp})
+	var err error
+	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
+	if reqContentType != "application/json" || reqContentType == "" {
+		err = fmt.Errorf("Invalid content type %s , Required %s", reqContentType, "application/json")
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		return
 	}
-	ID, ok := c.Get("userID")
-	fmt.Println("-----> Got ID", ID.(string))
-	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		return
-	}
-	hc.StakeholderID = ID.(string)
-	go func() {
-		select {
-		case insertJobChan := <-hc.PublishHC():
-			jobdb <- insertJobChan
-		case <-ctx.Done():
+	binding.Validator = &defaultValidator{}
+	err = c.ShouldBindWith(&hc, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
+	if err == nil {
+		ID, ok := c.Get("userID")
+		fmt.Println("-----> Got ID", ID.(string))
+		if !ok {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+			c.JSON(http.StatusUnprocessableEntity, resp)
 			return
 		}
-	}()
-	insertJob := <-jobdb
+		hc.StakeholderID = ID.(string)
+		go func() {
+			select {
+			case insertJobChan := <-hc.PublishHC():
+				jobdb <- insertJobChan
+			case <-ctx.Done():
+				return
+			}
+		}()
+		insertJob := <-jobdb
 
-	if insertJob.ErrTyp != "000" {
-		resp := ErrCheck(ctx, insertJob)
-		c.Error(insertJob.Err)
-		c.JSON(http.StatusInternalServerError, resp)
+		if insertJob.ErrTyp != "000" {
+			resp := ErrCheck(ctx, insertJob)
+			c.Error(insertJob.Err)
+			c.JSON(http.StatusInternalServerError, resp)
+			return
+		}
+
+		reqBody := map[string]string{"senderID": hc.StakeholderID, "senderUserRole": "Corporate", "notificationType": "General", "content": "Hiring Criteria has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
+		if err != nil {
+			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
+		}
+		fmt.Println(resp)
+
+		fmt.Printf("\n HC : %+v\n", hc)
+
+		c.JSON(http.StatusOK, PubHCResp{"Hiring Criteria has been Published", insertJob.SuccessResp["publishID"]})
 		return
 	}
-
-	reqBody := map[string]string{"senderID": hc.StakeholderID, "senderUserRole": "Corporate", "notificationType": "General", "content": "Hiring Criteria has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
-	resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
-	if err != nil {
-		fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
-	}
-	fmt.Println(resp)
-
-	fmt.Printf("\n HC : %+v\n", hc)
-
-	c.JSON(http.StatusOK, PubHCResp{"Hiring Criteria With ID :" + hc.HiringCriteriaID + " has been Published", insertJob.SuccessResp["publishID"]})
+	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+	c.JSON(http.StatusUnprocessableEntity, resp)
 	return
 }

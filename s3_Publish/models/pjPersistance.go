@@ -3,6 +3,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -37,7 +38,48 @@ func (pj *PublishJobs) Insert(ID string) <-chan DbModelError {
 
 	for index := range pj.PublishedJobs {
 		pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?),"
-		pdhVals = append(pdhVals, ID, pdhIDs[index], currentTime, false, true, false, false, "New Job has been published", currentTime, currentTime, "[]")
+
+		var jc FullJobDb
+		getByIDSP, _ := RetriveSP("JOB_HC_GET_BY_ID")
+		err := Db.QueryRow(getByIDSP, pj.PublishedJobs[index].JobID).Scan(&jc.JobID, &jc.StakeholderID, &jc.HiringCriteriaID, &jc.HiringCriteriaName, &jc.JobName, &jc.CreationDate, &jc.PublishedFlag, &jc.PublishID)
+		if err != nil {
+			customError.ErrTyp = "S3PJ003"
+			customError.ErrCode = "500"
+			customError.Err = fmt.Errorf("Failed to retrieve Created Jobs : %v", err.Error())
+			Job <- customError
+			return Job
+		}
+		if jc.HiringCriteriaID.Valid {
+			jc.HcID = jc.HiringCriteriaID.String
+		}
+		if jc.HiringCriteriaName.Valid {
+			jc.HcName = jc.HiringCriteriaName.String
+		}
+		getAllJCSP, _ := RetriveSP("JOB_SKill_GET_BY_ID")
+		jcRows, err := Db.Query(getAllJCSP, pj.PublishedJobs[index].JobID)
+		if err != nil {
+			customError.ErrTyp = "S3PJ003"
+			customError.ErrCode = "500"
+			customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+			Job <- customError
+			return Job
+		}
+		defer jcRows.Close()
+		for jcRows.Next() {
+			var newJC JobSkillsMapping
+			err = jcRows.Scan(&newJC.ID, &newJC.JobID, &newJC.JobName, &newJC.SkillID, &newJC.Skill, &newJC.NoOfPositions, &newJC.Location, &newJC.SalaryRange, &newJC.DateOfHiring, &newJC.Status, &newJC.Remarks, &newJC.Attachment, &newJC.CreationDate)
+			if err != nil {
+				customError.ErrTyp = "S3PJ003"
+				customError.ErrCode = "500"
+				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+				Job <- customError
+				return Job
+			}
+			newJC.Attachment = []byte("")
+			jc.Jobs = append(jc.Jobs, newJC)
+		}
+		jcPubDataAsByte, _ := json.Marshal(&jc)
+		pdhVals = append(pdhVals, ID, pdhIDs[index], currentTime, false, true, false, false, "New Job has been published", currentTime, currentTime, string(jcPubDataAsByte))
 	}
 	//pjInsertCmd = pjInsertCmd[0 : len(pjInsertCmd)-1]
 	stmt, err := Db.Prepare(pjInsertCmd)

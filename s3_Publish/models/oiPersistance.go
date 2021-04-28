@@ -3,6 +3,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -73,9 +74,19 @@ func (oi *OtherInformationModel) PublishOI() <-chan DbModelError {
 
 	currentTime := time.Now()
 
+	getAllHCSP, _ := RetriveSP("OI_GET_BY_ID")
+	err := Db.QueryRow(getAllHCSP, oi.StakeholderID, oi.ID).Scan(&oi.Title, &oi.Information, &oi.CreationDate)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Failed to retrive Other information due to %v", err.Error())
+		customError.ErrCode = "S3PJ002"
+		Job <- customError
+		return Job
+	}
+	oiDataAsBytes, _ := json.Marshal(&oi)
 	pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?)"
 
-	pdhVals = append(pdhVals, oi.StakeholderID, pdhIDs[0], currentTime, false, false, false, true, "Other Information has been published", currentTime, currentTime, "[]")
+	pdhVals = append(pdhVals, oi.StakeholderID, pdhIDs[0], currentTime, false, false, false, true, "Other Information has been published", currentTime, currentTime, string(oiDataAsBytes))
 
 	pdhStmt, err := Db.Prepare(pdhInsertCmd)
 	if err != nil {

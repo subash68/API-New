@@ -56,8 +56,14 @@ func Subscribe(c *gin.Context) {
 		if newSubscriptions.TransactionID == "" {
 			newSubscriptions.TransactionID = "TX" + GetRandomID(15)
 		}
-		if getSubPayment(newSubscriptions.PublishID) != (newSubscriptions.BonusTokensUsed + newSubscriptions.PaidTokensUsed) {
+		tknReq, bonusPercent := getSubPayment(newSubscriptions.PublishID)
+		if tknReq != (newSubscriptions.BonusTokensUsed + newSubscriptions.PaidTokensUsed) {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Token Amount error", Err: fmt.Errorf("Required Tokens are not equal to TokensUsed in parameters"), SuccessResp: successResp})
+			c.JSON(http.StatusBadRequest, resp)
+			return
+		}
+		if newSubscriptions.BonusTokensUsed > (tknReq / bonusPercent) {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Token Amount error", Err: fmt.Errorf("Cannot use more than %v tokens for this transaction", (tknReq / bonusPercent)), SuccessResp: successResp})
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
@@ -111,7 +117,7 @@ func GetSubscriptionPayment(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		return
 	}
-	subsPayment := models.SubscriptionPaymentModel{"Payment details are not implemented, sending sample tokens required for " + pubID, 40.00}
+	subsPayment := models.SubscriptionPaymentModel{"Payment details are not implemented, sending sample tokens required for " + pubID, 40.00, 10}
 	c.JSON(http.StatusOK, subsPayment)
 	return
 }
@@ -166,9 +172,9 @@ func GetAllSubscriptions(c *gin.Context) {
 }
 
 // getSubPayment ...
-func getSubPayment(pID string) float64 {
+func getSubPayment(pID string) (float64, float64) {
 
-	return 40
+	return 40, 10
 }
 
 func makeTokenServiceCall(endpoint string, reqData map[string]string) (string, error) {

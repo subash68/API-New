@@ -3,6 +3,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -181,7 +182,7 @@ func CreateHCID(crpID string, count int, hc []HiringCriteriaDB) ([]string, DbMod
 }
 
 // PublishHC ...
-func (hc *HiringCriteriaDB) PublishHC() <-chan DbModelError {
+func (phc *PublishHiringCriteriasModel) PublishHC() <-chan DbModelError {
 	Job := make(chan DbModelError, 1)
 	successResp := map[string]string{}
 	var customError DbModelError
@@ -192,7 +193,7 @@ func (hc *HiringCriteriaDB) PublishHC() <-chan DbModelError {
 	}
 
 	// Creating PublishHistory
-	pdhIDs, customError := CreatePJID(hc.StakeholderID, 1, "PDH", "PDH_Get_Last_ID")
+	pdhIDs, customError := CreatePJID(phc.StakeholderID, len(phc.HiringCriteriaIDs), "PDH", "PDH_Get_Last_ID")
 	if customError.ErrTyp != "000" {
 		fmt.Printf("\nDb connection error :%+v\n", customError)
 		Job <- customError
@@ -203,12 +204,25 @@ func (hc *HiringCriteriaDB) PublishHC() <-chan DbModelError {
 	pdhVals := []interface{}{}
 
 	currentTime := time.Now()
+	for index := range phc.HiringCriteriaIDs {
 
-	pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?)"
+		pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?),"
+		getByIDSP, _ := RetriveSP("HC_GET_BY_ID")
+		var hc HiringCriteriaDB
+		err := Db.QueryRow(getByIDSP, phc.HiringCriteriaIDs[index]).Scan(&hc.HiringCriteriaID, &hc.HiringCriteriaName, &hc.ProgramID, &hc.DepartmentID, &hc.CutOffCategory, &hc.CutOff, &hc.EduGapsSchoolAllowed, &hc.EduGaps11N12Allowed, &hc.EduGapsGradAllowed, &hc.EduGapsPGAllowed, &hc.AllowActiveBacklogs, &hc.NumberOfAllowedBacklogs, &hc.YearOfPassing, &hc.Remarks, &hc.CreationDate, &hc.PublishedFlagNull, &hc.PublishIDNull)
+		hcPubDataAsBytes, _ := json.Marshal(&hc)
+		if err != nil {
+			customError.ErrTyp = "S3PJ003"
+			customError.ErrCode = "500"
+			customError.Err = fmt.Errorf("Failed to retrieve Hiring criteria : %v", err.Error())
+			Job <- customError
+			return Job
+		}
 
-	pdhVals = append(pdhVals, hc.StakeholderID, pdhIDs[0], currentTime, true, false, false, false, "Hiring Criteria has been published", currentTime, currentTime, "[]")
+		pdhVals = append(pdhVals, phc.StakeholderID, pdhIDs[index], currentTime, true, false, false, false, "Hiring Criteria has been published", currentTime, currentTime, string(hcPubDataAsBytes))
+	}
 
-	//pdhInsertCmd = pdhInsertCmd[0 : len(pdhInsertCmd)-1]
+	pdhInsertCmd = pdhInsertCmd[0 : len(pdhInsertCmd)-1]
 	pdhStmt, err := Db.Prepare(pdhInsertCmd)
 	if err != nil {
 		customError.ErrTyp = "500"
@@ -226,30 +240,32 @@ func (hc *HiringCriteriaDB) PublishHC() <-chan DbModelError {
 		return Job
 	}
 
-	updateSP, _ := RetriveSP("HC_UPDATE_BY_ID")
-	stmtWhere, _ := RetriveSP("HC_UPDATE_WHERE")
+	for index := range phc.HiringCriteriaIDs {
+		updateSP, _ := RetriveSP("HC_UPDATE_BY_ID")
+		stmtWhere, _ := RetriveSP("HC_UPDATE_WHERE")
 
-	updateSP = updateSP + " PublishID='" + pdhIDs[0] + "', PublishFlag=1 " + stmtWhere
+		updateSP = updateSP + " PublishID='" + pdhIDs[index] + "', PublishFlag=1 " + stmtWhere
 
-	updateStm, err := Db.Prepare(updateSP)
-	if err != nil {
-		fmt.Println(updateSP)
-		customError.ErrTyp = "500"
-		customError.ErrCode = "S3PJ002"
-		customError.Err = fmt.Errorf("Cannot prepare database update due to %v --- %s", err.Error(), updateSP)
-		Job <- customError
-		return Job
-	}
-	_, err = updateStm.Exec(hc.HiringCriteriaID, hc.StakeholderID)
-	if err != nil {
-		customError.ErrTyp = "500"
-		customError.Err = fmt.Errorf("Failed to update the database due to : %v", err.Error())
-		customError.ErrCode = "S3PJ002"
-		Job <- customError
-		return Job
+		updateStm, err := Db.Prepare(updateSP)
+		if err != nil {
+			fmt.Println(updateSP)
+			customError.ErrTyp = "500"
+			customError.ErrCode = "S3PJ002"
+			customError.Err = fmt.Errorf("Cannot prepare database update due to %v --- %s", err.Error(), updateSP)
+			Job <- customError
+			return Job
+		}
+		_, err = updateStm.Exec(phc.HiringCriteriaIDs[index], phc.StakeholderID)
+		if err != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Failed to update the database due to : %v", err.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	customError.ErrTyp = "000"
-	successResp["publishID"] = pdhIDs[0]
+	successResp["publishID"] = fmt.Sprintf("%v", pdhIDs)
 	customError.SuccessResp = successResp
 
 	Job <- customError

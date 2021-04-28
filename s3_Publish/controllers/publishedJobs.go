@@ -29,8 +29,16 @@ func AddPublishedJobs(c *gin.Context) {
 
 	defer cancel()
 	defer close(jobdb)
+	var err error
+	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
+	if reqContentType != "application/json" || reqContentType == "" {
+		err = fmt.Errorf("Invalid content type %s , Required %s", reqContentType, "application/json")
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
 	binding.Validator = &defaultValidator{}
-	err := c.ShouldBindWith(&pj, binding.Form)
+	err = c.ShouldBindWith(&pj, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
 	if err == nil {
 
 		ID, ok := c.Get("userID")

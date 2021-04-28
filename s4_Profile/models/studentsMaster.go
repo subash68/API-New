@@ -274,7 +274,8 @@ type StudentProjectsModel struct {
 	GuideName       string    `form:"guideName" json:"guideName"`
 	GuideEmail      string    `form:"guideEmail" json:"guideEmail"`
 	StartDate       time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
-	EndDate         time.Time `form:"endDate" json:"endDate,omitempty" time_format="2006-12-01T21:23:34.409Z"`
+	EndDate         time.Time `form:"endDate" json:"endDate,omitempty
+	" time_format="2006-12-01T21:23:34.409Z"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
@@ -285,6 +286,47 @@ type StudentProjectsModel struct {
 type StudentAllProjectsModel struct {
 	StakeholderID string                 `form:"-" json:"-"`
 	Projects      []StudentProjectsModel `form:"projects" json:"projects" binding:"dive"`
+}
+
+// StudentPublicationsModel ...
+type StudentPublicationsModel struct {
+	StakeholderID       string    `form:"-" json:"-"`
+	ID                  int       `form:"-" json:"id"`
+	Name                string    `form:"name" json:"name" binding:"required"`
+	PublishingAuthority string    `form:"publishingAuthority" json:"publishingAuthority" binding:"required"`
+	GuideName           string    `form:"guideName" json:"guideName" binding:"required"`
+	GuideEmail          string    `form:"guideEmail" json:"guideEmail" binding:"required"`
+	StartDate           time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	EndDate             time.Time `form:"endDate" json:"endDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Attachment          []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag         bool      `form:"-" json:"enabledFlag"`
+	CreationDate        time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate     time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllPublicationsModel ...
+type StudentAllPublicationsModel struct {
+	StakeholderID string                     `form:"-" json:"-"`
+	Publications  []StudentPublicationsModel `form:"publications" json:"publications" binding:"dive"`
+}
+
+// StudentScholarshipsModel ...
+type StudentScholarshipsModel struct {
+	StakeholderID       string    `form:"-" json:"-"`
+	ID                  int       `form:"-" json:"id"`
+	Name                string    `form:"name" json:"name" binding:"required"`
+	ScholarshipIssuedBy string    `form:"scholarshipIssuedBy" json:"publishingAuthority" binding:"required"`
+	ScholarshipDate     time.Time `form:"scholarshipDate" json:"scholarshipDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Attachment          []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag         bool      `form:"-" json:"enabledFlag"`
+	CreationDate        time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate     time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllScholarshipsModel ...
+type StudentAllScholarshipsModel struct {
+	StakeholderID string                     `form:"-" json:"-"`
+	Scholarships  []StudentScholarshipsModel `form:"scholarships" json:"scholarships" binding:"dive"`
 }
 
 // StudentContactInfoModel ...

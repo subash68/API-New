@@ -94,7 +94,7 @@ func (jc *FullJobDb) GetByID() <-chan DbModelError {
 		return Job
 	}
 	getByIDSP, _ := RetriveSP("JOB_HC_GET_BY_ID")
-	err := Db.QueryRow(getByIDSP, jc.JobID).Scan(&jc.JobID, &jc.StakeholderID, &jc.HiringCriteriaID, &jc.HiringCriteriaName, &jc.JobName, &jc.CreationDate)
+	err := Db.QueryRow(getByIDSP, jc.JobID).Scan(&jc.JobID, &jc.StakeholderID, &jc.HiringCriteriaID, &jc.HiringCriteriaName, &jc.JobName, &jc.CreationDate, &jc.PublishedFlag, &jc.PublishID)
 	if err != nil {
 		customError.ErrTyp = "S3PJ003"
 		customError.ErrCode = "500"
@@ -226,7 +226,7 @@ func (jc *JobHcMappingDB) GetAllJC() (jcArray []JobHcMappingDB, err error) {
 	defer jcRows.Close()
 	for jcRows.Next() {
 		var newJC JobHcMappingDB
-		err = jcRows.Scan(&newJC.JobID, &newJC.HiringCriteriaID, &newJC.HiringCriteriaName, &newJC.JobName, &newJC.CreationDate)
+		err = jcRows.Scan(&newJC.JobID, &newJC.HiringCriteriaID, &newJC.HiringCriteriaName, &newJC.JobName, &newJC.CreationDate, &newJC.PublishedFlag, &newJC.PublishID)
 
 		if err != nil {
 			return jcArray, fmt.Errorf("Cannot read the Rows %v", err.Error())

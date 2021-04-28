@@ -109,7 +109,7 @@ func InitialzeRoutes() *gin.Engine {
 
 	// HIRING CRITERIA
 	hiringCriteria.POST("/", controllers.AddHiringCriteria)
-	hiringCriteria.POST("/publish/:hcID", controllers.PublishHiringCriteria)
+	hiringCriteria.POST("/publish", controllers.PublishHiringCriteria)
 	hiringCriteria.GET("/published", controllers.GetAllPublishedHC)
 	hiringCriteria.GET("/getByID/:hcID", controllers.GetHiringCriteriaByID)
 	hiringCriteria.GET("/all", controllers.GetAllHiringCriteria)

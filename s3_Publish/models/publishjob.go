@@ -42,8 +42,8 @@ type HiringCriteriaDB struct {
 	CreationDate            time.Time  `form:"-" json:"creationDate"`
 	PublishedFlagNull       NullBool   `form:"-" json:"-"`
 	PublishIDNull           NullString `form:"-" json:"-"`
-	PublishedFlag           bool       `form:"-" json:"publishedFlag"`
-	PublishID               string     `form:"-" json:"publishID"`
+	PublishedFlag           bool       `form:"-" json:"publishedFlag,omitempty"`
+	PublishID               string     `form:"-" json:"publishID,omitempty"`
 }
 
 // MultipleHC ...
@@ -61,6 +61,8 @@ type JobHcMappingDB struct {
 	HcName             string     `form:"hiringCriteriaName" json:"hiringCriteriaName"`
 	JobName            string     `form:"jobName" json:"jobName" binding:"required"`
 	CreationDate       time.Time  `form:"-" json:"creationDate"`
+	PublishedFlag      bool       `form:"-" json:"publishedFlag"`
+	PublishID          string     `form:"-" json:"publishID"`
 }
 
 // JobSkillsMapping ...
@@ -107,6 +109,12 @@ type PublishedJobsDB struct {
 // PublishJobs ...
 type PublishJobs struct {
 	PublishedJobs []PublishedJobsDB `form:"publishJobs" json:"publishJobs" binding:"dive"`
+}
+
+// PublishHiringCriteriasModel ...
+type PublishHiringCriteriasModel struct {
+	StakeholderID     string   `form:"-" json:"-"`
+	HiringCriteriaIDs []string `form:"hiringCriteriaIDs" json:"hiringCriteriaIDs" binding:"required"`
 }
 
 // PublishDataModel ...

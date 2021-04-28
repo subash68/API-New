@@ -37,6 +37,7 @@ type AllSubscriptionsModel struct {
 
 // SubscriptionPaymentModel ...
 type SubscriptionPaymentModel struct {
-	Message        string  `json:"string"`
-	TokensRequired float64 `json:"tokensrequired"`
+	Message                   string  `json:"string"`
+	TokensRequired            float64 `json:"tokensrequired"`
+	BonusTokenUsagePercentage float64 `json:"bonusTokenUsagePercentage"`
 }
