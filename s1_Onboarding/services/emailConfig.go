@@ -92,7 +92,7 @@ func SendEmail(to string, sub string, body string) (bool, error) {
 
 // SendOTPEmail to send an email to the recipeint email
 func SendOTPEmail(to string, stakeholderID string) (bool, error) {
-	fmt.Println(" ---> otp for ", stakeholderID)
+	fmt.Println(" ---> otp for ", to)
 	if to == "" {
 		return false, fmt.Errorf("Invalid Email Address ")
 	}

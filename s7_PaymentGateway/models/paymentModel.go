@@ -22,6 +22,7 @@ type CreatePaymentModel struct {
 	TokensUsed      float64                `form:"tokenUsed"`
 	TokensToAdd     float64                `form:"tokensToAdd"`
 	PayType         string                 `form:"payType" json:"payType" binding:"required"`
+	ReferenceObject string                 `form:"referenceObject" json:"referenceObject"`
 	Notes           map[string]interface{} `form:"-" json:"notes"`
 }
 

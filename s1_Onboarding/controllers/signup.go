@@ -108,6 +108,10 @@ func Signup(c *gin.Context) {
 			studentData := serializeStudentData(ctx, c, string(bcryptEncodedPassword))
 			if studentData.FirstName == "" {
 				fmt.Println(studentData)
+				// resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid STudentDetails", Err: fmt.Errorf("Invalid student information"), SuccessResp: successResp})
+				// c.JSON(http.StatusUnprocessableEntity, resp)
+				// c.Abort()
+				// return
 				return
 			}
 			go func() {
@@ -120,7 +124,7 @@ func Signup(c *gin.Context) {
 			}()
 			break
 		default:
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid Stakehodler type", Err: fmt.Errorf("" + stakeholderInfo.Stakeholder + " is invaild,  Expecting Corporate,University or Student"), SuccessResp: successResp})
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid Stakeholder type", Err: fmt.Errorf("" + stakeholderInfo.Stakeholder + " is invaild,  Expecting Corporate,University or Student"), SuccessResp: successResp})
 			c.JSON(http.StatusUnprocessableEntity, resp)
 			c.Abort()
 			return
@@ -140,8 +144,8 @@ func Signup(c *gin.Context) {
 		// }
 		fmt.Printf("\n insertjob: %v\n", insertJob)
 
-		go services.SendOTPEmail(insertJob.SuccessResp["Email"], insertJob.SuccessResp["StakeholderID"])
 		go services.SendSmsOtp(insertJob.SuccessResp["Phone"])
+		go services.SendOTPEmail(insertJob.SuccessResp["Email"], insertJob.SuccessResp["StakeholderID"])
 		// tokenAdded, err := raiseBonusTokenReq(insertJob.SuccessResp["StakeholderID"])
 		// if err != nil {
 		// 	fmt.Println("Failed to assign Bonus tokens %v", err.Error())
@@ -204,52 +208,14 @@ func serializeStudentData(ctx context.Context, c *gin.Context, encodedPass strin
 	if err == nil {
 		studentData.Password = encodedPass
 		studentData.AccountStatus = "1"
-		//studentData.Attachment = attachFile(c)
+		studentData.Attachment = attachFile(c)
 		return studentData
 	}
+	fmt.Println(studentData)
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)
 	c.Abort()
 	return models.StudentMasterDb{}
-	// var allErrors []struct {
-	// 	Field         string `json:"field"`
-	// 	Validation    string `json:"validation"`
-	// 	OriginalError string `json:"original"`
-	// }
-	// splitErr := strings.Split(err.Error(), "\n")
-	// for _, val := range splitErr {
-	// 	tempsplit := strings.Split(val, "'")
-	// 	allErrors = append(allErrors, struct {
-	// 		Field         string `json:"field"`
-	// 		Validation    string `json:"validation"`
-	// 		OriginalError string `json:"original"`
-	// 	}{Field: tempsplit[3], Validation: tempsplit[5], OriginalError: val})
-	// }
-	// if verr, ok := err.(validator.ValidationErrors); ok {
-	// 	fmt.Println(verr.Msg("this is actually a validation error"))
-	// }
-	// for _, fieldErr := range err.(validator.ValidationErrors) {
-	// 	fmt.Printf("\n%+v\n", fieldErr)
-
-	// ErrorConverter := fieldError{*fieldErr}.String()
-
-	// errormessage.Err.Detail = append(errormessage.Err.Detail, ErrorConverter)
-
-	// c.Error(ErrorConverter.Convert())
-
-	// if fieldErr, ok := err.(validator.ValidationErrors); ok {
-	//     var tagErrorMsg []string
-	//     for _, v := range fieldErr {
-	//         if _, has := ValidateErrorMessage[v.Tag]; has {
-	//             tagErrorMsg = append(tagErrorMsg, fmt.Sprintf(ValidateErrorMessage[v.Tag], v.Field, v.Value))
-	//         } else {
-	//             tagErrorMsg = append(tagErrorMsg, err.Error())
-	//         }
-	//     }
-	//     return errors.New(strings.Join(tagErrorMsg, ","))
-	// }
-
-	// }
 
 }
 

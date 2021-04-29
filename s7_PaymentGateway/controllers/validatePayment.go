@@ -19,6 +19,11 @@ type TokenDbResp struct {
 	Message string `json:"message"`
 }
 
+type VrfSuccessRespModel struct {
+	Messages        []string `json:"messages"`
+	ReferenceObject string   `json:"referenceObject"`
+}
+
 // ValidatePayment ...
 func ValidatePayment(c *gin.Context) {
 
@@ -122,7 +127,9 @@ func ValidatePayment(c *gin.Context) {
 		}
 		close(successLogChan)
 		close(errLogChan)
-		c.JSON(http.StatusOK, successMessage)
+		var rfObject string
+		rfObject, _ = paymentDetails["referenceObject"].(string)
+		c.JSON(http.StatusOK, VrfSuccessRespModel{successMessage, rfObject})
 		c.Abort()
 		return
 

@@ -39,6 +39,13 @@ type CommonOtpVerifyModel struct {
 
 // VerfSucResp ...
 type VerfSucResp struct {
+	Message        string `json:"message"`
+	MobileVerified bool   `json:"mobileVerified`
+	EmailVerified  bool   `json:"emailVerified"`
+}
+
+// SucResp ...
+type SucResp struct {
 	Message string `json:"message"`
 }
 
@@ -57,11 +64,11 @@ func CommonOTPVerifier(c *gin.Context) {
 	err := c.ShouldBindWith(&commonOtpData, binding.Form)
 	if err == nil {
 		phoneVerified, err := services.ValidateOTP(commonOtpData.PhoneOTP, commonOtpData.Phone)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "OTP validation fialed ", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusUnprocessableEntity, resp)
-			return
-		}
+		// if err != nil {
+		// 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "OTP validation fialed ", Err: err, SuccessResp: successResp})
+		// 	c.JSON(http.StatusUnprocessableEntity, resp)
+		// 	return
+		// }
 		emailVerified, err := services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
 		processOtpValidation(ctx, c, err, successResp, commonOtpData.Stakeholder, commonOtpData.PlatformUID, phoneVerified, emailVerified, emailVerified)
 	} else {
@@ -178,7 +185,7 @@ func processOtpValidation(ctx context.Context, c *gin.Context, err error, succes
 		// }
 		fmt.Printf("\n insertjob: %v\n", insertJob)
 
-		c.JSON(http.StatusOK, VerfSucResp{"OTP verification successful"})
+		c.JSON(http.StatusOK, VerfSucResp{"OTP verification successful", phoneVrf, emailVrf})
 		return
 
 	}
@@ -275,7 +282,7 @@ func ResendOTP(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		} else if otpSent {
-			c.JSON(http.StatusOK, VerfSucResp{"OTP sent to " + sentTo})
+			c.JSON(http.StatusOK, SucResp{"OTP sent to " + sentTo})
 			return
 		}
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Failed to send OTP", Err: err, SuccessResp: successResp})

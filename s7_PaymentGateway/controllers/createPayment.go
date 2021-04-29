@@ -33,6 +33,7 @@ func CreateOrder(c *gin.Context) {
 		newPaymentOrder.Notes["tokensUsed"] = newPaymentOrder.TokensUsed
 		newPaymentOrder.Notes["tokensToAdd"] = newPaymentOrder.TokensToAdd
 		newPaymentOrder.Notes["payType"] = newPaymentOrder.PayType
+		newPaymentOrder.Notes["referenceObject"] = newPaymentOrder.ReferenceObject
 		orderID, err := services.CreateOrder(newPaymentOrder.PayAmount, newPaymentOrder.Notes)
 
 		if err != nil {

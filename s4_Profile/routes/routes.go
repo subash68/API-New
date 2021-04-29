@@ -187,6 +187,30 @@ func InitialzeRoutes() *gin.Engine {
 	stu.PATCH("/scholarship/:id", controllers.StudentScholarships.UpdateScholarships)
 	stu.DELETE("/scholarship/:id", controllers.StudentScholarships.DeleteScholarships)
 
+	// Student SocialAccount
+	stu.POST("/socialAccount", controllers.StudentSocialAccount.AddSocialAccount)
+	stu.GET("/socialAccount", controllers.StudentSocialAccount.GetAllSocialAccount)
+	stu.PATCH("/socialAccount/:id", controllers.StudentSocialAccount.UpdateSocialAccount)
+	stu.DELETE("/socialAccount/:id", controllers.StudentSocialAccount.DeleteSocialAccount)
+
+	// Student TechSkills
+	stu.POST("/techSkills", controllers.StudentTechSkills.AddTechSkills)
+	stu.GET("/techSkills", controllers.StudentTechSkills.GetAllTechSkills)
+	stu.PATCH("/techSkills/:id", controllers.StudentTechSkills.UpdateTechSkills)
+	stu.DELETE("/techSkills/:id", controllers.StudentTechSkills.DeleteTechSkills)
+
+	// Student TestScores
+	stu.POST("/testScores", controllers.StudentTestScores.AddTestScores)
+	stu.GET("/testScores", controllers.StudentTestScores.GetAllTestScores)
+	stu.PATCH("/testScores/:id", controllers.StudentTestScores.UpdateTestScores)
+	stu.DELETE("/testScores/:id", controllers.StudentTestScores.DeleteTestScores)
+
+	// Student VolunteerExp
+	stu.POST("/volunteerExp", controllers.StudentVolunteerExperience.AddVolunteerExperience)
+	stu.GET("/volunteerExp", controllers.StudentVolunteerExperience.GetAllVolunteerExperience)
+	stu.PATCH("/volunteerExp/:id", controllers.StudentVolunteerExperience.UpdateVolunteerExperience)
+	stu.DELETE("/volunteerExp/:id", controllers.StudentVolunteerExperience.DeleteVolunteerExperience)
+
 	// Student complete profile
 	stu.GET("/completeProfile", controllers.GetStudentProfile)
 

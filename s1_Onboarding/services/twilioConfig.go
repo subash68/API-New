@@ -13,20 +13,21 @@ import (
 )
 
 type twiloOtpResp struct {
-	SID    string `json:"sid"`
-	Status string `json:"status"`
-	Valid  bool   `json:"valid"`
+	SID   string `json:"sid"`
+	Valid bool   `json:"valid"`
 }
 
 // SendSmsOtp ...
 func SendSmsOtp(to string) (bool, error) {
+	//to = "+919160534363"
 	twilioConfig := configuration.TwilioConfig()
+	fmt.Println(twilioConfig)
 	apiURL := "https://verify.twilio.com/"
 	resource := "/v2/Services/" + twilioConfig.VrfSID + "/Verifications"
 	data := url.Values{}
 	data.Set("To", to)
 	data.Set("Channel", "sms")
-	data.Set("Code", "123456")
+	//data.Set("Code", "123456")
 
 	u, _ := url.ParseRequestURI(apiURL)
 	u.Path = resource
@@ -36,16 +37,23 @@ func SendSmsOtp(to string) (bool, error) {
 
 	r, _ := http.NewRequest(http.MethodPost, urlStr, strings.NewReader(data.Encode()))
 	r.SetBasicAuth(twilioConfig.AccSID, twilioConfig.AccSecret)
+	// r.Header.Add("Accept", "application/json")
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
 	resp, err := client.Do(r)
+	//fmt.Println(r)
+	// bodyBytes, err := ioutil.ReadAll(resp.Body)
+	// fmt.Printf("====== Resp %+v , %s", resp, string(bodyBytes))
+	// fmt.Printf("\n======== err %v\n", err)
 	if err != nil {
 		return false, err
 	}
+
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		var data twiloOtpResp
 		bodyBytes, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println(string(bodyBytes))
 		err := json.Unmarshal(bodyBytes, &data)
 		if err == nil {
 			return true, nil
@@ -79,6 +87,8 @@ func ValidateOTP(otp string, to string) (bool, error) {
 	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
 	resp, err := client.Do(r)
+	bodyBytesResp, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(bodyBytesResp))
 	if err != nil {
 		return false, err
 	}
@@ -86,10 +96,8 @@ func ValidateOTP(otp string, to string) (bool, error) {
 		var data twiloOtpResp
 		bodyBytes, _ := ioutil.ReadAll(resp.Body)
 		err := json.Unmarshal(bodyBytes, &data)
-		if err == nil && data.Status == "approved" {
+		if err == nil {
 			return true, nil
-		} else if !data.Valid {
-			return false, fmt.Errorf("Invalid OTP")
 		}
 		return false, fmt.Errorf("Failed to get the SID")
 	} else {

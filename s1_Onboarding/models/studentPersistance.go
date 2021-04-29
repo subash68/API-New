@@ -4,6 +4,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	// Blank import for initializing
@@ -24,7 +25,7 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 	// Verify as a new User
 	var studentExists bool
 	dbSP, _ := RetriveSP("STU_EXISTS_WITH_EMAIL")
-	err := Db.QueryRow(dbSP, data.CollegeEmail).Scan(&data.StakeholderID, &data.CollegeEmail, &studentExists)
+	err := Db.QueryRow(dbSP, data.PersonalEmail).Scan(&data.StakeholderID, &data.PersonalEmail, &studentExists)
 
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println("query operation failed" + err.Error())
@@ -38,7 +39,7 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 	// Return if already exists
 	if studentExists {
 		Job <- DbModelError{
-			"403", "S1AUT002", fmt.Errorf("User already Signed Up with this CollegeEmail"), successResp,
+			"403", "S1AUT002", fmt.Errorf("Account exists with email: %s", data.PersonalEmail), successResp,
 		}
 		return Job
 
@@ -62,9 +63,10 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 		return Job
 	}
 	defer stmt.Close()
-
-	results, err := stmt.Exec(&data.StakeholderID, &data.FirstName, &data.MiddleName, &data.LastName, &data.PersonalEmail, &data.CollegeEmail, &data.PhoneNumber, &data.AlternatePhoneNumber, &data.CollegeID, &data.Gender, &data.DateOfBirth, &data.AadharNumber, &data.PermanentAddressLine1, &data.PermanentAddressLine2, &data.PermanentAddressLine3, &data.PermanentAddressCountry, &data.PermanentAddressState, &data.PermanentAddressCity, &data.PermanentAddressDistrict, &data.PermanentAddressZipcode, &data.PermanentAddressPhone, &data.PresentAddressLine1, &data.PresentAddressLine2, &data.PresentAddressLine3, &data.PresentAddressCountry, &data.PresentAddressState, &data.PresentAddressCity, &data.PresentAddressDistrict, &data.PresentAddressZipcode, &data.PresentAddressPhone, &data.FathersGuardianFullName, &data.FathersGuardianOccupation, &data.FathersGuardianCompany, &data.FathersGuardianPhoneNumber, &data.FathersGuardianEmailID, &data.MothersGuardianFullName, &data.MothersGuardianOccupation, &data.MothersGuardianCompany, &data.MothersGuardianDesignation, &data.MothersGuardianPhoneNumber, &data.MothersGuardianEmailID, &data.AccountStatus, &data.Password, expiryDate)
-	fmt.Printf("reults: %+v \n %+v", results, err)
+	data.CreationDate = time.Now()
+	data.LastUpdatedDate = data.CreationDate
+	results, err := stmt.Exec(&data.StakeholderID, &data.FirstName, &data.MiddleName, &data.LastName, &data.PersonalEmail, &data.PhoneNumber, &data.AlternatePhoneNumber, &data.Gender, &data.DateOfBirth, &data.AadharNumber, &data.PermanentAddressLine1, &data.PermanentAddressLine2, &data.PermanentAddressLine3, &data.PermanentAddressCountry, &data.PermanentAddressState, &data.PermanentAddressCity, &data.PermanentAddressDistrict, &data.PermanentAddressZipcode, &data.PermanentAddressPhone, &data.PresentAddressLine1, &data.PresentAddressLine2, &data.PresentAddressLine3, &data.PresentAddressCountry, &data.PresentAddressState, &data.PresentAddressCity, &data.PresentAddressDistrict, &data.PresentAddressZipcode, &data.PresentAddressPhone, &data.UniversityName, &data.UniversityID, &data.ProgramName, &data.ProgramID, &data.BranchName, &data.BranchID, &data.CollegeID, &data.CollegeEmailID, &data.Password, &data.UniversityApprovedFlag, &data.CreationDate, &data.LastUpdatedDate, &data.AccountStatus, false, false, expiryDate, &data.Attachment)
+	fmt.Printf("results: %+v \n %+v", results, err)
 	if err != nil {
 
 		fmt.Println("error while inserting" + err.Error())
@@ -78,9 +80,9 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 	fmt.Printf("line 80 %+v %+v \n ", data, err)
 
 	customError.ErrTyp = "000"
-	successResp["Phone"] = data.CollegeEmail
+	successResp["Phone"] = data.PhoneNumber
 	successResp["StakeholderID"] = data.StakeholderID
-	successResp["Email"] = data.PhoneNumber
+	successResp["Email"] = data.PersonalEmail
 	customError.SuccessResp = successResp
 
 	Job <- customError
@@ -89,7 +91,7 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 
 }
 
-func createStuSID(dob string) (string, DbModelError) {
+func createStuSID(dob time.Time) (string, DbModelError) {
 
 	fmt.Printf("\n ---> dob: %v yoe: %v\n", dob)
 	rowCount := 0
@@ -101,16 +103,9 @@ func createStuSID(dob string) (string, DbModelError) {
 			"500", "", fmt.Errorf("Failed to Create Platform Unique ID, due to db connection error"), map[string]string{},
 		}
 	}
-	layout := "2006-01-02"
-	dobYear, err := time.Parse(layout, dob)
-	if err != nil {
-		return "", DbModelError{
-			"500", "", fmt.Errorf("Invalid Dob string, expected format yyyy-mm-dd"), map[string]string{},
-		}
-	}
 
 	partialID := fmt.Sprintf("%010d", (rowCount + 1))
-	return fmt.Sprint("S", dobYear.Year(), partialID), DbModelError{
+	return fmt.Sprint("S", strconv.Itoa(dob.Year()), partialID), DbModelError{
 		"000", "", nil, map[string]string{},
 	}
 }

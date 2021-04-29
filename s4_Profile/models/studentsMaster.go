@@ -329,6 +329,80 @@ type StudentAllScholarshipsModel struct {
 	Scholarships  []StudentScholarshipsModel `form:"scholarships" json:"scholarships" binding:"dive"`
 }
 
+// StudentSocialAccountModel ...
+type StudentSocialAccountModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	UserID          string    `form:"userID" json:"userID" binding:"required"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllSocialAccountModel ...
+type StudentAllSocialAccountModel struct {
+	StakeholderID  string                      `form:"-" json:"-"`
+	SocialAccounts []StudentSocialAccountModel `form:"socialAccounts" json:"socialAccounts" binding:"dive"`
+}
+
+// StudentTechSkillsModel ...
+type StudentTechSkillsModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	SkillID         string    `form:"skillID" json:"skillID" binding:"required"`
+	SkillName       string    `form:"skillName" json:"skillName" binding:"required"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllTechSkillsModel ...
+type StudentAllTechSkillsModel struct {
+	StakeholderID string                   `form:"-" json:"-"`
+	TechSkills    []StudentTechSkillsModel `form:"techSkills" json:"techSkills" binding:"dive"`
+}
+
+// StudentTestScoresModel ...
+type StudentTestScoresModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	TestScoreDate   time.Time `form:"testScoreDate" json:"testScoreDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	TestScore       string    `form:"testScore" json:"testScore" binding:"required"`
+	TestScoreTotal  string    `form:"testScoreTotal" json:"testScoreTotal" binding:"required"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllTestScoresModel ...
+type StudentAllTestScoresModel struct {
+	StakeholderID string                   `form:"-" json:"-"`
+	TestScores    []StudentTestScoresModel `form:"testScores" json:"testScores" binding:"dive"`
+}
+
+// StudentVolunteerExperienceModel ...
+type StudentVolunteerExperienceModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	ID              int       `form:"-" json:"id"`
+	Name            string    `form:"name" json:"name" binding:"required"`
+	Organisation    string    `form:"organisation" json:"organisation" binding:"required"`
+	Location        string    `form:"location" json:"location" binding:"required"`
+	StartDate       time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	EndDate         time.Time `form:"endDate" json:"endDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
+// StudentAllVolunteerExperienceModel ...
+type StudentAllVolunteerExperienceModel struct {
+	StakeholderID       string                            `form:"-" json:"-"`
+	VolunteerExperience []StudentVolunteerExperienceModel `form:"volunteerExperience" json:"VolunteerExperience" binding:"dive"`
+}
+
 // StudentContactInfoModel ...
 type StudentContactInfoModel struct {
 	StakeholderID            string `form:"stakeholderID" json:"stakeholderID,omitempty"`

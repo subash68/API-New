@@ -86,7 +86,7 @@ func ActivateAccount(c *gin.Context) {
 		// }
 		fmt.Printf("\n insertjob: %v\n", insertJob)
 
-		c.JSON(http.StatusOK, VerfSucResp{"Account activation successful"})
+		c.JSON(http.StatusOK, SucResp{"Account activation successful"})
 		return
 	} else {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
