@@ -84,6 +84,9 @@ func UpdateVrfInfoInDB(sid string, accStatus string, phoneVrf bool, emailVrf boo
 		customError.ErrTyp = "000"
 		successResp["AccountStatus"] = accStatus
 	}
+	successResp["emailVerified"] = fmt.Sprintf("%v", (emailVerified || emailVrf))
+	successResp["mobileVerfied"] = fmt.Sprintf("%v", (mobileVerfied || phoneVrf))
+	customError.SuccessResp = successResp
 	customError.SuccessResp = successResp
 	return customError
 }

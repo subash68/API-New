@@ -33,8 +33,8 @@ type CommonOtpVerifyModel struct {
 	PlatformUID string `form:"platformUID" binding:"required"`
 	Email       string `form:"email" binding:"required"`
 	Phone       string `form:"phone" binding:"required"`
-	EmailOTP    string `form:"emailOtp" binding:"required"`
-	PhoneOTP    string `form:"phoneOtp" binding:"required"`
+	EmailOTP    string `form:"emailOtp"`
+	PhoneOTP    string `form:"phoneOtp"`
 }
 
 // VerfSucResp ...
@@ -63,14 +63,15 @@ func CommonOTPVerifier(c *gin.Context) {
 	binding.Validator = &defaultValidator{}
 	err := c.ShouldBindWith(&commonOtpData, binding.Form)
 	if err == nil {
-		phoneVerified, err := services.ValidateOTP(commonOtpData.PhoneOTP, commonOtpData.Phone)
-		// if err != nil {
-		// 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "OTP validation fialed ", Err: err, SuccessResp: successResp})
-		// 	c.JSON(http.StatusUnprocessableEntity, resp)
-		// 	return
-		// }
-		emailVerified, err := services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
-		processOtpValidation(ctx, c, err, successResp, commonOtpData.Stakeholder, commonOtpData.PlatformUID, phoneVerified, emailVerified, emailVerified)
+		phoneVerified := false
+		emailVerified := false
+		if commonOtpData.Phone != "" && commonOtpData.PhoneOTP != "" {
+			phoneVerified, err = services.ValidateOTP(commonOtpData.PhoneOTP, commonOtpData.Phone)
+		}
+		if commonOtpData.Email != "" && commonOtpData.EmailOTP != "" {
+			emailVerified, err = services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
+		}
+		processOtpValidation(ctx, c, err, successResp, commonOtpData.Stakeholder, commonOtpData.PlatformUID, phoneVerified, emailVerified, true)
 	} else {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)
@@ -126,11 +127,7 @@ func VerifyEmail(c *gin.Context) {
 
 func processOtpValidation(ctx context.Context, c *gin.Context, err error, successResp map[string]string, stakeholder string, pid string, phoneVrf bool, emailVrf bool, verified bool) {
 	jobdb := make(chan models.DbModelError, 1)
-	if err != nil {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "OTP validation fialed ", Err: err, SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		return
-	}
+
 	if verified {
 		switch stakeholder {
 		case "Corporate":
@@ -185,9 +182,14 @@ func processOtpValidation(ctx context.Context, c *gin.Context, err error, succes
 		// }
 		fmt.Printf("\n insertjob: %v\n", insertJob)
 
-		c.JSON(http.StatusOK, VerfSucResp{"OTP verification successful", phoneVrf, emailVrf})
+		c.JSON(http.StatusOK, VerfSucResp{"OTP verification successful", (insertJob.SuccessResp["mobileVerfied"] == "true"), (insertJob.SuccessResp["emailVerified"] == "true")})
 		return
 
+	}
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "OTP validation failed ", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Invalid OTP", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)
@@ -276,7 +278,7 @@ func ResendOTP(c *gin.Context) {
 			otpSent, err = services.SendSmsOtp(insertJob.SuccessResp["Phone"])
 			sentTo = insertJob.SuccessResp["Phone"]
 		}
-
+		fmt.Printf("====================== OTP send %v , %v======", otpSent, err)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Failed to send OTP", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

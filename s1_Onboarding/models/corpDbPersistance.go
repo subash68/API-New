@@ -147,6 +147,9 @@ func (data *CorporateMasterDB) UpdateVrfStatus() <-chan DbModelError {
 		customError.ErrTyp = "000"
 		successResp["AccountStatus"] = data.AccountStatus
 	}
+
+	successResp["emailVerified"] = fmt.Sprintf("%v", (emailVerified || data.PrimaryEmailVerified))
+	successResp["mobileVerfied"] = fmt.Sprintf("%v", (mobileVerfied || data.PrimaryPhoneVerified))
 	customError.SuccessResp = successResp
 
 	Job <- customError

@@ -19,7 +19,6 @@ type twiloOtpResp struct {
 
 // SendSmsOtp ...
 func SendSmsOtp(to string) (bool, error) {
-	//to = "+919160534363"
 	twilioConfig := configuration.TwilioConfig()
 	fmt.Println(twilioConfig)
 	apiURL := "https://verify.twilio.com/"
@@ -42,7 +41,7 @@ func SendSmsOtp(to string) (bool, error) {
 	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
 	resp, err := client.Do(r)
-	//fmt.Println(r)
+	// fmt.Println(r)
 	// bodyBytes, err := ioutil.ReadAll(resp.Body)
 	// fmt.Printf("====== Resp %+v , %s", resp, string(bodyBytes))
 	// fmt.Printf("\n======== err %v\n", err)
