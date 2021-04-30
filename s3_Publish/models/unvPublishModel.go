@@ -26,7 +26,7 @@ type UnvYearWiseRanking struct {
 	StakeholderID    string    `form:"-" json:"stakeholder,omitempty"`
 	Rank             string    `form:"rank" json:"rank" binding:"required"`
 	IssuingAuthority string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
-	Attachment       []byte    `form:"-" json:"attachment"`
+	RankingFile      string    `form:"-" json:"rankingFile"`
 	CreationDate     time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
 }
@@ -39,7 +39,7 @@ type UnvAccredationsDBModel struct {
 	AccredationType        string    `form:"accredationType" binding:"required"`
 	AccredationDescription string    `form:"accredationDescription" binding:"required"`
 	IssuingAuthority       string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
-	AccredationFile        []byte    `form:"accredationFile" json:"accredationfile"`
+	AccredationFile        string    `form:"accredationFile" json:"accredationfile"`
 	StartDate              string    `form:"startDate" json:"startDate" binding:"required"`
 	EndDate                string    `form:"endDate" json:"endDate" binding:"required"`
 	EnablingFlag           string    `form:"enablingFlag" json:"enablingFlag" binding:"required"`
@@ -57,7 +57,7 @@ type UnvTieupsDBModel struct {
 	TieupWithName          string    `form:"tieupWithName" json:"tieupWithName"`
 	TieupWithContact       string    `form:"tieupWithContact" json:"tieupWithContact"`
 	TieupWithStakeholderID string    `form:"tieupWithStakeholderID" json:"tieupWithStakeholderID"`
-	TieupFile              []byte    `form:"-" json:"tieupfile"`
+	TieupFile              string    `form:"-" json:"tieupfile"`
 	StartDate              string    `form:"startDate" json:"startDate" binding:"required"`
 	EndDate                string    `form:"endDate" json:"endDate"`
 	EnablingFlag           string    `form:"enablingFlag" json:"enablingFlag"`
@@ -77,7 +77,7 @@ type UnvSpecialOfferingsDBModel struct {
 	OutsourcedVendorContact       string    `form:"outsourcedVendorContact" json:"outsourcedVendorContact"`
 	OutsourcedVendorStakeholderID string    `form:"outsourcedVendorStakeholderID" json:"outsourcedVendorStakeholderID"`
 	SpecialOffersCol              string    `form:"specialOffersCol" json:"specialOffersCol"`
-	SpecialOfferingFile           []byte    `form:"specialOfferingFile" json:"specialOfferingFile"`
+	SpecialOfferingFile           string    `form:"specialOfferingFile" json:"specialOfferingFile"`
 	StartDate                     string    `form:"startDate" json:"startDate"`
 	EndDate                       string    `form:"endDate" json:"endDate"`
 	EnablingFlag                  string    `form:"enablingFlag" json:"enablingFlag"`
@@ -97,7 +97,7 @@ type UnvCEOsDBModel struct {
 	OutsourcedVendorName          string    `form:"outsourcedVendorName" json:"outsourcedVendorName"`
 	OutsourcedVendorContact       string    `form:"outsourcedVendorContact" json:"outsourcedVendorContact"`
 	OutsourcedVendorStakeholderID string    `form:"outsourcedVendorStakeholderID" json:"outsourcedVendorStakeholderID"`
-	CoeFile                       []byte    `form:"coeFile" json:"coeFile"`
+	CoeFile                       string    `form:"coeFile" json:"coeFile"`
 	StartDate                     string    `form:"startDate" json:"startDate" binding:"required"`
 	EndDate                       string    `form:"endDate" json:"endDate" binding:"required"`
 	EnablingFlag                  string    `form:"enablingFlag" json:"enablingFlag" binding:"required"`

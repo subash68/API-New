@@ -19,4 +19,5 @@ type NotificationsModel struct {
 	PublishFlag        bool      `form:"publishFlag" json:"publishFlag"`
 	CreationDate       time.Time `form:"creationDate" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
 	LastUpdatedDate    time.Time `form:"lastUpdatedDate" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
+	Action             string    `form:"-" json:"action"`
 }

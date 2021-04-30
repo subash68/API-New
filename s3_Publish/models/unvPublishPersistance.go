@@ -3,8 +3,8 @@ package models
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"mime/multipart"
 	"strconv"
 	"time"
@@ -291,18 +291,15 @@ func addPrograms(programs []UnvProgramsDBModel, ID string, lastUpdatedDate strin
 
 func addAccredations(accrs []UnvAccredationsDBModel, ID string, form *multipart.Form) (dbStatements, error) {
 	insSP, stmtExists := RetriveSP("UNV_Add_Accredations")
-	var err error
 	if !stmtExists {
 		return dbStatements{}, fmt.Errorf("Failed to retrieve the database queries")
 	}
 	vals := []interface{}{}
-	for index, value := range accrs {
-		files := form.File["accredations"+strconv.Itoa(index)]
-		for _, file := range files {
-			fileContent, _ := file.Open()
-			value.AccredationFile, err = ioutil.ReadAll(fileContent)
+	for _, value := range accrs {
+		if value.AccredationFile != "" {
+			_, err := base64.StdEncoding.DecodeString(string(value.AccredationFile))
 			if err != nil {
-				fmt.Println("Accredations file "+strconv.Itoa(index), err.Error)
+				return dbStatements{}, fmt.Errorf("AccredationFile file is not a base64 Encoded string")
 			}
 		}
 		insSP += "(?,?,?,?,?,?,?,?,?,?),"
@@ -319,18 +316,15 @@ func addRankings(rankings []UnvYearWiseRanking, ID string, form *multipart.Form)
 		return dbStatements{}, fmt.Errorf("Failed to retrieve the database queries")
 	}
 	vals := []interface{}{}
-	var err error
-	for index, value := range rankings {
-		files := form.File["rankings"+strconv.Itoa(index)]
-		for _, file := range files {
-			fileContent, _ := file.Open()
-			value.Attachment, err = ioutil.ReadAll(fileContent)
+	for _, value := range rankings {
+		if value.RankingFile != "" {
+			_, err := base64.StdEncoding.DecodeString(string(value.RankingFile))
 			if err != nil {
-				fmt.Println("Accredations file "+strconv.Itoa(index), err.Error)
+				return dbStatements{}, fmt.Errorf("RankingFile file is not a base64 Encoded string")
 			}
 		}
 		insSP += "(?,?,?,?),"
-		vals = append(vals, ID, value.Rank, value.IssuingAuthority, value.Attachment)
+		vals = append(vals, ID, value.Rank, value.IssuingAuthority, value.RankingFile)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -343,14 +337,11 @@ func addSplOfferings(splOff []UnvSpecialOfferingsDBModel, ID string, form *multi
 		return dbStatements{}, fmt.Errorf("Failed to retrieve the database queries")
 	}
 	vals := []interface{}{}
-	var err error
-	for index, value := range splOff {
-		files := form.File["specialOfferings"+strconv.Itoa(index)]
-		for _, file := range files {
-			fileContent, _ := file.Open()
-			value.SpecialOfferingFile, err = ioutil.ReadAll(fileContent)
+	for _, value := range splOff {
+		if value.SpecialOfferingFile != "" {
+			_, err := base64.StdEncoding.DecodeString(string(value.SpecialOfferingFile))
 			if err != nil {
-				fmt.Println("Special offering file "+strconv.Itoa(index), err.Error)
+				return dbStatements{}, fmt.Errorf("SpecialOfferingFile file is not a base64 Encoded string")
 			}
 		}
 		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?),"
@@ -367,14 +358,11 @@ func addTieUps(tieups []UnvTieupsDBModel, ID string, form *multipart.Form) (dbSt
 		return dbStatements{}, fmt.Errorf("Failed to retrieve the database queries")
 	}
 	vals := []interface{}{}
-	var err error
-	for index, value := range tieups {
-		files := form.File["tieups"+strconv.Itoa(index)]
-		for _, file := range files {
-			fileContent, _ := file.Open()
-			value.TieupFile, err = ioutil.ReadAll(fileContent)
+	for _, value := range tieups {
+		if value.TieupFile != "" {
+			_, err := base64.StdEncoding.DecodeString(string(value.TieupFile))
 			if err != nil {
-				fmt.Println("tieups  file "+strconv.Itoa(index), err.Error)
+				return dbStatements{}, fmt.Errorf("Tieup file is not a base64 Encoded string")
 			}
 		}
 		insSP += "(?,?,?,?,?,?,?,?,?,?,?),"
@@ -387,18 +375,16 @@ func addTieUps(tieups []UnvTieupsDBModel, ID string, form *multipart.Form) (dbSt
 
 func addCoes(tieups []UnvCEOsDBModel, ID string, form *multipart.Form) (dbStatements, error) {
 	insSP, stmtExists := RetriveSP("UNV_Add_Coes")
-	var err error
+	//var err error
 	if !stmtExists {
 		return dbStatements{}, fmt.Errorf("Failed to retrieve the database queries")
 	}
 	vals := []interface{}{}
-	for index, value := range tieups {
-		files := form.File["coes"+strconv.Itoa(index)]
-		for _, file := range files {
-			fileContent, _ := file.Open()
-			value.CoeFile, err = ioutil.ReadAll(fileContent)
+	for _, value := range tieups {
+		if value.CoeFile != "" {
+			_, err := base64.StdEncoding.DecodeString(value.CoeFile)
 			if err != nil {
-				fmt.Println("Coes file "+strconv.Itoa(index), err.Error)
+				return dbStatements{}, fmt.Errorf("Coes file is not a base64 Encoded string")
 			}
 		}
 		insSP += "(?,?,?,?,?,?,?,?,?,?,?),"
@@ -521,7 +507,7 @@ func getRankings(ID string, up *UniversityProposal) DbModelError {
 	defer RankingRows.Close()
 	for RankingRows.Next() {
 		var newRanking UnvYearWiseRanking
-		err := RankingRows.Scan(&newRanking.ID, &newRanking.Rank, &newRanking.IssuingAuthority, &newRanking.Attachment, &newRanking.CreationDate, &newRanking.LastUpdatedDate)
+		err := RankingRows.Scan(&newRanking.ID, &newRanking.Rank, &newRanking.IssuingAuthority, &newRanking.RankingFile, &newRanking.CreationDate, &newRanking.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Accredations rows")

@@ -51,5 +51,7 @@
     "RAZORPAY_KEY_SECRET":"F8TjclAyxpxgzAHp8umqXVeb",
     "RAZORPAY_MERCHENT_ID":"EVgSZPSWzvNgrQ",
     "AUTH_SER_HOST":"auth_service",
-    "AUTH_SER_PORT":8080
+    "AUTH_SER_PORT":8080,
+    "NFT_SER_HOST":"notification_service",
+    "NFT_SER_PORT":8080
 }

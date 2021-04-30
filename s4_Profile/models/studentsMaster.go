@@ -55,6 +55,8 @@ type StudentMasterDb struct {
 	AccountExpiryDate          time.Time  `form:"-" json:"accountExpiryDate" time_format="2006-12-01T21:23:34.409Z"`
 	AboutMeNullable            NullString `json:"-"`
 	AboutMe                    string     `form:"aboutMe" json:"aboutMe"`
+	UniversityName             string     `form:"universityName" json:"universityName"`
+	UniversityID               string     `form:"universityID" json:"-"`
 }
 
 // StudentTTModel ...
@@ -94,7 +96,7 @@ type StudentLangModel struct {
 	SpeakProficiency string    `form:"speakProficiency" json:"speakProficiency" binding:"required"`
 	ReadProficiency  string    `form:"readProficiency" json:"readProficiency" binding:"required"`
 	WriteProficiency string    `form:"writeProficiency" json:"writeProficiency" binding:"required"`
-	IsMotherTongue   bool      `form:"isMotherTongue" json:"isMotherTongue" binding:"required"`
+	IsMotherTongue   bool      `form:"isMotherTongue" json:"isMotherTongue"`
 	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
 	CreationDate     time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
@@ -436,6 +438,8 @@ type StudentContactInfoModel struct {
 	PresentAddressZipcode    string `form:"presentAddressZipcode" json:"presentAddressZipcode" binding:"required"`
 	PresentAddressPhone      string `form:"presentAddressPhone" json:"presentAddressPhone" binding:"required"`
 	AboutMe                  string `form:"aboutMe" json:"aboutMe"`
+	UniversityName           string `form:"universityName" json:"universityName"`
+	UniversityID             string `form:"universityID" json:"-"`
 }
 
 // StudentCompleteProfileDataModel ...
@@ -451,4 +455,21 @@ type StudentCompleteProfileDataModel struct {
 	CertificationsArray []StudentCertsModel       `form:"certifications" json:"certifications"`
 	AssessmentsArray    []StudentAssessmentModel  `form:"assessments" json:"assessments"`
 	InternshipsArray    []StudentInternshipModel  `form:"internships" json:"internships"`
+}
+
+// StudentProfileVerificationDataModel ...
+type StudentProfileVerificationDataModel struct {
+	Profile     StudentMasterDb          `form:"-" json:"-"`
+	ContactInfo StudentContactInfoModel  `form:"contactInfo" json:"contactInfo"`
+	Academics   StudentAcademicsModelReq `form:"academics" json:"academics"`
+}
+
+// StudentAllProfiles ...
+type StudentAllProfiles struct {
+	StudentPlatformID string `json:"studentPlatformID"`
+	StudentName       string `json:"studentName"`
+	UniversityID      string `json:"UniversityID`
+	Program           string `json:"program"`
+	BranchName        string `json:"branch"`
+	Year              string `json:"year"`
 }

@@ -24,8 +24,18 @@ func AddNewProposal(c *gin.Context) {
 	defer cancel()
 	defer close(jobdb)
 	var up models.UniversityProposal
+	var err error
+	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
+	if reqContentType != "application/json" || reqContentType == "" {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		c.Abort()
+		return
+	}
 	binding.Validator = &defaultValidator{}
-	err := c.ShouldBindWith(&up, binding.Form)
+
+	err = c.ShouldBindWith(&up, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
+
 	if err == nil {
 		ID, ok := c.Get("userID")
 		fmt.Println("-----> Got ID", ID.(string))

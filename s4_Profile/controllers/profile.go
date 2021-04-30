@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -205,29 +204,4 @@ func UploadProfilePic(c *gin.Context) {
 	c.JSON(http.StatusOK, ProfileRespModel{Message: "Profile Picture Updated"})
 	return
 
-}
-
-func getFuncReq(c *gin.Context, ctxKey string) (context.Context, string, string, map[string]string) {
-	successResp = map[string]string{}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	ctxkey = ctxFunc("Target")
-	ctx = context.WithValue(ctx, ctxkey, ctxkey)
-
-	defer cancel()
-	ID, ok := c.Get("userID")
-
-	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S4Profile001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		c.Abort()
-	}
-	fmt.Println("-----> Got ID", ID.(string))
-	userType, ok := c.Get("userType")
-	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S4Profile001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User Type from the request"), SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		c.Abort()
-	}
-	return ctx, ID.(string), userType.(string), successResp
 }
