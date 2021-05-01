@@ -83,6 +83,7 @@ func InitialzeRoutes() *gin.Engine {
 	subData.Use(middleware.AuthorizeRequest(""))
 
 	subData.GET("/publishedData/:publishID", controllers.GetCrpSubscribedData)
+	subData.GET("/nftData", controllers.NftDataController.GetNftData)
 
 	corporate := publish.Group("/crp")
 	corporate.Use(middleware.AuthorizeRequest("Corporate"))
@@ -152,6 +153,11 @@ func InitialzeRoutes() *gin.Engine {
 	proposal.GET("/", controllers.GetUnvProposal)
 	proposal.DELETE("/program/:programID", controllers.DeleteProgramByID)
 	proposal.DELETE("/branch/:branchID", controllers.DeleteBranchByID)
+	proposal.DELETE("/accredations/:accredationsID", controllers.DeleteAccredationsByID)
+	proposal.DELETE("/coes/:coesID", controllers.DeleteCoesByID)
+	proposal.DELETE("/ranking/:rankingID", controllers.DeleteRankingByID)
+	proposal.DELETE("/tieups/:tieupsID", controllers.DeleteTieupsByID)
+	proposal.DELETE("/specialOfferings/:specialOfferingsID", controllers.DeleteSpecialOfferingsByID)
 
 	unvPublish.POST("/profile", controllers.PublishProfile)
 	unvPublish.POST("/oi", controllers.PublishUnvOI)

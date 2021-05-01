@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jaswanth-gorripati/PGK/s3_Publish/configuration"
@@ -94,6 +95,33 @@ func ErrCheck(ctx context.Context, result models.DbModelError) models.RespErrMod
 
 	return respErrMsg
 
+}
+
+func getFuncReq(c *gin.Context, ctxKey string) (context.Context, string, string, map[string]string) {
+	successResp = map[string]string{}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	ctxkey = ctxFunc("Target")
+	ctx = context.WithValue(ctx, ctxkey, ctxkey)
+
+	defer cancel()
+	ID, ok := c.Get("userID")
+
+	if !ok {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3Publish001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		c.Abort()
+		return ctx, "", "", successResp
+	}
+	fmt.Println("-----> Got ID", ID.(string))
+	userType, ok := c.Get("userType")
+	if !ok {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3Publish001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User Type from the request"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		c.Abort()
+		return ctx, "", "", successResp
+	}
+	return ctx, ID.(string), userType.(string), successResp
 }
 
 // TokenDbResp ...

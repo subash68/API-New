@@ -14,10 +14,31 @@ var (
 
 type nftPersistance struct{}
 
+// Corporate ...
+const (
+	Corporate  string = "Corporate"
+	University string = "University"
+	Student    string = "Student"
+)
+
 // AddNotification ...
 func (np *nftPersistance) AddNotification(newNft NotificationsModel) (err error) {
+	senderRole := ""
+	switch newNft.SenderUserRole {
+	case Corporate:
+		senderRole = "CRP"
+		break
+	case University:
+		senderRole = "UNV"
+		break
+	case Student:
+		senderRole = "STU"
+		break
+	default:
+		return fmt.Errorf("Invalid Publisher UserRole")
+	}
 
-	newNft.NotificationID, err = CreateNftID(newNft.SenderID)
+	newNft.NotificationID, err = CreateNftID(newNft.SenderID, senderRole)
 	if err != nil {
 		return err
 	}
@@ -87,7 +108,7 @@ func (np *nftPersistance) GetAllNotifications(ID string, filters string, page in
 }
 
 // CreateNftID ...
-func CreateNftID(senderID string) (string, error) {
+func CreateNftID(senderID string, senderRole string) (string, error) {
 	rowSP, _ := RetriveSP("NFT_Get_Last_ID")
 	lastID := ""
 	err := Db.QueryRow(rowSP, senderID).Scan(&lastID)
@@ -102,7 +123,7 @@ func CreateNftID(senderID string) (string, error) {
 	countNum, _ := strconv.Atoi(lastID[len(lastID)-7:])
 	fmt.Println("--------------------> ", lastID, countNum)
 
-	return "NFT" + strconv.Itoa(corporateNum) + (fmt.Sprintf("%07d", (countNum + 1))), nil
+	return "NFT" + senderRole + strconv.Itoa(corporateNum) + (fmt.Sprintf("%07d", (countNum + 1))), nil
 }
 
 func getName(query string, ID string) (name string) {

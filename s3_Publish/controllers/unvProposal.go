@@ -162,3 +162,28 @@ func DeleteBranchByID(c *gin.Context) {
 func DeleteProgramByID(c *gin.Context) {
 	DeleteUnvProposalByID(c, "Program")
 }
+
+// DeleteAccredationsByID ...
+func DeleteAccredationsByID(c *gin.Context) {
+	DeleteUnvProposalByID(c, "Accredations")
+}
+
+// DeleteCoesByID ...
+func DeleteCoesByID(c *gin.Context) {
+	DeleteUnvProposalByID(c, "Coes")
+}
+
+// DeleteRankingByID ...
+func DeleteRankingByID(c *gin.Context) {
+	DeleteUnvProposalByID(c, "Ranking")
+}
+
+// DeleteTieupsByID ...
+func DeleteTieupsByID(c *gin.Context) {
+	DeleteUnvProposalByID(c, "Tieups")
+}
+
+// DeleteSpecialOfferingsByID ...
+func DeleteSpecialOfferingsByID(c *gin.Context) {
+	DeleteUnvProposalByID(c, "SpecialOfferings")
+}
