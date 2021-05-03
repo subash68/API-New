@@ -13,6 +13,12 @@ import (
 	"github.com/jaswanth-gorripati/PGK/s3_Publish/models"
 )
 
+// OINotificationType ...
+const (
+	OINotificationType   string = "OtherInformation"
+	OINotificationTypeID string = "2"
+)
+
 // AddOtherInfo ...
 func AddOtherInfo(c *gin.Context) {
 	successResp = map[string]string{}
@@ -192,7 +198,7 @@ func PublishOI(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
-	reqBody := map[string]string{"senderID": oi.StakeholderID, "senderUserRole": "Corporate", "notificationType": "General", "content": "Other Information has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+	reqBody := map[string]string{"senderID": oi.StakeholderID, "senderUserRole": "Corporate", "notificationType": OINotificationType, "content": "Other Information has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"], "isGeneric": "true", "notificationTypeID": OINotificationTypeID}
 	resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 	if err != nil {
 		fmt.Printf("\n==========Err Resp from Notification =======> %v", err)

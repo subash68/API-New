@@ -104,3 +104,18 @@ func RestrictContentType(contentType string) gin.HandlerFunc {
 		return
 	}
 }
+
+// RestrictUserType ...
+func RestrictUserType(userType string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userTypeFromTC, ok := c.Get("userType")
+		if userTypeFromTC == "" || !ok || userTypeFromTC != userType {
+			c.JSON(http.StatusUnauthorized, "Unauthorized request")
+			c.Abort()
+			return
+		}
+
+		c.Next()
+		return
+	}
+}

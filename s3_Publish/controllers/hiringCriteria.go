@@ -12,6 +12,12 @@ import (
 	"github.com/jaswanth-gorripati/PGK/s3_Publish/models"
 )
 
+// HCNotificationType ...
+const (
+	HCNotificationType   string = "HiringCriteria"
+	HCNotificationTypeID string = "1"
+)
+
 // AddHCResp ...
 type AddHCResp struct {
 	HcID string `json:"hcID"`
@@ -345,7 +351,7 @@ func PublishHiringCriteria(c *gin.Context) {
 			return
 		}
 
-		reqBody := map[string]string{"senderID": hc.StakeholderID, "senderUserRole": "Corporate", "notificationType": "General", "content": "Hiring Criteria has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+		reqBody := map[string]string{"senderID": hc.StakeholderID, "senderUserRole": "Corporate", "notificationType": HCNotificationType, "content": "Hiring Criteria has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"], "isGeneric": "true", "notificationTypeID": HCNotificationTypeID}
 		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)

@@ -12,6 +12,12 @@ import (
 	"github.com/jaswanth-gorripati/PGK/s3_Publish/models"
 )
 
+// CJNotificationType ...
+const (
+	CJNotificationType   string = "JobPublish"
+	CJNotificationTypeID string = "4"
+)
+
 // AddPJResp ...
 type AddPJResp struct {
 	PjID []string `json:"pjID"`
@@ -68,7 +74,7 @@ func AddPublishedJobs(c *gin.Context) {
 		pubIDs = pubIDs[1 : len(pubIDs)-1]
 		arrayPubIDs := strings.Split(pubIDs, " ")
 		for i := 0; i < len(pj.PublishedJobs); i++ {
-			reqBody := map[string]string{"senderID": ID.(string), "senderUserRole": "Corporate", "notificationType": "General", "content": "New Job has been published", "publishFlag": "true", "publishID": arrayPubIDs[i]}
+			reqBody := map[string]string{"senderID": ID.(string), "senderUserRole": "Corporate", "notificationType": CJNotificationType, "content": "New Job has been published", "publishFlag": "true", "publishID": arrayPubIDs[i], "isGeneric": "true", "notificationTypeID": CJNotificationTypeID}
 			resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 			if err != nil {
 				fmt.Printf("\n==========Err Resp from Notification =======> %v", err)

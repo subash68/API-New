@@ -12,6 +12,8 @@ type NotificationsModel struct {
 	ReceiverName       string    `form:"-" json:"receiverName,omitempty"`
 	DateofNotification time.Time `form:"dateofNotification" json:"dateofNotification"  time_format="2006-12-01T21:23:34.409Z"`
 	NotificationType   string    `form:"notificationType" json:"notificationType" binding:"required"`
+	NotificationTypeID string    `form:"notificationTypeID" json:"notificationTypeID" binding:"required"`
+	GenericMessage     bool      `form:"isGeneric" json:"isGeneric"`
 	Content            string    `form:"content" json:"content" binding:"required"`
 	AttachFile         []byte    `form:"attachFile" json:"attachFile"`
 	RedirectedURL      string    `form:"redirectedURL" json:"redirectedURL"`

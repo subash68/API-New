@@ -52,10 +52,13 @@ func (np *nftPersistance) AddNotification(newNft NotificationsModel) (err error)
 	currentTime := time.Now()
 
 	fmt.Printf("\n========= Add Notification query : %+v ====\n ======\n", newNft)
-
+	//  isGeneric := false
+	//  if newNft.GenericMessage == "true" {
+	// 	isGeneric = true
+	//  }
 	_, err = stmt.Exec(newNft.NotificationID, newNft.SenderID, newNft.SenderUserRole, newNft.ReceiverID,
 		currentTime, newNft.NotificationType, newNft.Content, newNft.AttachFile, newNft.RedirectedURL,
-		newNft.PublishID, newNft.PublishFlag, currentTime, currentTime)
+		newNft.PublishID, newNft.PublishFlag, currentTime, currentTime, newNft.NotificationTypeID, newNft.GenericMessage)
 	if err != nil {
 		fmt.Printf("Failed to insert into database -- %v -- insert due to %v", nftInsCmd, err.Error())
 		return fmt.Errorf("Failed to insert into database -- %v -- insert due to %v", nftInsCmd, err.Error())

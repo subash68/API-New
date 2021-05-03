@@ -165,5 +165,5 @@ services:
         condition: service_healthy
       # mysql:
       #   condition: service_healthy
-# docker-compose -f docker-compose-dev.yaml up -d auth_service publish_service profile_service onboard_service subcription_service token_service pg_service ui_service
+# docker-compose -f docker-compose-dev.yaml up -d auth_service publish_service profile_service onboard_service subcription_service token_service pg_service ui_service notification_service
 # docker-compose -f docker-compose-dev.yaml up -d apigateway

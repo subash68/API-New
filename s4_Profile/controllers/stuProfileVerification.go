@@ -9,6 +9,16 @@ import (
 	"github.com/jaswanth-gorripati/PGK/s4_Profile/models"
 )
 
+// SRVNotificationType ...
+const (
+	SRVNotificationType   string = "RequestVerification"
+	SRVNotificationTypeID string = "6"
+	SRVRedirectURL        string = "/dashboard/univerity"
+	UPVNotificationType   string = "ProcessVerification"
+	UPVNotificationTypeID string = "7"
+	UPVRedirectURL        string = "/dashboard/Academics"
+)
+
 // StudentProfileVerification ...
 var (
 	StudentProfileVerification studentProfileVerification = studentProfileVerification{}
@@ -27,7 +37,7 @@ func (spv *studentProfileVerification) RequestVerification(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	reqBody := map[string]string{"senderID": sd.StakeholderID, "senderUserRole": userType, "notificationType": "Direct", "content": "Student Profile Verification Request", "publishFlag": "false", "publishID": "", "ReceiverID": universityID}
+	reqBody := map[string]string{"senderID": sd.StakeholderID, "senderUserRole": userType, "notificationType": SRVNotificationType, "content": "Student Profile Verification Request", "publishFlag": "false", "publishID": "", "ReceiverID": universityID, "redirectedURL": SRVRedirectURL, "isGeneric": "false", "notificationTypeID": SRVNotificationTypeID}
 	resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 	if err != nil {
 		fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
@@ -124,7 +134,7 @@ func (spv *studentProfileVerification) ProcessRequestVerification(c *gin.Context
 			return
 		}
 
-		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": "Direct", "content": nftContent, "publishFlag": "false", "publishID": "", "ReceiverID": sd.StakeholderID}
+		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": UPVNotificationType, "content": nftContent, "publishFlag": "false", "publishID": "", "ReceiverID": sd.StakeholderID, "redirectedURL": UPVRedirectURL, "isGeneric": "false", "notificationTypeID": UPVNotificationTypeID}
 		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)

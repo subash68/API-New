@@ -14,6 +14,14 @@ import (
 	"github.com/jaswanth-gorripati/PGK/s3_Publish/models"
 )
 
+// UPNotificationType ...
+const (
+	UPNotificationType    string = "UniversityProfile"
+	UPNotificationTypeID  string = "4"
+	UOINotificationType   string = "UniversityOtherInformation"
+	UOINotificationTypeID string = "5"
+)
+
 // PublishProfile ...
 func PublishProfile(c *gin.Context) {
 	successResp = map[string]string{}
@@ -57,7 +65,7 @@ func PublishProfile(c *gin.Context) {
 			return
 		}
 		//
-		reqBody := map[string]string{"senderID": up.StakeholderID, "senderUserRole": "University", "notificationType": "General", "content": "Profile has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+		reqBody := map[string]string{"senderID": up.StakeholderID, "senderUserRole": "University", "notificationType": UPNotificationType, "content": "Profile has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"], "isGeneric": "true", "notificationTypeID": UPNotificationTypeID}
 		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
@@ -126,7 +134,7 @@ func PublishUnvOI(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		}
-		reqBody := map[string]string{"senderID": up.StakeholderID, "senderUserRole": "University", "notificationType": "General", "content": "Other Information has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"]}
+		reqBody := map[string]string{"senderID": up.StakeholderID, "senderUserRole": "University", "notificationType": UOINotificationType, "content": "Other Information has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"], "isGeneric": "true", "notificationTypeID": UOINotificationTypeID}
 		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
