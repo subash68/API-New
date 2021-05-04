@@ -19,21 +19,21 @@ func (sa *StudentAcademicsModelReq) InsertAcademics(form *multipart.Form) error 
 	if sa.Tenth.Name != "" {
 		tenthSP, _ := RetriveSP("STU_TENTH_INS")
 		tenthUPD, _ := RetriveSP("STU_TENTH_UPD")
-		vals := constructTTReq(sa.Tenth, form, "tenth")
+		vals := constructTTReq(sa.Tenth, form, "tenthFile")
 		val = append(val, vals...)
 		val = append(val, vals...)
 
-		ques += "?,?,?,?,?,?,?"
+		ques += "?,?,?,?,?,?"
 		insFields += tenthSP
 		updSP += tenthUPD
 	}
 	if sa.Twelfth.Name != "" {
 		twelfthSP, _ := RetriveSP("STU_Twelfth_INS")
 		tenthUPD, _ := RetriveSP("STU_Twelfth_UPD")
-		vals := constructTTReq(sa.Twelfth, form, "twelfth")
+		vals := constructTTReq(sa.Twelfth, form, "twelfthFile")
 		val = append(val, vals...)
 		val = append(val, vals...)
-		ques += "?,?,?,?,?,?,?"
+		ques += "?,?,?,?,?,?"
 		insFields += twelfthSP
 		updSP += tenthUPD
 	}
@@ -102,11 +102,6 @@ func (st *StudentNullableTTModel) ConvertToJSONStruct() StudentTTModel {
 		stt.Percentage = st.Percentage.String
 	}
 	stt.AttachmentFile = st.AttachmentFile
-	if st.EnablingFlag.Valid {
-		stt.EnablingFlag = st.EnablingFlag.Bool
-	} else {
-		return emptyStt
-	}
 	return stt
 }
 
@@ -121,7 +116,7 @@ func constructTTReq(st StudentTTModel, form *multipart.Form, fileName string) []
 			fmt.Println(fileName+" file ", err.Error)
 		}
 	}
-	vals = append(vals, st.Name, st.Location, st.MonthAndYearOfPassing, st.Board, st.Percentage, st.AttachmentFile, true)
+	vals = append(vals, st.Name, st.Location, st.MonthAndYearOfPassing, st.Board, st.Percentage, st.AttachmentFile)
 	return vals
 }
 

@@ -37,7 +37,7 @@ func (spv *studentProfileVerification) RequestVerification(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	reqBody := map[string]string{"senderID": sd.StakeholderID, "senderUserRole": userType, "notificationType": SRVNotificationType, "content": "Student Profile Verification Request", "publishFlag": "false", "publishID": "", "ReceiverID": universityID, "redirectedURL": SRVRedirectURL, "isGeneric": "false", "notificationTypeID": SRVNotificationTypeID}
+	reqBody := map[string]string{"senderID": sd.StakeholderID, "senderUserRole": userType, "notificationType": SRVNotificationType, "content": "Student Profile Verification Request", "publishFlag": "false", "publishID": "", "receiverID": universityID, "redirectedURL": SRVRedirectURL, "isGeneric": "false", "notificationTypeID": SRVNotificationTypeID}
 	resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 	if err != nil {
 		fmt.Printf("\n==========Err Resp from Notification =======> %v", err)
@@ -134,7 +134,7 @@ func (spv *studentProfileVerification) ProcessRequestVerification(c *gin.Context
 			return
 		}
 
-		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": UPVNotificationType, "content": nftContent, "publishFlag": "false", "publishID": "", "ReceiverID": sd.StakeholderID, "redirectedURL": UPVRedirectURL, "isGeneric": "false", "notificationTypeID": UPVNotificationTypeID}
+		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "receiverID": sa.StudentID, "notificationType": UPVNotificationType, "content": nftContent, "publishFlag": "false", "publishID": "", "ReceiverID": sd.StakeholderID, "redirectedURL": UPVRedirectURL, "isGeneric": "false", "notificationTypeID": UPVNotificationTypeID}
 		resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			fmt.Printf("\n==========Err Resp from Notification =======> %v", err)

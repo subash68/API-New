@@ -75,8 +75,7 @@ func GetDbKey(apiKey string) (string, bool) {
 		"middleName":                           "Student_MiddleName",
 		"lastName":                             "Student_LastName",
 		"personalEmail":                        "Student_PersonalEmailID",
-		"alternatePhoneNuber":                  "Student_AlternateContactNumber",
-		"collegeID":                            "Student_CollegeID",
+		"alternatePhoneNumber":                 "Student_AlternateContactNumber",
 		"gender":                               "Student_Gender",
 		"dateOfBirth":                          "Student_DateOfBirth",
 		"aadharNumber":                         "Student_AadharNumber",
@@ -111,6 +110,13 @@ func GetDbKey(apiKey string) (string, bool) {
 		"mothersGuardianEmailID":               "Mother_Guardian_EmailID",
 		"aboutMe":                              "Student_AboutMe",
 		"profilePicture":                       "ProfilePicture",
+		"universityID":                         "University_Stakeholder_ID",
+		"programName":                          "ProgramName",
+		"programID":                            "Program_ID",
+		"branchName":                           "BranchName",
+		"branchID":                             "Branch_ID",
+		"collegeID":                            "Student_CollegeID",
+		"collegeEmailID":                       "Student_CollegeEmailID",
 	}
 	key := DbModelKeys[apiKey]
 	fmt.Println("-----> ", key, key == "")

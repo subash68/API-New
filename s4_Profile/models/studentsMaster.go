@@ -11,9 +11,8 @@ type StudentMasterDb struct {
 	LastName                   string     `form:"lastName" json:"lastName" binding:"required"`
 	PersonalEmail              string     `form:"personalEmail" json:"personalEmail"`
 	CollegeEmail               string     `form:"collegeEmail" json:"collegeEmail" binding:"required,email"`
-	PhoneNumber                string     `form:"phoneNuber" json:"phoneNuber" binding:"required"`
-	AlternatePhoneNumber       string     `form:"alternatePhoneNuber" json:"alternatePhoneNuber"`
-	CollegeID                  string     `form:"collegeID" json:"collegeID" binding:"required"`
+	PhoneNumber                string     `form:"phoneNumber" json:"phoneNumber" binding:"required"`
+	AlternatePhoneNumber       string     `form:"alternatePhoneNumber" json:"alternatePhoneNumber"`
 	Gender                     string     `form:"gender" json:"gender" binding:"required"`
 	DateOfBirth                string     `form:"dateOfBirth" json:"dateOfBirth" binding:"required"`
 	AadharNumber               string     `form:"aadharNumber" json:"aadharNumber" binding:"required"`
@@ -56,7 +55,13 @@ type StudentMasterDb struct {
 	AboutMeNullable            NullString `json:"-"`
 	AboutMe                    string     `form:"aboutMe" json:"aboutMe"`
 	UniversityName             string     `form:"universityName" json:"universityName"`
-	UniversityID               string     `form:"universityID" json:"-"`
+	UniversityID               string     `form:"universityID" json:"universityID"`
+	ProgramName                string     `form:"programName" json:"programName"`
+	ProgramID                  string     `form:"programID" json:"programID"`
+	BranchName                 string     `form:"branchName" json:"branchName"`
+	BranchID                   string     `form:"branchID" json:"branchID"`
+	CollegeID                  string     `form:"collegeID" json:"collegeID" `
+	CollegeEmailID             string     `form:"collegeEmailID" json:"collegeEmailID"`
 }
 
 // StudentTTModel ...
@@ -66,8 +71,7 @@ type StudentTTModel struct {
 	MonthAndYearOfPassing string `form:"monthAndYearOfPassing" json:"monthAndYearOfPassing" binding:"required"`
 	Board                 string `form:"schoolBoard" json:"schoolBoard" binding:"required"`
 	Percentage            string `form:"percentage" json:"percentage" binding:"required"`
-	AttachmentFile        []byte `form:"attachment" json:"attachment" binding:"required"`
-	EnablingFlag          bool   `form:"-" json:"enablingFlag"`
+	AttachmentFile        []byte `form:"attachment" json:"attachment"`
 }
 
 // StudentNullableTTModel ...
@@ -78,14 +82,25 @@ type StudentNullableTTModel struct {
 	Board                 NullString `form:"schoolBoard" json:"schoolBoard"`
 	Percentage            NullString `form:"percentage" json:"percentage"`
 	AttachmentFile        []byte     `form:"attachment" json:"attachment"`
-	EnablingFlag          NullBool   `form:"-" json:"enablingFlag"`
 }
 
 // StudentAcademicsModelReq ...
 type StudentAcademicsModelReq struct {
 	StakeholderID string         `form:"-" json:"-"`
 	Tenth         StudentTTModel `form:"tenth,omitempty" json:"tenth,omitempty" binding:"dive"`
-	Twelfth       StudentTTModel `form:"twelfth,omitempty" json:"twelfth,omitempty" binding:"dive"`
+	Twelfth       StudentTTModel `form:"twelfth,omitempty" json:"twelfth,omitempty"`
+}
+
+// StudentTenthAcademicsModelReq ...
+type StudentTenthAcademicsModelReq struct {
+	StakeholderID string         `form:"-" json:"-"`
+	Tenth         StudentTTModel `form:"tenth" json:"tenth,omitempty" binding:"dive"`
+}
+
+// StudentTwelfthAcademicsModelReq ...
+type StudentTwelfthAcademicsModelReq struct {
+	StakeholderID string         `form:"-" json:"-"`
+	Twelfth       StudentTTModel `form:"twelfth" json:"twelfth,omitempty"  binding:"dive"`
 }
 
 // StudentLangModel ...
@@ -413,8 +428,8 @@ type StudentContactInfoModel struct {
 	LastName                 string `form:"lastName" json:"lastName" binding:"required"`
 	PersonalEmail            string `form:"personalEmail" json:"personalEmail"`
 	CollegeEmail             string `form:"collegeEmail" json:"collegeEmail" binding:"required,email"`
-	PhoneNumber              string `form:"phoneNuber" json:"phoneNuber" binding:"required"`
-	AlternatePhoneNumber     string `form:"alternatePhoneNuber" json:"alternatePhoneNuber"`
+	PhoneNumber              string `form:"phoneNumber" json:"phoneNumber" binding:"required"`
+	AlternatePhoneNumber     string `form:"alternatePhoneNumber" json:"alternatePhoneNumber"`
 	CollegeID                string `form:"collegeID" json:"collegeID" binding:"required"`
 	Gender                   string `form:"gender" json:"gender" binding:"required"`
 	DateOfBirth              string `form:"dateOfBirth" json:"dateOfBirth" binding:"required"`

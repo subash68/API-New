@@ -112,7 +112,8 @@ func InitialzeRoutes() *gin.Engine {
 
 	stu := user.Group("/stu")
 	stu.Use(middleware.AuthorizeRequest())
-	stu.POST("/academics", controllers.AddAcademics)
+	stu.POST("/academics/tenth", controllers.AddTenth)
+	stu.POST("/academics/twelfth", controllers.AddTwelfth)
 	stu.GET("/academics", controllers.GetAcademics)
 
 	// Student Languages
@@ -215,7 +216,7 @@ func InitialzeRoutes() *gin.Engine {
 	stu.GET("/completeProfile", controllers.GetStudentProfile)
 	stu.POST("/requestVerification", middleware.RestrictUserType("Student"), controllers.StudentProfileVerification.RequestVerification)
 	stu.GET("/verifiedProfiles", controllers.StudentProfileVerification.GetAllVerifiedStudentProfile)
-	stu.GET("/verPendingProfiles", controllers.StudentProfileVerification.GetAllStudentProfileValidationRequests)
+	stu.GET("/vrfPendingProfiles", controllers.StudentProfileVerification.GetAllStudentProfileValidationRequests)
 	stu.GET("/stuProfile/:studentID", controllers.StudentProfileVerification.GetUnvStudentProfile)
 	stu.POST("/verifyProfile", middleware.RestrictUserType("University"), controllers.StudentProfileVerification.ProcessRequestVerification)
 

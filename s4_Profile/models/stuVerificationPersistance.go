@@ -70,7 +70,9 @@ func (spv *StudentProfileVerificationDataModel) GetVrfProfileData(ID string) DbM
 // GetAllStudentProfileMetadata ...
 func GetAllStudentProfileMetadata(ID string, verificationStatus string) (sap []StudentAllProfiles, dbError DbModelError) {
 	sp, _ := RetriveSP("STU_GET_ALL_PROFILES")
+	fmt.Println(sp, ID, verificationStatus)
 	rows, err := Db.Query(sp, ID, verificationStatus)
+	fmt.Println("===== rows", rows, err)
 	defer rows.Close()
 	for rows.Next() {
 		var newSl StudentAllProfiles
@@ -81,17 +83,19 @@ func GetAllStudentProfileMetadata(ID string, verificationStatus string) (sap []S
 			dbError.Err = err
 			return sap, dbError
 		}
-		if pgProgram != "" && pgBranch != "" && pgYear != "" {
-			newSl.Program = pgProgram
-			newSl.BranchName = pgBranch
-			newSl.Year = switchToText(pgYear, true)
-		} else {
-			newSl.Program = gradProgram
-			newSl.BranchName = gradBranch
-			newSl.Year = switchToText(gradYear, false)
-		}
+		if newSl.StudentPlatformID != "" {
+			if pgProgram != "" && pgBranch != "" && pgYear != "" {
+				newSl.Program = pgProgram
+				newSl.BranchName = pgBranch
+				newSl.Year = switchToText(pgYear, true)
+			} else {
+				newSl.Program = gradProgram
+				newSl.BranchName = gradBranch
+				newSl.Year = switchToText(gradYear, false)
+			}
 
-		sap = append(sap, newSl)
+			sap = append(sap, newSl)
+		}
 	}
 	dbError.ErrTyp = "000"
 	return sap, dbError
