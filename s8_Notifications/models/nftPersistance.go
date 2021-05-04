@@ -22,7 +22,7 @@ const (
 )
 
 // AddNotification ...
-func (np *nftPersistance) AddNotification(newNft NotificationsModel) (err error) {
+func (np *nftPersistance) AddNotification(newNft NotificationsModel) (nftID string, err error) {
 	senderRole := ""
 	switch newNft.SenderUserRole {
 	case Corporate:
@@ -35,19 +35,19 @@ func (np *nftPersistance) AddNotification(newNft NotificationsModel) (err error)
 		senderRole = "STU"
 		break
 	default:
-		return fmt.Errorf("Invalid Publisher UserRole")
+		return "", fmt.Errorf("Invalid Publisher UserRole")
 	}
 
 	newNft.NotificationID, err = CreateNftID(newNft.SenderID, senderRole)
 	if err != nil {
-		return err
+		return "", err
 	}
 	nftInsCmd, _ := RetriveSP("NFT_INS")
 
 	stmt, err := Db.Prepare(nftInsCmd)
 	if err != nil {
 		fmt.Printf("Cannot prepare query -- %v  -- due to %v", nftInsCmd, err.Error())
-		return fmt.Errorf("Cannot prepare query -- %v  -- due to %v", nftInsCmd, err.Error())
+		return "", fmt.Errorf("Cannot prepare query -- %v  -- due to %v", nftInsCmd, err.Error())
 	}
 	currentTime := time.Now()
 
@@ -61,9 +61,9 @@ func (np *nftPersistance) AddNotification(newNft NotificationsModel) (err error)
 		newNft.PublishID, newNft.PublishFlag, currentTime, currentTime, newNft.NotificationTypeID, newNft.GenericMessage)
 	if err != nil {
 		fmt.Printf("Failed to insert into database -- %v -- insert due to %v", nftInsCmd, err.Error())
-		return fmt.Errorf("Failed to insert into database -- %v -- insert due to %v", nftInsCmd, err.Error())
+		return "", fmt.Errorf("Failed to insert into database -- %v -- insert due to %v", nftInsCmd, err.Error())
 	}
-	return nil
+	return newNft.NotificationID, nil
 }
 
 // GetAllNotifications ...

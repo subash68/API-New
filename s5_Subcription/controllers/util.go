@@ -3,6 +3,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -10,6 +11,8 @@ import (
 	"unsafe"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jaswanth-gorripati/PGK/s5_Subcription/configuration"
+	"github.com/jaswanth-gorripati/PGK/s5_Subcription/middleware"
 	"github.com/jaswanth-gorripati/PGK/s5_Subcription/models"
 	"gopkg.in/go-playground/validator.v8"
 )
@@ -122,4 +125,18 @@ func GetRandomID(n int) string {
 
 	return *(*string)(unsafe.Pointer(&b))
 
+}
+
+func makeNFTServiceCall(endpoint string, reqData map[string]string) (string, error) {
+	tokenConfig := configuration.NftConfig()
+	resBody, err := middleware.MakeInternalServiceCall(tokenConfig.Host, tokenConfig.Port, "POST", endpoint, reqData)
+	if err != nil {
+		return "", err
+	}
+	var tokenResp TokenDbResp
+	err = json.Unmarshal(resBody, &tokenResp)
+	if err != nil {
+		return "", err
+	}
+	return tokenResp.Message, nil
 }

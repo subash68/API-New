@@ -24,14 +24,14 @@ func (nft *nftController) AddNewNotification(c *gin.Context) {
 	var newNft models.NotificationsModel
 	err := c.ShouldBindWith(&newNft, binding.Form)
 	if err == nil {
-		err := models.NftPersistance.AddNotification(newNft)
+		nftID, err := models.NftPersistance.AddNotification(newNft)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)
 			c.Abort()
 			return
 		}
-		c.JSON(http.StatusOK, models.MessageResp{"Notification Saved"})
+		c.JSON(http.StatusOK, models.NftMessageResp{"Notification Saved", nftID})
 		c.Abort()
 		return
 	}

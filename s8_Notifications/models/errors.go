@@ -21,6 +21,12 @@ type MessageResp struct {
 	Message string `json:"message"`
 }
 
+// NftMessageResp ...
+type NftMessageResp struct {
+	Message string `json:"message"`
+	NftID   string `json::"nftID"`
+}
+
 // DetailedErrModel ...
 type DetailedErrModel struct {
 	Code      string `json:"code,omitempty"`

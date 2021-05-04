@@ -19,6 +19,11 @@
     "LUT_SKILLS":"LUT_Skills_Master",
     "LUT_PROGRAMS":"LUT_ProgramCatalog",
     "LUT_DEPARTMENTS":"LUT_BranchCatalog",
+    "CRP_CD_DB":"Corp_CampusDrive_Sent",
+    "UNV_CP_DB":"Univ_CampusPlacement_Sent",
+    "UNV_INSIGHTS":"Univ_Insights",
+    "CORP_HC_INSIGHTS":"Corp_HiringInsights",
+    "UNV_STU_DB":"Univ_UniversitywiseStudentList",
     "DB_HOST":"database-1.cbiyeet4pu7p.ap-south-1.rds.amazonaws.com",
     "DB_PORT":3306,
     "DB_REDIS_ADDRESS":"redis",
@@ -41,5 +46,7 @@
     "AUTH_SER_HOST":"auth_service",
     "AUTH_SER_PORT":8080,
     "TOKEN_SER_HOST":"token_service",
-    "TOKEN_SER_PORT":8080
+    "TOKEN_SER_PORT":8080,
+    "NFT_SER_HOST":"notification_service",
+    "NFT_SER_PORT":8080
 }

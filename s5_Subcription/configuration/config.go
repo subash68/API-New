@@ -11,32 +11,37 @@ import (
 
 // DbEnv ...
 type DbEnv struct {
-	DbUserName       string `json:"DB_USER_NAME"`
-	DbPassword       string `json:"DB_PASSWORD"`
-	DbDatabaseName   string `json:"DB_DATABASE_NAME"`
-	DbHost           string `json:"DB_HOST"`
-	DbPort           int    `json:"DB_PORT"`
-	CorpMasterDbName string `json:"CORP_MASTER_DB_NAME"`
-	UnvMasterDbName  string `json:"UNV_MASTER_DB_NAME"`
-	StuMasterDbName  string `json:"STU_MASTER_DB_NAME"`
-	ProfilePicDbName string `json:"PROFIE_PIC_DB_NAME"`
-	UnvSubDBName     string `json:"UNV_SUB_DB"`
-	CrpSubDBName     string `json:"CRP_SUB_DB"`
-	StuSubDBName     string `json:"STU_SUB_DB"`
-	UnvPubDBName     string `json:"UNV_PUB_DB"`
-	CrpPubDBName     string `json:"CRP_PUB_DB"`
-	StuPubDBName     string `json:"STU_PUB_DB"`
-	LutCrpTyp        string `json:"LUT_CRP_TYPE"`
-	LutCrpCat        string `json:"LUT_CRP_CAT"`
-	LutCrpInd        string `json:"LUT_CRP_IND"`
-	LutUnvCat        string `json:"LUT_UNV_CAT"`
-	LutSkills        string `json:"LUT_SKILLS"`
-	LutPrograms      string `json:"LUT_PROGRAMS"`
-	LutDepartments   string `json:"LUT_DEPARTMENTS"`
-	DbRedisAddr      string `json:"DB_REDIS_ADDRESS"`
-	DbRedisPort      string `json:"DB_REDIS_PORT"`
-	DbRedisPass      string `json:"DB_REDIS_PASS"`
-	DbRedisDb        string `json:"DB_REDIS_DB"`
+	DbUserName           string `json:"DB_USER_NAME"`
+	DbPassword           string `json:"DB_PASSWORD"`
+	DbDatabaseName       string `json:"DB_DATABASE_NAME"`
+	DbHost               string `json:"DB_HOST"`
+	DbPort               int    `json:"DB_PORT"`
+	CorpMasterDbName     string `json:"CORP_MASTER_DB_NAME"`
+	UnvMasterDbName      string `json:"UNV_MASTER_DB_NAME"`
+	StuMasterDbName      string `json:"STU_MASTER_DB_NAME"`
+	ProfilePicDbName     string `json:"PROFIE_PIC_DB_NAME"`
+	UnvSubDBName         string `json:"UNV_SUB_DB"`
+	CrpSubDBName         string `json:"CRP_SUB_DB"`
+	StuSubDBName         string `json:"STU_SUB_DB"`
+	UnvPubDBName         string `json:"UNV_PUB_DB"`
+	CrpPubDBName         string `json:"CRP_PUB_DB"`
+	StuPubDBName         string `json:"STU_PUB_DB"`
+	LutCrpTyp            string `json:"LUT_CRP_TYPE"`
+	LutCrpCat            string `json:"LUT_CRP_CAT"`
+	LutCrpInd            string `json:"LUT_CRP_IND"`
+	LutUnvCat            string `json:"LUT_UNV_CAT"`
+	LutSkills            string `json:"LUT_SKILLS"`
+	LutPrograms          string `json:"LUT_PROGRAMS"`
+	LutDepartments       string `json:"LUT_DEPARTMENTS"`
+	CorpCDDbName         string `json:"CRP_CD_DB"`
+	UnvCPDbName          string `json:"UNV_CP_DB"`
+	UnvInsightsDbName    string `json:"UNV_INSIGHTS"`
+	CorpHcInsightsDbName string `json:"CORP_HC_INSIGHTS"`
+	UnvStuDataDbName     string `json:"UNV_STU_DB"`
+	DbRedisAddr          string `json:"DB_REDIS_ADDRESS"`
+	DbRedisPort          string `json:"DB_REDIS_PORT"`
+	DbRedisPass          string `json:"DB_REDIS_PASS"`
+	DbRedisDb            string `json:"DB_REDIS_DB"`
 }
 
 // TokenService ...
@@ -49,6 +54,12 @@ type TokenService struct {
 type AuthService struct {
 	Host string `json:"AUTH_SER_HOST"`
 	Port int    `json:"AUTH_SER_PORT"`
+}
+
+// NftService ...
+type NftService struct {
+	Host string `json:"NFT_SER_HOST"`
+	Port int    `json:"NFT_SER_PORT"`
 }
 
 // EmailEnv ...
@@ -89,6 +100,7 @@ var emailConfig *EmailEnv
 var dbConfig *DbEnv
 var tokenService *TokenService
 var authService *AuthService
+var nftService *NftService
 var jwtConfig *JwtEnv
 var twilioConfig *TwilioEnv
 var paymentConfig *PaymentEnv
@@ -110,6 +122,11 @@ func DbConfig() DbEnv {
 // AuthConfig provides the URL for authenticate micro-service
 func AuthConfig() AuthService {
 	return *authService
+}
+
+// NftConfig provides the URL for authenticate micro-service
+func NftConfig() NftService {
+	return *nftService
 }
 
 // EmailConfig provide configuration details of Email service
@@ -159,6 +176,8 @@ func Config() {
 	err = json.Unmarshal(dat, &paymentConfig)
 
 	err = json.Unmarshal(dat, &authService)
+
+	err = json.Unmarshal(dat, &nftService)
 
 	if err != nil {
 
