@@ -136,6 +136,64 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 		}
 		subs.Subscriptions = append(subs.Subscriptions, newsub)
 	}
+	subSP, _ := RetriveSP("UNV_STU_DB_SUB_GET_ALL_SUB")
+	fmt.Println("========================== UNV_STU_DB_SUB_GET_ALL==========", subSP)
+	subrow, err := Db.Query(subSP, ID)
+	if err != nil && err != sql.ErrNoRows {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+		Job <- customError
+		return Job
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionModel
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
+			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
+			if err != nil {
+				customError.ErrTyp = "500"
+				customError.ErrCode = "S3PJ002"
+				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+				Job <- customError
+				return Job
+			}
+			subs.Subscriptions = append(subs.Subscriptions, newsub)
+		}
+	}
+
+	subSP, _ = RetriveSP("UNV_INSIGHTS_GET_ALL_SUB")
+	fmt.Println("========================== UNV_INSIGHTS_GET_ALL==========", subSP)
+	subrow, err = Db.Query(subSP, ID)
+	if err != nil && err != sql.ErrNoRows {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+		Job <- customError
+		return Job
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		fmt.Println("=============== ")
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionModel
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
+			newsub.GeneralNote = "University Information"
+			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
+			if err != nil {
+				customError.ErrTyp = "500"
+				customError.ErrCode = "S3PJ002"
+				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+				Job <- customError
+				return Job
+			}
+			subs.Subscriptions = append(subs.Subscriptions, newsub)
+		}
+	}
 	customError.ErrTyp = "000"
 	Job <- customError
 	return Job

@@ -10,8 +10,10 @@ type SubscriptionModel struct {
 	PublishID          string    `form:"publishId" json:"publishId" binding:"required"`
 	TokensUsed         float64   `form:"tokensUsed" json:"tokensUsed,omitempty" binding:"required"`
 	TransactionID      string    `form:"transactionID" json:"transactionID,omitempty"`
-	CorporateName      string    `form:"-" json:"corporateName,omitempty"`
+	CorporateName      string    `form:"-" json:"publisherName,omitempty"`
 	GeneralNote        string    `form:"-" json:"generalNote,omitempty"`
+	SubscriptionID     string    `form:"-" json:"subscriptionID,omitempty"`
+	PublisherLocation  string    `form:"-" json:"location"`
 }
 
 // SubscriptionReq ...

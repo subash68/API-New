@@ -1,9 +1,7 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -26,8 +24,8 @@ func (uim *UnvInsightsModel) Insert() (*UnvInsightsModel, error) {
 	ct, _ := time.Parse(time.RFC3339, currentTime)
 
 	uim.SubscribedDate, uim.CreationDate, uim.LastUpdatedDate = ct, ct, ct
-
-	err := uim.createSudID()
+	var err error
+	uim.SubscriptionID, err = createSudID(uim.SubscribedStakeholderID, "UNV_INSIGHTS_Get_Last_ID", "SUBUI")
 	if err != nil {
 		return uim, err
 	}
@@ -81,24 +79,4 @@ func (uim *UnvInsightsModel) GetUnvInsightAll() ([]UnvInsightsModel, error) {
 	}
 
 	return uims, nil
-}
-
-// createSudID ...
-func (uim *UnvInsightsModel) createSudID() error {
-	rowSP, _ := RetriveSP("UNV_INSIGHTS_Get_Last_ID")
-	lastID := ""
-	err := Db.QueryRow(rowSP, uim.SubscribedStakeholderID).Scan(&lastID)
-
-	if err != nil && err != sql.ErrNoRows {
-		return err
-	}
-	if err == sql.ErrNoRows {
-		lastID = "0000000000000"
-	}
-	corporateNum, _ := strconv.Atoi(uim.SubscribedStakeholderID[7:])
-	countNum, _ := strconv.Atoi(lastID[len(lastID)-7:])
-	fmt.Println("--------------------> ", lastID, countNum)
-	uim.SubscriptionID = "SUBUI" + strconv.Itoa(corporateNum) + (fmt.Sprintf("%07d", (countNum + 1)))
-
-	return nil
 }

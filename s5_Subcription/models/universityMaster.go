@@ -77,3 +77,39 @@ type UnvInsightSubsReqModel struct {
 	BonusTokensUsed         float64 `form:"bonusTokensUsed" json:"bonusTokensUsed"`
 	TransactionID           string  `form:"transactionID" json:"transactionID,omitempty"`
 }
+
+// StuInfoFromUnvDatabaseModel ...
+type StuInfoFromUnvDatabaseModel struct {
+	StakeholderID string  `form:"studentID" json:"studentID"`
+	CollegeID     string  `form:"collegeID" json:"collegeID"`
+	ProgramName   string  `form:"programName" json:"programName"`
+	ProgramID     string  `form:"programID" json:"programID"`
+	BranchName    string  `form:"branchName" json:"branchName"`
+	BranchID      string  `form:"branchID" json:"branchID"`
+	AvgCgpa       float64 `form:"avgCGPA" json:"avgCGPA"`
+	AvgPercentage float64 `form:"avgPercentage" json:"avgPercentage"`
+}
+
+// UnvStuDataModel ...
+type UnvStuDataModel struct {
+	SubscriptionID          string                        `form:"-" json:"subscriptionID"`
+	SubscriberStakeholderID string                        `form:"universityID" json:"universityID" binding:"required"`
+	SubscribedStakeholderID string                        `form:"-" json:"subscribedStakeholderID`
+	SubscriptionValidityTag bool                          `form:"-" json:"subscriptionValidityTag"`
+	StudentDataExists       bool                          `form:"-" json:"studentDataExists"`
+	StudentsData            []StuInfoFromUnvDatabaseModel `form:"studentsData" json:"studentsData"`
+	SubscribedDate          time.Time                     `form:"-" json:"subscribedTime" time_format="2006-12-01T21:23:34.409Z"`
+	CreationDate            time.Time                     `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate         time.Time                     `form:"-" json:"lastUpdatedTime" time_format="2006-12-01T21:23:34.409Z"`
+}
+
+// UnvStuDataQueryDataModel ...
+type UnvStuDataQueryDataModel struct {
+	SubscriberStakeholderID string   `form:"universityID" json:"universityID" binding:"required"`
+	SubscriptionID          string   `form:"subscriptionID" json:"subscriptionID"  binding:"required"`
+	HiringCriteriaID        string   `form:"hiringCriteriaID" json:"hiringCriteriaID"`
+	ProgramID               string   `form:"programID" json:"programID"`
+	BranchID                string   `form:"branchID" json:"branchID"`
+	MonthOfHiring           string   `form:"mothOfHiring" json:"mothOfHiring"`
+	Skills                  []string `form:"skills" json:"skills"`
+}

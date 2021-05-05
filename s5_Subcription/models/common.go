@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"reflect"
+	"strconv"
 )
 
 // CompleteDB ...
@@ -132,4 +133,23 @@ func GetProfilePic(stakeholderID string, sp string) ([]byte, DbModelError) {
 	}
 	customError.ErrTyp = "000"
 	return ppic, customError
+}
+
+// createSudID ... UNV_INSIGHTS_Get_Last_ID, SUBUI
+func createSudID(ID string, query string, code string) (string, error) {
+	rowSP, _ := RetriveSP(query)
+	lastID := ""
+	err := Db.QueryRow(rowSP, ID).Scan(&lastID)
+
+	if err != nil && err != sql.ErrNoRows {
+		return "", err
+	}
+	if err == sql.ErrNoRows {
+		lastID = "0000000000000"
+	}
+	corporateNum, _ := strconv.Atoi(ID[7:])
+	countNum, _ := strconv.Atoi(lastID[len(lastID)-7:])
+	fmt.Println("--------------------> ", lastID, countNum)
+
+	return (code + strconv.Itoa(corporateNum) + (fmt.Sprintf("%07d", (countNum + 1)))), nil
 }

@@ -115,6 +115,26 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 			unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
 		}
 	}
+	subSP, _ = RetriveSP("UNV_STU_DB_SUB_GET_ALL")
+	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
+	subrow, err = Db.Query(subSP, subID, ID)
+	if err != nil && err != sql.ErrNoRows {
+		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription)
+			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
+		}
+	}
+
 	subSP, _ = RetriveSP("UNV_INSIGHTS_GET_ALL")
 	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
 	subrow, err = Db.Query(subSP, subID, ID)
