@@ -84,5 +84,9 @@ func InitialzeRoutes() *gin.Engine {
 	subscription.GET("/payment/:publishID", controllers.GetSubscriptionPayment)
 	subscription.GET("/subscriptions", controllers.GetAllSubscriptions)
 
+	subscription.POST("/subscribe/unvInsight", controllers.UnvInsightsController.SubscribeUnvInsight)
+	subscription.GET("/subscribe/unvInsight/:subscriptionID", controllers.UnvInsightsController.GetSubscribedUnvInsight)
+	subscription.GET("/subscribe/unvInsight", controllers.UnvInsightsController.GetAllSubscribedUnvInsight)
+
 	return router
 }

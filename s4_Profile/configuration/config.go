@@ -45,6 +45,11 @@ type DbEnv struct {
 	StuTechSkillsDbName     string `json:"STU_TECH_SKILLS"`
 	StuTestScoresDbName     string `json:"STU_TESTS"`
 	StuVolunteerExpDbName   string `json:"STU_VOLUNTEERS"`
+	CorpCDDbName            string `json:"CRP_CD_DB"`
+	UnvCPDbName             string `json:"UNV_CP_DB"`
+	UnvInsightsDbName       string `json:"UNV_INSIGHTS"`
+	CorpHcInsightsDbName    string `json:"CORP_HC_INSIGHTS"`
+	UnvStuDataDbName        string `json:"UNV_STU_DB"`
 	DbRedisAddr             string `json:"DB_REDIS_ADDRESS"`
 	DbRedisPort             string `json:"DB_REDIS_PORT"`
 	DbRedisPass             string `json:"DB_REDIS_PASS"`

@@ -102,17 +102,37 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
 	} else if err == sql.ErrNoRows {
-		return unvDB, nil
-	}
-	defer subrow.Close()
-	for subrow.Next() {
-		var newsub SubscriptionReq
-		err = subrow.Scan(&newsub.Publisher, &newsub.DateOfSubscription, &newsub.PublishID, &newsub.TransactionID, &newsub.GeneralNote)
-		newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
-		if err != nil {
-			return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			err = subrow.Scan(&newsub.Publisher, &newsub.DateOfSubscription, &newsub.PublishID, &newsub.TransactionID, &newsub.GeneralNote)
+			newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
 		}
-		unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
+	}
+	subSP, _ = RetriveSP("UNV_INSIGHTS_GET_ALL")
+	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
+	subrow, err = Db.Query(subSP, subID, ID)
+	if err != nil && err != sql.ErrNoRows {
+		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription)
+			newsub.GeneralNote = "University Information" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
+		}
 	}
 	if unvDB.StakeholderID == "" {
 		return unvDB, fmt.Errorf("User details not found for ID %s", ID)
@@ -121,5 +141,6 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		unvDB.StudentDbAvailable = true
 		unvDB.StudentDbPublishID = unvDB.StudentStrengthNullable.String
 	}
+
 	return unvDB, nil
 }

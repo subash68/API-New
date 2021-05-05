@@ -49,3 +49,31 @@ type UniversityMasterDb struct {
 	PrimaryPhoneVerified                 bool      `form:"primaryPhoneVerified"`
 	PrimaryEmailVerified                 bool      `form:"primaryEmailVerified"`
 }
+
+// UnvInsightsModel ...
+type UnvInsightsModel struct {
+	SubscriptionID            string    `form:"-" json:"subscriptionID"`
+	SubscriberStakeholderID   string    `form:"universityID" json:"universityID" binding:"required"`
+	SubscribedStakeholderID   string    `form:"-" json:"subscribedStakeholderID`
+	AverageCGPA               float64   `form:"-" json:"averageCGPA"`
+	AveragePercentage         float64   `form:"-" json:"averagePercentage"`
+	HighestCGPA               float64   `form:"-" json:"highestCGPA"`
+	HighestPercentage         float64   `form:"-" json:"highestPercentage"`
+	HighestPackageReceived    string    `form:"-" json:"highestPackage"`
+	AveragePackageReceived    string    `form:"-" json:"averagePackage"`
+	UniversityConversionRatio float64   `form:"-" json:"universityConvertionRatio"`
+	TentativeMonthOfPassing   string    `form:"-" json:"tentativeMonthOfPassing"`
+	Top5Recruiters            []string  `form:"-" json:"top5Recruiters"`
+	Top5Skills                []string  `form:"-" json:"top5Skills"`
+	SubscribedDate            time.Time `form:"-" json:"subscribedTime" time_format="2006-12-01T21:23:34.409Z"`
+	CreationDate              time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate           time.Time `form:"-" json:"lastUpdatedTime" time_format="2006-12-01T21:23:34.409Z"`
+}
+
+// UnvInsightSubsReqModel ...
+type UnvInsightSubsReqModel struct {
+	SubscriberStakeholderID string  `form:"universityID" json:"universityID" binding:"required"`
+	PaidTokensUsed          float64 `form:"paidTokensUsed" json:"paidTokensUsed"`
+	BonusTokensUsed         float64 `form:"bonusTokensUsed" json:"bonusTokensUsed"`
+	TransactionID           string  `form:"transactionID" json:"transactionID,omitempty"`
+}

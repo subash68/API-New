@@ -80,4 +80,5 @@ type SubscriptionReq struct {
 	TransactionID      string    `form:"transactionID" json:"transactionID,omitempty"`
 	CorporateName      string    `form:"-" json:"corporateName,omitempty"`
 	GeneralNote        string    `form:"-" json:"generalNote"`
+	SubscriptionID     string    `form:"-" json:"subscriptionID,omitempty"`
 }
