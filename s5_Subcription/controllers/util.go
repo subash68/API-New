@@ -166,5 +166,5 @@ func makeNFTServiceCall(endpoint string, reqData map[string]string) (string, err
 	if err != nil {
 		return "", err
 	}
-	return tokenResp.Message, nil
+	return tokenResp.NftID, nil
 }

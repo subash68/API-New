@@ -113,3 +113,29 @@ type UnvStuDataQueryDataModel struct {
 	MonthOfHiring           string   `form:"mothOfHiring" json:"mothOfHiring"`
 	Skills                  []string `form:"skills" json:"skills"`
 }
+
+// UnvCampusPlacementInviteModel ...
+type UnvCampusPlacementInviteModel struct {
+	CorpID                 string    `form:"-" json:"initiatorStakeholderID"`
+	CorporateName          string    `form:"-" json:"corporateName"`
+	UniversityID           string    `form:"universityID" json:"universityID"`
+	UniversityName         string    `form:"universityName" json:"universityName"`
+	CampusDriveID          string    `form:"-" json:"campusDriveID"`
+	CampusDriverRequested  bool      `form:"campusDriveRequested" json:"campusDriveRequested"`
+	RequestedDate          time.Time `form:"-" json:"requestedDate" time_format="2006-12-01T21:23:34.409Z"`
+	RequestedNftID         string    `form:"-" json:"requestedNotificationID"`
+	Accepted               bool      `form:"-" json:"accepted"`
+	AcceptedOrRejectedDate time.Time `form:"-" json:"acceptedOrRejectedDate" time_format="2006-12-01T21:23:34.409Z"`
+	AccOrRejectNftID       string    `form:"-" json:"acceptOrRejectNftID"`
+	ReasonToReject         string    `form:"reasonToReject" json:"reasonToReject"`
+}
+
+// UnvSubCDModel ...
+type UnvSubCDModel struct {
+	CorporateID   string `form:"corporateID" json:"corporateID" binding:"required"`
+	CampusDriveID string `form:"-" json:"campusDriveID" binding:"required"`
+	EmailFrom     string `form:"emailFrom" json:"emailFrom" binding:"required,email"`
+	EmailTo       string `form:"emailTo" json:"emailTo" binding:"required,email"`
+	EmailSubject  string `form:"emailSubject" json:"emailSubject" binding:"required"`
+	EmailBody     string `form:"emailBody" json:"emailBody" binding:"required"`
+}

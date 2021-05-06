@@ -81,4 +81,7 @@ type SubscriptionReq struct {
 	CorporateName      string    `form:"-" json:"corporateName,omitempty"`
 	GeneralNote        string    `form:"-" json:"generalNote"`
 	SubscriptionID     string    `form:"-" json:"subscriptionID,omitempty"`
+	CampusDriveID      string    `form:"-" json:"campusDriveID,omitempty"`
+	CampusDriveStatus  string    `form:"-" json:"campusDriveStatus,omitempty"`
+	NftID              string    `form:"-" json:"nftID,omitempty"`
 }

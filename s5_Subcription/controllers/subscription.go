@@ -17,6 +17,7 @@ import (
 // TokenDbResp ...
 type TokenDbResp struct {
 	Message string `json:"message"`
+	NftID   string `json:"nftID"`
 }
 
 // Subscribe ...

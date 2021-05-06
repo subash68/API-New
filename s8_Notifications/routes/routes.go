@@ -82,7 +82,8 @@ func InitialzeRoutes() *gin.Engine {
 
 	// token.GET("/balance", controllers.GetTokenBalanceForID)
 	// token.GET("/allocations", controllers.GetTokenAllocationsOfID)
-	notifications.GET("/:perPage/:page", controllers.NftController.GetAllNotification)
+	notifications.GET("/all/:perPage/:page", controllers.NftController.GetAllNotification)
+	notifications.GET("/nftData/:nftID", controllers.NftController.GetNotificationByID)
 
 	//notifications.POST("/addNotification", controllers.NftController.AddNewNotification)
 	notifications.POST("/addNotification", middleware.AuthorizeInternalRequest("INTERNAL"), controllers.NftController.AddNewNotification)

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 )
 
 // UnvSearchModel ...
@@ -88,7 +89,6 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 	row := Db.QueryRow(sp, ID)
 	unvDB := UniversityGetByIDModel{}
 	//var result map[string]interface{}
-
 	// Unmarshal or Decode the JSON to the interface.
 
 	err := row.Scan(&unvDB.StakeholderID, &unvDB.UniversityName, &unvDB.UniversityCollegeID, &unvDB.UniversityHQAddressCity, &unvDB.YearOfEstablishment, &unvDB.UniversityProfile, &unvDB.ProgramsOffered, &unvDB.Ranking, &unvDB.Accredations, &unvDB.StudentStrengthNullable, &unvDB.UnvInsightsAvailable)
@@ -97,7 +97,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		return unvDB, fmt.Errorf("Cannot scan ros due to : %v", err.Error())
 	}
 	subSP, _ := RetriveSP("UNV_SUB_DATA_IN_SRH")
-	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
+	fmt.Println("========================== UNV_SUB_DATA_IN_SRH==========", sp)
 	subrow, err := Db.Query(subSP, subID, ID)
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
@@ -136,7 +136,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 	}
 
 	subSP, _ = RetriveSP("UNV_INSIGHTS_GET_ALL")
-	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
+	fmt.Println("========================== UNV_INSIGHTS_GET_ALL==========", sp)
 	subrow, err = Db.Query(subSP, subID, ID)
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
@@ -154,6 +154,42 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 			unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
 		}
 	}
+	subSP, _ = RetriveSP("CORP_CD_GET_ALL")
+	fmt.Println("========================== CORP_CD_GET_ALL==========", sp)
+	subrow, err = Db.Query(subSP, subID, ID)
+	if err != nil && err != sql.ErrNoRows {
+		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			var cdReq, cdAr bool
+			var rqDate, arDate time.Time
+			var reqNftID, arNftID string
+			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID)
+			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			if cdReq == true && cdAr == true && arNftID != "" {
+				newsub.CampusDriveStatus = "Accepted"
+				newsub.NftID = arNftID
+				newsub.DateOfSubscription = rqDate
+			} else if cdReq == true && cdAr == false && arNftID != "" {
+				newsub.CampusDriveStatus = "Rejected"
+				newsub.NftID = arNftID
+				newsub.DateOfSubscription = rqDate
+			} else if cdReq == true && cdAr == false && arNftID == "" {
+				newsub.CampusDriveStatus = "Pending"
+				newsub.NftID = reqNftID
+				newsub.DateOfSubscription = rqDate
+			}
+			unvDB.Subscriptions = append(unvDB.Subscriptions, newsub)
+		}
+	}
+
 	if unvDB.StakeholderID == "" {
 		return unvDB, fmt.Errorf("User details not found for ID %s", ID)
 	}

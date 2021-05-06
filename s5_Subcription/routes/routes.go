@@ -92,5 +92,10 @@ func InitialzeRoutes() *gin.Engine {
 	subscription.POST("/subscribe/unvStuData/queryStuData", controllers.UnvStuDataController.QuerySubscribedStuData)
 	subscription.GET("/subscribe/unvStuData/:subID", controllers.UnvStuDataController.FetchSubscribedStuData)
 
+	subscription.POST("/subscribe/campusDrive", controllers.CampusDriveInvitationsController.Subscribe)
+	subscription.POST("/subscribe/campusDrive/invite", controllers.CampusDriveInvitationsController.Invite)
+	subscription.POST("/subscribe/campusDrive/respond", controllers.CampusDriveInvitationsController.Respond)
+	//subscription.GET("/subscribe/campusDrive/:subID", controllers.CampusDriveInvitationsController.FetchSubscribedStuData)
+
 	return router
 }

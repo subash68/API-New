@@ -52,5 +52,6 @@ func CreateSP() {
 		"LUT_GET_CRP_TYPE":       "SELECT OneLtrCode,IF(COUNT(*),'true','false') FROM " + dbConfig.DbDatabaseName + ".LUT_CorporateType WHERE CorporateType=? GROUP BY OneLtrCode LIMIT 1",
 		"LUT_GET_CRP_CAT":        "SELECT OneLtrCode,IF(COUNT(*),'true','false') FROM " + dbConfig.DbDatabaseName + ".LUT_CorporateCategory WHERE CorporateCategoryName=? GROUP BY OneLtrCode LIMIT 1",
 		"LUT_GET_UNV_CAT":        "SELECT OneLtrCode,IF(COUNT(*),'true','false') FROM " + dbConfig.DbDatabaseName + ".LUT_UniversityType WHERE UniversityTypeName=? GROUP BY OneLtrCode LIMIT 1",
+		"SUPPORT_INS":            "INSERT INTO CollabToHire.Support_Master (StakeholderID,StakeholderRole,Contact_Email,Contact_Person,Contact_Phone,Query_Or_Issue,CreationDate,LastUpdatedDate) VALUES(?,?,?,?,?,?,?,?)",
 	}
 }

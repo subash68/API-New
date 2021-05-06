@@ -86,6 +86,7 @@ func InitialzeRoutes() *gin.Engine {
 	onboard.POST("/sendOTP", controllers.SendChangePasswordOTP)
 	onboard.POST("/resetPassword", controllers.ChangePassword)
 	onboard.POST("/logout", middleware.AuthorizeRequest(), controllers.Logout)
+	onboard.POST("/addSupport", middleware.AuthorizeRequest(), controllers.AddSupport)
 	// users := router.Group("/u")
 	// users.Use(middleware.AuthorizeRequest())
 	// users.GET("/getPayment", controllers.GetPayment)

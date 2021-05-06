@@ -31,6 +31,7 @@ func (nft *nftController) AddNewNotification(c *gin.Context) {
 			c.Abort()
 			return
 		}
+		fmt.Println("\n==============>>> NEW NFT ID ---- %s \n", nftID)
 		c.JSON(http.StatusOK, models.NftMessageResp{"Notification Saved", nftID})
 		c.Abort()
 		return
@@ -75,13 +76,36 @@ func (nft *nftController) GetAllNotification(c *gin.Context) {
 
 	notifications, err := models.NftPersistance.GetAllNotifications(ID, filter, page, size)
 	if err != nil {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Competitions", Err: err, SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Notifications", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
 	}
 
 	c.JSON(http.StatusOK, notifications)
+	c.Abort()
+	return
+}
+
+// GetNotificationByID ...
+func (nft *nftController) GetNotificationByID(c *gin.Context) {
+	ctx, ID, _, successResp := getFuncReq(c, "Get Notifications")
+
+	nftID := c.Param("nftID")
+	if nftID == "" {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot find nftID"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
+	notification, err := models.NftPersistance.GetNotificationByID(ID, nftID)
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Notifications", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusInternalServerError, resp)
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, notification)
 	c.Abort()
 	return
 }

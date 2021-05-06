@@ -22,7 +22,8 @@ const (
 )
 
 // AddNotification ...
-func (np *nftPersistance) AddNotification(newNft NotificationsModel) (nftID string, err error) {
+func (np *nftPersistance) AddNotification(newNft NotificationsModel) (string, error) {
+	var err error
 	senderRole := ""
 	switch newNft.SenderUserRole {
 	case Corporate:
@@ -105,6 +106,23 @@ func (np *nftPersistance) GetAllNotifications(ID string, filters string, page in
 			}
 		}
 		allNfts = append(allNfts, newNFT)
+	}
+
+	return allNfts, nil
+}
+
+// GetNotificationByID ...
+func (np *nftPersistance) GetNotificationByID(ID string, nftID string) (NotificationsModel, error) {
+	// Preparing Database insert
+	nftGetAllCmd, _ := RetriveSP("NFT_GET_BY_ID")
+
+	var allNfts NotificationsModel
+
+	err := Db.QueryRow(nftGetAllCmd, nftID, ID, ID).Scan(&allNfts.NotificationID, &allNfts.SenderID, &allNfts.SenderUserRole, &allNfts.ReceiverID,
+		&allNfts.DateofNotification, &allNfts.NotificationType, &allNfts.Content, &allNfts.AttachFile, &allNfts.RedirectedURL,
+		&allNfts.PublishID, &allNfts.PublishFlag, &allNfts.CreationDate, &allNfts.LastUpdatedDate)
+	if err != nil {
+		return allNfts, fmt.Errorf("Cannot get the Rows %v", err.Error())
 	}
 
 	return allNfts, nil
