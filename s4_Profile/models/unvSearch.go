@@ -126,7 +126,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		defer subrow.Close()
 		for subrow.Next() {
 			var newsub SubscriptionReq
-			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription)
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription, &newsub.SearchCriteria)
 			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())

@@ -81,6 +81,7 @@ type UnvInsightSubsReqModel struct {
 // StuInfoFromUnvDatabaseModel ...
 type StuInfoFromUnvDatabaseModel struct {
 	StakeholderID string  `form:"studentID" json:"studentID"`
+	Name          string  `form:"studentName" json:"studentName"`
 	CollegeID     string  `form:"collegeID" json:"collegeID"`
 	ProgramName   string  `form:"programName" json:"programName"`
 	ProgramID     string  `form:"programID" json:"programID"`

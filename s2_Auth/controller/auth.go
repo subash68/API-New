@@ -61,6 +61,7 @@ func CreateInternalToken(c *gin.Context) {
 func AuthorizeToken(c *gin.Context) {
 	var vrfTokenData dto.VrfToken
 	binding.Validator = &defaultValidator{}
+
 	err := c.ShouldBindWith(&vrfTokenData, binding.Form)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, "Cannot process required information for creating token")

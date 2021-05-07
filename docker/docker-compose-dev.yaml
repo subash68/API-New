@@ -143,6 +143,17 @@ services:
       - ../s8_Notifications:/notifications
       - ../s8_Notifications/notifications
     command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
+
+  analytics_auth:
+    image: s9-analyticsauth
+    container_name: analytics_auth
+    restart: always
+    build:
+      context: ../s9_Analytics/.
+    volumes:
+      - ../s9_Analytics:/usr/app/
+      - ../s9_Analytics/node_modules
+    command: "npm start"
     # ports:
     #   - 8080:8080
     # mysql:

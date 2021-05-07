@@ -19,13 +19,13 @@ func (usd *UnvStuDataModel) Subscribe() (*UnvStuDataModel, error) {
 		return usd, err
 	}
 	newUISubIns, _ := RetriveSP("UNV_STU_DB_SUB_INIT")
-	newUISubIns += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	newUISubIns += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	subInsStmt, err := Db.Prepare(newUISubIns)
 	if err != nil {
 		return usd, fmt.Errorf("Cannot prepare University Student Database Subscription insert due to %v %v", newUISubIns, err.Error())
 	}
 
-	_, err = subInsStmt.Exec(usd.SubscriptionID, usd.SubscriberStakeholderID, usd.SubscribedStakeholderID, "", "", "", "", "", "", "", "", currentTime, false, currentTime, currentTime)
+	_, err = subInsStmt.Exec(usd.SubscriptionID, usd.SubscriberStakeholderID, usd.SubscribedStakeholderID, "", "", "", "", "", "", "", "", currentTime, false, currentTime, currentTime, "")
 	if err != nil {
 		return usd, fmt.Errorf("Cannot Insert University Student Database Subscription due to %v %v", newUISubIns, err.Error())
 	}
@@ -34,7 +34,7 @@ func (usd *UnvStuDataModel) Subscribe() (*UnvStuDataModel, error) {
 }
 
 // StoreStudentData ...
-func (usd *UnvStuDataModel) StoreStudentData(query string) (*UnvStuDataModel, error) {
+func (usd *UnvStuDataModel) StoreStudentData(query string, search string) (*UnvStuDataModel, error) {
 	newUSDSubGet, _ := RetriveSP("UNV_STU_DB_VAL_INS")
 	var collegeID string
 	var count int
@@ -69,8 +69,8 @@ func (usd *UnvStuDataModel) StoreStudentData(query string) (*UnvStuDataModel, er
 	newUISubIns, _ := RetriveSP("UNV_STU_DB_SUB_INIT")
 	vals := []interface{}{}
 	for i := range usd.StudentsData {
-		newUISubIns += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, usd.SubscriptionID, usd.SubscriberStakeholderID, usd.SubscribedStakeholderID, usd.StudentsData[i].CollegeID, usd.StudentsData[i].ProgramName, usd.StudentsData[i].ProgramID, usd.StudentsData[i].BranchName, usd.StudentsData[i].BranchID, usd.StudentsData[i].AvgPercentage, usd.StudentsData[i].AvgPercentage, usd.StudentsData[i].StakeholderID, currentTime, true, currentTime, currentTime)
+		newUISubIns += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, usd.SubscriptionID, usd.SubscriberStakeholderID, usd.SubscribedStakeholderID, usd.StudentsData[i].CollegeID, usd.StudentsData[i].ProgramName, usd.StudentsData[i].ProgramID, usd.StudentsData[i].BranchName, usd.StudentsData[i].BranchID, usd.StudentsData[i].AvgPercentage, usd.StudentsData[i].AvgPercentage, usd.StudentsData[i].StakeholderID, currentTime, true, currentTime, currentTime, search)
 	}
 	newUISubIns = newUISubIns[0 : len(newUISubIns)-1]
 	subInsStmt, err := Db.Prepare(newUISubIns)
@@ -100,7 +100,7 @@ func GetStudentsList(query string, unvID string) ([]StuInfoFromUnvDatabaseModel,
 	defer rows.Close()
 	for rows.Next() {
 		var nsd StuInfoFromUnvDatabaseModel
-		err = rows.Scan(&nsd.StakeholderID, &nsd.AvgPercentage, &nsd.ProgramName, &nsd.ProgramID, &nsd.BranchName, &nsd.BranchID, &nsd.CollegeID)
+		err = rows.Scan(&nsd.StakeholderID, &nsd.AvgPercentage, &nsd.ProgramName, &nsd.ProgramID, &nsd.BranchName, &nsd.BranchID, &nsd.CollegeID, &nsd.Name)
 		if err != nil {
 			return stuData, err
 		}

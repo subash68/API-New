@@ -84,4 +84,5 @@ type SubscriptionReq struct {
 	CampusDriveID      string    `form:"-" json:"campusDriveID,omitempty"`
 	CampusDriveStatus  string    `form:"-" json:"campusDriveStatus,omitempty"`
 	NftID              string    `form:"-" json:"nftID,omitempty"`
+	SearchCriteria     string    `form:"-" json:"searchCriteria,omitempty"`
 }

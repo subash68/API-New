@@ -87,7 +87,26 @@ func (usdc *unvStuDataController) QuerySubscribedStuData(c *gin.Context) {
 		usd.SubscribedStakeholderID = ID
 		usd.SubscriberStakeholderID = unvStuQuery.SubscriberStakeholderID
 		usd.SubscriptionID = unvStuQuery.SubscriptionID
-		respData, err := usd.StoreStudentData("")
+		search := ""
+
+		if unvStuQuery.ProgramID != "" {
+			search += unvStuQuery.ProgramID + ","
+		}
+		if unvStuQuery.BranchID != "" {
+			search += unvStuQuery.BranchID + ","
+		}
+		if unvStuQuery.MonthOfHiring != "" {
+			search += unvStuQuery.MonthOfHiring + ","
+		}
+		if len(unvStuQuery.Skills) > 0 {
+			skillsArray := fmt.Sprintf("%v", unvStuQuery.Skills)
+			search += skillsArray[1 : len(skillsArray)-2]
+		}
+		if unvStuQuery.HiringCriteriaID != "" {
+			search = "Mtech,1,Java,Golang,"
+		}
+		search = search[:len(search)-1]
+		respData, err := usd.StoreStudentData("", search)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5Sub", ErrTyp: "Internal Server Error", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusUnprocessableEntity, resp)

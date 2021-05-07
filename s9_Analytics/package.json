@@ -1,0 +1,34 @@
+{
+  "name": "s9_analytics",
+  "version": "1.0.0",
+  "description": "Analytics key fetcher",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon  app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint js"
+  },
+  "nodemonConfig": {
+    "ext": "js, ts, graphql, json,yaml",
+    "ignore": [
+      "logs/*",
+      "swagger.json",
+      "node_modules"
+    ],
+    "delay": "2500"
+  },
+  "dependencies": {
+    "adal-node": "^0.2.2",
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0"
+  },
+  "keywords": [
+    "analytics"
+  ],
+  "author": "PGK technologies",
+  "license": "ISC"
+}
