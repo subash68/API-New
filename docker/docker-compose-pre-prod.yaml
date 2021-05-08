@@ -127,6 +127,7 @@ services:
       - ../s8_Notifications:/notifications
       - ../s8_Notifications/notifications
     command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
+
   analytics_auth:
     image: s9-analyticsauth
     container_name: analytics_auth

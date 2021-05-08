@@ -78,11 +78,12 @@ type CampusDriveRespondDataModel struct {
 
 // CampusDriveInviteEmailModel ...
 type CampusDriveInviteEmailModel struct {
-	CampusDriveID string `form:"campusDriveID" json:"campusDriveID" binding:"required"`
-	EmailFrom     string `form:"emailFrom" json:"emailFrom" binding:"required,email"`
-	EmailTo       string `form:"emailTo" json:"emailTo" binding:"required,email"`
-	EmailSubject  string `form:"emailSubject" json:"emailSubject" binding:"required"`
-	EmailBody     string `form:"emailBody" json:"emailBody" binding:"required"`
+	CampusDriveID     string                 `form:"campusDriveID" json:"campusDriveID" binding:"required"`
+	EmailFrom         string                 `form:"emailFrom" json:"emailFrom" binding:"required,email"`
+	EmailTo           string                 `form:"emailTo" json:"emailTo" binding:"required,email"`
+	EmailSubject      string                 `form:"emailSubject" json:"emailSubject" binding:"required"`
+	EmailBody         string                 `form:"emailBody" json:"emailBody" binding:"required"`
+	UniversityDetails map[string]interface{} `form:"-" json:"-"`
 }
 
 // CampusDriveSubInitModel ...

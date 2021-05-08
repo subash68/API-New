@@ -99,6 +99,11 @@ func (cdi *campusDriveInvitationsController) Invite(c *gin.Context) {
 			c.Abort()
 			return
 		}
+		if userType == "Corporate" {
+			usr.UniversityDetails = models.GetUnvDetailsByID(r)
+		} else if userType == "University" {
+			//delete(usr.UniversityDetails)
+		}
 		reqAsBytes, _ := json.Marshal(usr)
 		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": CDNotificationType, "content": string(reqAsBytes), "publishFlag": "false", "publishID": "", "receiverID": r, "redirectedURL": "", "isGeneric": "false", "notificationTypeID": CDNotificationID}
 		nftResp, err := makeNFTServiceCall("/nft/addNotification", reqBody)

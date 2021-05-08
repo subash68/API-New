@@ -126,7 +126,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		defer subrow.Close()
 		for subrow.Next() {
 			var newsub SubscriptionReq
-			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription, &newsub.SearchCriteria)
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.SearchCriteria)
 			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
@@ -155,8 +155,8 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		}
 	}
 	subSP, _ = RetriveSP("CORP_CD_GET_ALL")
-	fmt.Println("========================== CORP_CD_GET_ALL==========", sp)
-	subrow, err = Db.Query(subSP, subID, ID)
+	fmt.Println("========================== CORP_CD_GET_ALL==========", subSP, subID, ID)
+	subrow, err = Db.Query(subSP, ID, subID)
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
 	} else if err == sql.ErrNoRows {
@@ -173,6 +173,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}
+			fmt.Printf("\n\n==== Campus details %+v , cdr %v , adAr %v===\n\n", newsub, cdReq, cdAr)
 			if cdReq == true && cdAr == true && arNftID != "" {
 				newsub.CampusDriveStatus = "Accepted"
 				newsub.NftID = arNftID

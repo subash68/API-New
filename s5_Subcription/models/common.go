@@ -153,3 +153,19 @@ func createSudID(ID string, query string, code string) (string, error) {
 
 	return (code + strconv.Itoa(corporateNum) + (fmt.Sprintf("%07d", (countNum + 1)))), nil
 }
+
+// GetUnvDetailsByID ...
+func GetUnvDetailsByID(ID string) map[string]interface{} {
+	sp, _ := RetriveSP("UNV_GET_PROFILE_BY_ID")
+	var ud map[string]interface{}
+	var val []interface{}
+	err := Db.QueryRow(sp, ID).Scan(val...)
+	if err != nil {
+		fmt.Printf("\n=========Error getting University details ========= %v\n", err)
+	}
+	keys := []string{"universityName", "location", "yearOfEstablishment", "programs", "rankings", "accredations"}
+	for v, va := range val {
+		ud[""+keys[v]] = va
+	}
+	return ud
+}

@@ -51,7 +51,7 @@ func (cdm *CampusDriveDataModel) SubscribeToInviteForCD(userType string) error {
 		return fmt.Errorf("Cannot prepare Campus drive Subscription insert due to %v %v", newUISubIns, err.Error())
 	}
 
-	_, err = subInsStmt.Exec(cdm.InitiatorID, cdm.ReceiverID, cdm.CampusDriveID, cdm.CampusDriveRequested, cdm.RequestedDate, cdm.RequestedNftID, currentTime, currentTime)
+	_, err = subInsStmt.Exec(cdm.InitiatorID, cdm.ReceiverID, cdm.CampusDriveID, cdm.CampusDriveRequested, currentTime, cdm.RequestedNftID, currentTime, currentTime)
 	if err != nil {
 		return fmt.Errorf("Cannot Insert Campus drive Subscription  due to %v %v", newUISubIns, err.Error())
 	}
@@ -79,7 +79,7 @@ func (cdm *CampusDriveDataModel) SendInvitationToReceiver(userType string) error
 		return fmt.Errorf("Cannot prepare Campus drive Invitation Update due to %v %v", newUISubIns, err.Error())
 	}
 
-	_, err = subInsStmt.Exec(cdm.CampusDriveRequested, cdm.RequestedDate, cdm.RequestedNftID, currentTime, cdm.InitiatorID, cdm.CampusDriveID)
+	_, err = subInsStmt.Exec(true, currentTime, cdm.RequestedNftID, currentTime, cdm.InitiatorID, cdm.CampusDriveID)
 	if err != nil {
 		return fmt.Errorf("Cannot Update Campus drive Invitation   due to %v %v", newUISubIns, err.Error())
 	}

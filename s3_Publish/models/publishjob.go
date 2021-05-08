@@ -28,7 +28,7 @@ type HiringCriteriaDB struct {
 	HiringCriteriaName      string     `form:"hiringCriteriaName" json:"hiringCriteriaName" binding:"required" validate:"required"`
 	StakeholderID           string     `form:"stakeholderID" json:"stakeholderID,omitempty"`
 	ProgramID               string     `form:"programID" json:"programID" binding:"required"`
-	DepartmentID            string     `form:"courseID" json:"course" binding:"required"`
+	DepartmentID            string     `form:"courseID" json:"courseID" binding:"required"`
 	CutOffCategory          string     `form:"cutOffCategory" json:"cutOffCategory" binding:"required"`
 	CutOff                  float64    `form:"cutOff" json:"cutOff" binding:"required"`
 	EduGapsSchoolAllowed    bool       `form:"eduGapsSchoolAllowed" json:"eduGapsSchoolAllowed"`
