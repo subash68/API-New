@@ -89,20 +89,23 @@ func (usdc *unvStuDataController) QuerySubscribedStuData(c *gin.Context) {
 		usd.SubscriptionID = unvStuQuery.SubscriptionID
 		search := ""
 
-		if unvStuQuery.ProgramID != "" {
-			search += unvStuQuery.ProgramID + ","
+		if len(unvStuQuery.ProgramID) > 0 {
+			skillsArray := fmt.Sprintf("%v", unvStuQuery.ProgramID)
+			search += skillsArray[1:len(skillsArray)-2] + ","
 		}
-		if unvStuQuery.BranchID != "" {
-			search += unvStuQuery.BranchID + ","
+		if len(unvStuQuery.BranchID) > 0 {
+			skillsArray := fmt.Sprintf("%v", unvStuQuery.BranchID)
+			search += skillsArray[1:len(skillsArray)-2] + ","
 		}
-		if unvStuQuery.MonthOfHiring != "" {
-			search += unvStuQuery.MonthOfHiring + ","
+		if len(unvStuQuery.MonthOfHiring) > 0 {
+			skillsArray := fmt.Sprintf("%v", unvStuQuery.MonthOfHiring)
+			search += skillsArray[1:len(skillsArray)-2] + ","
 		}
 		if len(unvStuQuery.Skills) > 0 {
 			skillsArray := fmt.Sprintf("%v", unvStuQuery.Skills)
-			search += skillsArray[1 : len(skillsArray)-2]
+			search += skillsArray[1:len(skillsArray)-2] + ","
 		}
-		if unvStuQuery.HiringCriteriaID != "" {
+		if len(unvStuQuery.HiringCriteriaID) > 0 {
 			search = "Mtech,1,Java,Golang,"
 		}
 		search = search[:len(search)-1]

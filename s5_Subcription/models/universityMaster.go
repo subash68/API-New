@@ -108,10 +108,10 @@ type UnvStuDataModel struct {
 type UnvStuDataQueryDataModel struct {
 	SubscriberStakeholderID string   `form:"universityID" json:"universityID" binding:"required"`
 	SubscriptionID          string   `form:"subscriptionID" json:"subscriptionID"  binding:"required"`
-	HiringCriteriaID        string   `form:"hiringCriteriaID" json:"hiringCriteriaID"`
-	ProgramID               string   `form:"programID" json:"programID"`
-	BranchID                string   `form:"branchID" json:"branchID"`
-	MonthOfHiring           string   `form:"mothOfHiring" json:"mothOfHiring"`
+	HiringCriteriaID        []string `form:"hiringCriteriaID" json:"hiringCriteriaID"`
+	ProgramID               []string `form:"programID" json:"programID"`
+	BranchID                []string `form:"branchID" json:"branchID"`
+	MonthOfHiring           []string `form:"mothOfHiring" json:"mothOfHiring"`
 	Skills                  []string `form:"skills" json:"skills"`
 }
 
