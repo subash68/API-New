@@ -42,7 +42,7 @@ type HiringCriteriaDB struct {
 	CreationDate            time.Time  `form:"-" json:"creationDate"`
 	PublishedFlagNull       NullBool   `form:"-" json:"-"`
 	PublishIDNull           NullString `form:"-" json:"-"`
-	PublishedFlag           bool       `form:"-" json:"publishedFlag,omitempty"`
+	PublishedFlag           bool       `form:"-" json:"publishedFlag"`
 	PublishID               string     `form:"-" json:"publishID,omitempty"`
 }
 
