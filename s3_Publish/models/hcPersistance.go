@@ -140,10 +140,14 @@ func (hc *HiringCriteriaDB) GetAllHC(query string) (hcArray []HiringCriteriaDB, 
 		err = hcRows.Scan(&newHC.HiringCriteriaID, &newHC.HiringCriteriaName, &newHC.ProgramID, &newHC.DepartmentID, &newHC.CutOffCategory, &newHC.CutOff, &newHC.EduGapsSchoolAllowed, &newHC.EduGaps11N12Allowed, &newHC.EduGapsGradAllowed, &newHC.EduGapsPGAllowed, &newHC.AllowActiveBacklogs, &newHC.NumberOfAllowedBacklogs, &newHC.YearOfPassing, &newHC.Remarks, &newHC.CreationDate, &newHC.PublishedFlagNull, &newHC.PublishIDNull)
 		if newHC.PublishedFlagNull.Valid {
 			newHC.PublishedFlag = newHC.PublishedFlagNull.Bool
+		} else {
+			newHC.PublishedFlag = false
 		}
 
 		if newHC.PublishIDNull.Valid {
 			newHC.PublishID = newHC.PublishIDNull.String
+		} else {
+			newHC.PublishID = ""
 		}
 		if err != nil {
 			return hcArray, fmt.Errorf("Cannot read the Rows %v", err.Error())

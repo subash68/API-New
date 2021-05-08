@@ -43,7 +43,7 @@ type HiringCriteriaDB struct {
 	PublishedFlagNull       NullBool   `form:"-" json:"-"`
 	PublishIDNull           NullString `form:"-" json:"-"`
 	PublishedFlag           bool       `form:"-" json:"publishedFlag"`
-	PublishID               string     `form:"-" json:"publishID,omitempty"`
+	PublishID               string     `form:"-" json:"publishID"`
 }
 
 // MultipleHC ...
