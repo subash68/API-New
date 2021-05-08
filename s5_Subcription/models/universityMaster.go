@@ -111,7 +111,7 @@ type UnvStuDataQueryDataModel struct {
 	HiringCriteriaID        []string `form:"hiringCriteriaID" json:"hiringCriteriaID"`
 	ProgramID               []string `form:"programID" json:"programID"`
 	BranchID                []string `form:"branchID" json:"branchID"`
-	MonthOfHiring           []string `form:"mothOfHiring" json:"mothOfHiring"`
+	MonthOfHiring           []string `form:"monthOfHiring" json:"mothOfHiring"`
 	Skills                  []string `form:"skills" json:"skills"`
 }
 

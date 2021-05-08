@@ -125,7 +125,7 @@ func (usd *UnvStuDataModel) RetrieveStudentData() (*UnvStuDataModel, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var nsd StuInfoFromUnvDatabaseModel
-		err = rows.Scan(&usd.SubscriptionID, &usd.SubscriberStakeholderID, &usd.SubscribedStakeholderID, &nsd.CollegeID, &nsd.ProgramName, &nsd.ProgramID, &nsd.BranchName, &nsd.BranchID, &nsd.AvgCgpa, &nsd.AvgPercentage, &nsd.StakeholderID, &usd.SubscribedDate, &usd.SubscriptionValidityTag, &usd.CreationDate, &usd.LastUpdatedDate)
+		err = rows.Scan(&usd.SubscriptionID, &usd.SubscriberStakeholderID, &usd.SubscribedStakeholderID, &nsd.CollegeID, &nsd.ProgramName, &nsd.ProgramID, &nsd.BranchName, &nsd.BranchID, &nsd.AvgCgpa, &nsd.AvgPercentage, &nsd.StakeholderID, &usd.SubscribedDate, &usd.SubscriptionValidityTag, &usd.CreationDate, &usd.LastUpdatedDate, &nsd.Name)
 		if err != nil {
 			return usd, err
 		}

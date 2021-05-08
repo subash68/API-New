@@ -151,7 +151,7 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 		defer subrow.Close()
 		for subrow.Next() {
 			var newsub SubscriptionModel
-			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation, &newsub.SearchCriteria)
 			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
 			if err != nil {
@@ -181,7 +181,7 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 		defer subrow.Close()
 		for subrow.Next() {
 			var newsub SubscriptionModel
-			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Subscriber, &newsub.Publisher, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "University Information"
 			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
 			if err != nil {
@@ -190,6 +190,50 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
 				Job <- customError
 				return Job
+			}
+			subs.Subscriptions = append(subs.Subscriptions, newsub)
+		}
+	}
+	subSP, _ = RetriveSP("CORP_CD_GET_ALL")
+	fmt.Println("========================== CORP_CD_GET_ALL==========", subSP, ID)
+	subrow, err = Db.Query(subSP, ID)
+	if err != nil && err != sql.ErrNoRows {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+		Job <- customError
+		return Job
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionModel
+			var cdReq, cdAr bool
+			var rqDate, arDate time.Time
+			var reqNftID, arNftID string
+			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID)
+			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				customError.ErrTyp = "500"
+				customError.ErrCode = "S3PJ002"
+				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+				Job <- customError
+				return Job
+			}
+			fmt.Printf("\n\n==== Campus details %+v , cdr %v , adAr %v===\n\n", newsub, cdReq, cdAr)
+			if cdReq == true && cdAr == true && arNftID != "" {
+				newsub.CampusDriveStatus = "Accepted"
+				newsub.NftID = arNftID
+				newsub.DateOfSubscription = rqDate
+			} else if cdReq == true && cdAr == false && arNftID != "" {
+				newsub.CampusDriveStatus = "Rejected"
+				newsub.NftID = arNftID
+				newsub.DateOfSubscription = rqDate
+			} else if cdReq == true && cdAr == false && arNftID == "" {
+				newsub.CampusDriveStatus = "Pending"
+				newsub.NftID = reqNftID
+				newsub.DateOfSubscription = rqDate
 			}
 			subs.Subscriptions = append(subs.Subscriptions, newsub)
 		}

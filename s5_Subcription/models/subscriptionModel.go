@@ -14,6 +14,10 @@ type SubscriptionModel struct {
 	GeneralNote        string    `form:"-" json:"generalNote,omitempty"`
 	SubscriptionID     string    `form:"-" json:"subscriptionID,omitempty"`
 	PublisherLocation  string    `form:"-" json:"location"`
+	CampusDriveID      string    `form:"-" json:"campusDriveID,omitempty"`
+	CampusDriveStatus  string    `form:"-" json:"campusDriveStatus,omitempty"`
+	NftID              string    `form:"-" json:"nftID,omitempty"`
+	SearchCriteria     string    `form:"-" json:"searchCriteria,omitempty"`
 }
 
 // SubscriptionReq ...

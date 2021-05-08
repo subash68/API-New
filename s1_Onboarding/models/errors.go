@@ -41,8 +41,8 @@ type errorMessage struct {
 
 // ErrorMessages ...
 type ErrorMessages struct {
-	Status string       `json:"Status"`
-	Err    errorMessage `json:"Error,omitempty"`
+	Status string       `json:"status"`
+	Err    errorMessage `json:"error,omitempty"`
 }
 
 // FieldError ...
@@ -53,7 +53,7 @@ type FieldError struct {
 // DetailError ...
 type DetailError struct {
 	Code      string `json:"code,omitempty"`
-	Message   string `json:"Message,omitempty"`
+	Message   string `json:"message,omitempty"`
 	Target    string `json:"target,omitempty"`
 	Condition string `json:"condition,omitempty"`
 }
