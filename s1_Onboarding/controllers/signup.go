@@ -144,8 +144,17 @@ func Signup(c *gin.Context) {
 		// }
 		fmt.Printf("\n insertjob: %v\n", insertJob)
 
-		go services.SendSmsOtp(insertJob.SuccessResp["Phone"])
-		go services.SendOTPEmail(insertJob.SuccessResp["Email"], insertJob.SuccessResp["StakeholderID"])
+		ms, err := services.SendSmsOtp(insertJob.SuccessResp["Phone"])
+		if err != nil {
+			fmt.Printf("\nFailed to send mobile otp\n")
+			fmt.Println(err)
+		}
+		es, err := services.SendOTPEmail(insertJob.SuccessResp["Email"], insertJob.SuccessResp["StakeholderID"])
+		if err != nil {
+			fmt.Printf("\nFailed to send Email otp\n")
+			fmt.Println(err)
+		}
+		fmt.Printf("Phone verification sent %v, email verification sent %v", ms, es)
 		// tokenAdded, err := raiseBonusTokenReq(insertJob.SuccessResp["StakeholderID"])
 		// if err != nil {
 		// 	fmt.Println("Failed to assign Bonus tokens %v", err.Error())

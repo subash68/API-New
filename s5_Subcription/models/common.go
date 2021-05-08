@@ -155,17 +155,14 @@ func createSudID(ID string, query string, code string) (string, error) {
 }
 
 // GetUnvDetailsByID ...
-func GetUnvDetailsByID(ID string) map[string]interface{} {
+func GetUnvDetailsByID(ID string) UnvCDDataModel {
 	sp, _ := RetriveSP("UNV_GET_PROFILE_BY_ID")
-	var ud map[string]interface{}
-	var val []interface{}
-	err := Db.QueryRow(sp, ID).Scan(val...)
+	var ud UnvCDDataModel
+	err := Db.QueryRow(sp, ID).Scan(&ud.Name, &ud.Location, &ud.YearOfEst, &ud.Programs, &ud.Ranking, &ud.Accredations)
 	if err != nil {
 		fmt.Printf("\n=========Error getting University details ========= %v\n", err)
 	}
-	keys := []string{"universityName", "location", "yearOfEstablishment", "programs", "rankings", "accredations"}
-	for v, va := range val {
-		ud[""+keys[v]] = va
-	}
+
+	fmt.Printf("\n\n Got UD --> %v", ud)
 	return ud
 }

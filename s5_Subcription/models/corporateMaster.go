@@ -76,14 +76,24 @@ type CampusDriveRespondDataModel struct {
 	ReasonToReject string `form:"reasonToReject" json:"reasonToReject"`
 }
 
+// UnvCDDataModel ...
+type UnvCDDataModel struct {
+	Name         string `json:"universityName"`
+	Location     string `json:"location"`
+	YearOfEst    int    `json:"yearOfEstablishment"`
+	Programs     string `json:"program"`
+	Ranking      string `json:"ranking"`
+	Accredations string `json:"accredations"`
+}
+
 // CampusDriveInviteEmailModel ...
 type CampusDriveInviteEmailModel struct {
-	CampusDriveID     string                 `form:"campusDriveID" json:"campusDriveID" binding:"required"`
-	EmailFrom         string                 `form:"emailFrom" json:"emailFrom" binding:"required,email"`
-	EmailTo           string                 `form:"emailTo" json:"emailTo" binding:"required,email"`
-	EmailSubject      string                 `form:"emailSubject" json:"emailSubject" binding:"required"`
-	EmailBody         string                 `form:"emailBody" json:"emailBody" binding:"required"`
-	UniversityDetails map[string]interface{} `form:"-" json:"-"`
+	CampusDriveID     string         `form:"campusDriveID" json:"campusDriveID" binding:"required"`
+	EmailFrom         string         `form:"emailFrom" json:"emailFrom" binding:"required,email"`
+	EmailTo           string         `form:"emailTo" json:"emailTo" binding:"required,email"`
+	EmailSubject      string         `form:"emailSubject" json:"emailSubject" binding:"required"`
+	EmailBody         string         `form:"emailBody" json:"emailBody" binding:"required"`
+	UniversityDetails UnvCDDataModel `form:"-" json:"universityDetails,omitempty"`
 }
 
 // CampusDriveSubInitModel ...
