@@ -43,7 +43,7 @@ func (nft *nftController) AddNewNotification(c *gin.Context) {
 
 // GetAllNotification ...
 func (nft *nftController) GetAllNotification(c *gin.Context) {
-	ctx, ID, _, successResp := getFuncReq(c, "Get Notifications")
+	ctx, ID, userType, successResp := getFuncReq(c, "Get Notifications")
 
 	page, err := strconv.Atoi(c.Param("page"))
 	if page <= 0 || err != nil {
@@ -74,7 +74,7 @@ func (nft *nftController) GetAllNotification(c *gin.Context) {
 		filter += " AND PublishFlag=" + c.Query("publishFlag") + ""
 	}
 
-	notifications, err := models.NftPersistance.GetAllNotifications(ID, filter, page, size)
+	notifications, err := models.NftPersistance.GetAllNotifications(ID, filter, page, size, userType)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Notifications", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)

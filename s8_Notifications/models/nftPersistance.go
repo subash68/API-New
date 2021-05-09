@@ -68,7 +68,7 @@ func (np *nftPersistance) AddNotification(newNft NotificationsModel) (string, er
 }
 
 // GetAllNotifications ...
-func (np *nftPersistance) GetAllNotifications(ID string, filters string, page int, size int) ([]NotificationsModel, error) {
+func (np *nftPersistance) GetAllNotifications(ID string, filters string, page int, size int, userType string) ([]NotificationsModel, error) {
 	// Preparing Database insert
 	nftGetAllCmd, _ := RetriveSP("NFT_GET_ALL")
 	nftGroupCmd, _ := RetriveSP("NFT_GROUP_COND")
@@ -77,7 +77,7 @@ func (np *nftPersistance) GetAllNotifications(ID string, filters string, page in
 	nftGetAllCmd = nftGetAllCmd + filters + nftGroupCmd
 	fmt.Println(nftGetAllCmd, ID, ID, ((page - 1) * size), size)
 
-	nftRows, err := Db.Query(nftGetAllCmd, ID, ID, ((page - 1) * size), size)
+	nftRows, err := Db.Query(nftGetAllCmd, ID, ID, userType, ((page - 1) * size), size)
 	if err != nil && err != sql.ErrNoRows {
 		return allNfts, fmt.Errorf("Cannot get the Rows %v", err.Error())
 	} else if err == sql.ErrNoRows {
