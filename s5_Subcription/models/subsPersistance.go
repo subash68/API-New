@@ -212,7 +212,7 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			var cdReq, cdAr bool
 			var rqDate, arDate time.Time
 			var reqNftID, arNftID string
-			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID)
+			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			if err != nil {
 				customError.ErrTyp = "500"
