@@ -157,12 +157,12 @@ type UnvOtherInformationModel struct {
 	StakeholderID   string    `form:"-" json:"-"`
 	Title           string    `form:"title" json:"title" binding:"required"`
 	Information     string    `form:"information" json:"information" binding:"required"`
-	Attachment      []byte    `form:"-" json:"attachment"`
-	ID              int       `form:"-" json:"id"`
+	Attachment      []byte    `form:"-" json:"attachment,omitEmpty"`
+	ID              int       `form:"-" json:"id,omitEmpty"`
 	PublishID       string    `form:"-" json:"publishID"`
 	PublishedFlag   string    `form:"-" json:"publishedFlag"`
-	CreationDate    time.Time `form:"-" json:"creationDate"`
-	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+	CreationDate    time.Time `form:"-" json:"creationDate,omitEmpty"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate,omitEmpty"`
 }
 
 // UniversityMasterDb ...

@@ -3,6 +3,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -63,15 +64,19 @@ func (oi *UnvOtherInformationModel) PublishOI() <-chan DbModelError {
 		Job <- customError
 		return Job
 	}
+	var uName string
+	unSp, _ := RetriveSP("UNV_GET_Name")
+	err := Db.QueryRow(unSp, oi.StakeholderID).Scan(&uName)
 	// Preparing Database insert
 	pdhInsertCmd, _ := RetriveSP("UNV_PDH_INS_NEW")
 	pdhVals := []interface{}{}
 
 	currentTime := time.Now()
 
-	pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	reqAsBytes, _ := json.Marshal(oi)
 
-	pdhVals = append(pdhVals, oi.StakeholderID, pdhIDs, currentTime, false, false, false, false, false, false, true, false, false, "Other Information has been published", currentTime, currentTime, "[]")
+	pdhVals = append(pdhVals, oi.StakeholderID, pdhIDs, uName, currentTime, false, false, false, false, false, false, true, false, false, "Other Information has been published", currentTime, currentTime, string(reqAsBytes))
 
 	pdhStmt, err := Db.Prepare(pdhInsertCmd)
 	if err != nil {
