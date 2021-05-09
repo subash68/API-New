@@ -108,7 +108,9 @@ func (usdc *unvStuDataController) QuerySubscribedStuData(c *gin.Context) {
 		if len(unvStuQuery.HiringCriteriaID) > 0 {
 			search = "Mtech,1,Java,Golang,"
 		}
-		search = search[:len(search)-1]
+		if len(search) > 1 {
+			search = search[:len(search)-1]
+		}
 		respData, err := usd.StoreStudentData("", search)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5Sub", ErrTyp: "Internal Server Error", Err: err, SuccessResp: successResp})
