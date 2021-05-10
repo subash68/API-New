@@ -78,12 +78,12 @@ type CampusDriveRespondDataModel struct {
 
 // UnvCDDataModel ...
 type UnvCDDataModel struct {
-	Name         string `json:"universityName"`
-	Location     string `json:"location"`
-	YearOfEst    int    `json:"yearOfEstablishment"`
-	Programs     string `json:"program"`
-	Ranking      string `json:"ranking"`
-	Accredations string `json:"accredations"`
+	Name         string `json:"universityName,omitempty"`
+	Location     string `json:"location,omitempty"`
+	YearOfEst    int    `json:"yearOfEstablishment,omitempty"`
+	Programs     string `json:"program,omitempty"`
+	Ranking      string `json:"ranking,omitempty"`
+	Accredations string `json:"accredations,omitempty"`
 }
 
 // CampusDriveInviteEmailModel ...
@@ -96,10 +96,47 @@ type CampusDriveInviteEmailModel struct {
 	UniversityDetails UnvCDDataModel `form:"-" json:"universityDetails,omitempty"`
 }
 
+// CampusDriveDirectInviteEmailModel ...
+type CampusDriveDirectInviteEmailModel struct {
+	CampusDriveID  string `form:"campusDriveID" json:"campusDriveID" binding:"required"`
+	EmailFrom      string `form:"emailFrom" json:"emailFrom" binding:"required,email"`
+	EmailTo        string `form:"emailTo" json:"emailTo" binding:"required,email"`
+	EmailSubject   string `form:"emailSubject" json:"emailSubject" binding:"required"`
+	EmailBody      string `form:"emailBody" json:"emailBody" binding:"required"`
+	StudentIDs     string `form:"studentIDs" json:"studentIDs"  binding:"required"`
+	SubscriptionID string `form:"subscriptionID" json:"subscriptionID" binding:"required"`
+}
+
 // CampusDriveSubInitModel ...
 type CampusDriveSubInitModel struct {
 	ReceiverID      string  `form:"receiverID" json:"receiverID" binding:"required"`
 	PaidTokensUsed  float64 `form:"paidTokensUsed" json:"paidTokensUsed"`
 	BonusTokensUsed float64 `form:"bonusTokensUsed" json:"bonusTokensUsed"`
 	TransactionID   string  `form:"transactionID" json:"transactionID,omitempty"`
+}
+
+// CrpHiringInsightsModel ...
+type CrpHiringInsightsModel struct {
+	SubscriptionID           string    `form:"-" json:"subscriptionID"`
+	SubscriberStakeholderID  string    `form:"corporateID" json:"corporateID" binding:"required"`
+	SubscribedStakeholderID  string    `form:"-" json:"subscribedStakeholderID"`
+	SubscriptionValidityFlag bool      `form:"-" json:"subscriptionValidityFlag,omitempty"`
+	Top5LocationsRecruited   []string  `form:"-" json:"top5LocationsRecruited"`
+	Top5SkillsRecruited      []string  `form:"-" json:"top5SkillsRecruited"`
+	Top5ProgramsRecruited    []string  `form:"-" json:"top5ProgramsRecruited"`
+	TentativeMonthOfHiring   string    `form:"-" json:"tentativeMonthOfHiring"`
+	AverageCutoffCGPA        float64   `form:"-" json:"averageCutoffCGPA"`
+	AverageCutoffPercentage  float64   `form:"-" json:"averageCutoffPercentage"`
+	AverageSalary            string    `form:"-" json:"averageSalary"`
+	SubscribedDate           time.Time `form:"-" json:"subscribedTime" time_format="2006-12-01T21:23:34.409Z"`
+	CreationDate             time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate          time.Time `form:"-" json:"lastUpdatedTime" time_format="2006-12-01T21:23:34.409Z"`
+}
+
+// CorpHiringInsightsSubsReqModel ...
+type CorpHiringInsightsSubsReqModel struct {
+	SubscriberStakeholderID string  `form:"corporateID" json:"corporateID" binding:"required"`
+	PaidTokensUsed          float64 `form:"paidTokensUsed" json:"paidTokensUsed"`
+	BonusTokensUsed         float64 `form:"bonusTokensUsed" json:"bonusTokensUsed"`
+	TransactionID           string  `form:"transactionID" json:"transactionID,omitempty"`
 }

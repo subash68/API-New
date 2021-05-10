@@ -76,7 +76,7 @@ func ValidatePayment(c *gin.Context) {
 				successLogChan <- resp
 			}()
 			go func() {
-				reqBody := map[string]string{"modeOfTokenissue": "Bonus", "stakeholderID": paymentDetails["stakeholderID"].(string), "paymentID": paymentOrder.OrderID, "allocatedTokens": "1000"}
+				reqBody := map[string]string{"modeOfTokenissue": "Bonus", "stakeholderID": paymentDetails["stakeholderID"].(string), "paymentID": paymentOrder.OrderID, "allocatedTokens": "100"}
 				resp, err := makeTokenServiceCall("/t/addAllocation", reqBody)
 				fmt.Println(resp, " ==================== Give Bonus tokens")
 				errLogChan <- err

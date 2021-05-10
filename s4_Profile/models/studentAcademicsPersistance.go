@@ -37,6 +37,16 @@ func (sa *StudentAcademicsModelReq) InsertAcademics(form *multipart.Form) error 
 		insFields += twelfthSP
 		updSP += tenthUPD
 	}
+	// if sa.Grad.Name != "" {
+	// 	twelfthSP, _ := RetriveSP("STU_Twelfth_INS")
+	// 	tenthUPD, _ := RetriveSP("STU_Twelfth_UPD")
+	// 	vals := constructTTReq(sa.Twelfth, form, "twelfthFile")
+	// 	val = append(val, vals...)
+	// 	val = append(val, vals...)
+	// 	ques += "?,?,?,?,?,?"
+	// 	insFields += twelfthSP
+	// 	updSP += tenthUPD
+	// }
 	// TODO -- Graduation and PG
 	saSP, _ := RetriveSP("STU_INS_ACADEMICS")
 	insFields = insFields[0 : len(insFields)-1]

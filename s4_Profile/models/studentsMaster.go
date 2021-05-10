@@ -84,6 +84,36 @@ type StudentNullableTTModel struct {
 	AttachmentFile        []byte     `form:"attachment" json:"attachment"`
 }
 
+// StudentGradModel ...
+type StudentGradModel struct {
+	UniversityStakeholderIDUniv string `form:"universityID" json:"universityID" binding:"required"`
+	CollegeRollNumber           string `form:"collegeRollNumber" json:"collegeRollNumber" binding:"required"`
+	ExpectedYearOfPassing       string `form:"expectedYearOfPassing" json:"expectedYearOfPassing" binding:"required"`
+	ProgramID                   string `form:"programID" json:"programID" binding:"required"`
+	ProgramName                 string `form:"programName" json:"programName" binding:"required"`
+	BranchID                    string `form:"branchID" json:"branchID" binding:"required"`
+	BranchName                  string `form:"branchName" json:"branchName" binding:"required"`
+	FinalCGPA                   string `form:"finalCGPA" json:"finalCGPA" binding:"required"`
+	FinalPercentage             string `form:"finalPercentage" json:"finalPercentage" binding:"required"`
+	ActiveBacklogsNumber        string `form:"activeBacklogsNumber" json:"activeBacklogsNumber" binding:"required"`
+	TotalNumberOfBacklogs       string `form:"totalNumberOfBacklogs" json:"totalNumberOfBacklogs" binding:"required"`
+}
+
+// StudentSemisterModel ...
+type StudentSemisterModel struct {
+	UniversityStakeholderIDUniv string `form:"universityID" json:"universityID" binding:"required"`
+	CollegeRollNumber           string `form:"collegeRollNumber" json:"collegeRollNumber" binding:"required"`
+	ExpectedYearOfPassing       string `form:"expectedYearOfPassing" json:"expectedYearOfPassing" binding:"required"`
+	ProgramID                   string `form:"programID" json:"programID" binding:"required"`
+	ProgramName                 string `form:"programName" json:"programName" binding:"required"`
+	BranchID                    string `form:"branchID" json:"branchID" binding:"required"`
+	BranchName                  string `form:"branchName" json:"branchName" binding:"required"`
+	FinalCGPA                   string `form:"finalCGPA" json:"finalCGPA" binding:"required"`
+	FinalPercentage             string `form:"finalPercentage" json:"finalPercentage" binding:"required"`
+	ActiveBacklogsNumber        string `form:"activeBacklogsNumber" json:"activeBacklogsNumber" binding:"required"`
+	TotalNumberOfBacklogs       string `form:"totalNumberOfBacklogs" json:"totalNumberOfBacklogs" binding:"required"`
+}
+
 // StudentAcademicsModelReq ...
 type StudentAcademicsModelReq struct {
 	StakeholderID string         `form:"-" json:"-"`

@@ -152,7 +152,7 @@ services:
       context: ../s9_Analytics/.
     volumes:
       - ../s9_Analytics:/usr/app/
-      - ../s9_Analytics/node_modules
+      - /usr/app/node_modules
     command: "npm start"
     # ports:
     #   - 8080:8080

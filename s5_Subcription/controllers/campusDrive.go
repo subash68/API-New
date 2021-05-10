@@ -196,7 +196,7 @@ func (cdi *campusDriveInvitationsController) Respond(c *gin.Context) {
 		}
 		var cdResp cdRespModel
 		cdResp.CampusDriveID = cdm.CampusDriveID
-		cdResp.Message = "Invitation sent to Receiver"
+		cdResp.Message = "Response Sent"
 		c.JSON(http.StatusOK, cdResp)
 		c.Abort()
 		return

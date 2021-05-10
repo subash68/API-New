@@ -84,4 +84,5 @@ type CorporateByIDResp struct {
 	DateOfJoining                       time.Time                `json:"dateOfJoining,omitempty" `
 	Jobs                                string                   `json:"jobs,omitempty" form:"jobs"`
 	JobsAvailable                       []map[string]interface{} `json:"jobsAvailable"`
+	Subscriptions                       []SubscriptionReq        `json:"subscriptions"`
 }

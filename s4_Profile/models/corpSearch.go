@@ -1,10 +1,12 @@
 package models
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // CorpSearchModel ...
@@ -89,6 +91,61 @@ func GetCorpByID(ID string, count int, shID string) (CorporateByIDResp, error) {
 	fmt.Println("==================", corpDb.Jobs, corpDb.Jobs == "", corpDb, " ===================")
 	if corpDb.StakeholderID == "" {
 		return corpDb, fmt.Errorf("User details not found for ID %s", ID)
+	}
+	subSP, _ := RetriveSP("CORP_HCI_GET_ALL_SUB")
+	fmt.Println("========================== CORP_HCI_GET_ALL_SUB==========", subSP)
+	subrow, err := Db.Query(subSP, ID, shID)
+	if err != nil && err != sql.ErrNoRows {
+		return corpDb, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription)
+			newsub.GeneralNote = "Hiring Insights" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			corpDb.Subscriptions = append(corpDb.Subscriptions, newsub)
+		}
+	}
+	subSP, _ = RetriveSP("UNV_CD_GET_ALL")
+	fmt.Println("========================== UNV_CD_GET_ALL==========", subSP, shID, ID)
+	subrow, err = Db.Query(subSP, ID, shID)
+	if err != nil && err != sql.ErrNoRows {
+		return corpDb, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			var cdReq, cdAr bool
+			var rqDate, arDate time.Time
+			var reqNftID, arNftID string
+			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID)
+			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			if err != nil {
+				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			fmt.Printf("\n\n==== Campus details %+v , cdr %v , adAr %v===\n\n", newsub, cdReq, cdAr)
+			if cdReq == true && cdAr == true && arNftID != "" {
+				newsub.CampusDriveStatus = "Accepted"
+				newsub.NftID = arNftID
+				newsub.DateOfSubscription = rqDate
+			} else if cdReq == true && cdAr == false && arNftID != "" {
+				newsub.CampusDriveStatus = "Rejected"
+				newsub.NftID = arNftID
+				newsub.DateOfSubscription = rqDate
+			} else if cdReq == true && cdAr == false && arNftID == "" {
+				newsub.CampusDriveStatus = "Pending"
+				newsub.NftID = reqNftID
+				newsub.DateOfSubscription = rqDate
+			}
+			corpDb.Subscriptions = append(corpDb.Subscriptions, newsub)
+		}
 	}
 
 	if corpDb.Jobs != "" {
