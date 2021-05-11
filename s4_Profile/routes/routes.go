@@ -114,6 +114,8 @@ func InitialzeRoutes() *gin.Engine {
 	stu.Use(middleware.AuthorizeRequest())
 	stu.POST("/academics/tenth", controllers.AddTenth)
 	stu.POST("/academics/twelfth", controllers.AddTwelfth)
+	stu.POST("/academics/graduation", controllers.AddGraduation)
+	stu.POST("/academics/postGraduation", controllers.AddPostGraduation)
 	stu.GET("/academics", controllers.GetAcademics)
 
 	// Student Languages

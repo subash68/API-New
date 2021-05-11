@@ -79,7 +79,9 @@ func (pj *PublishJobs) Insert(ID string) <-chan DbModelError {
 			jc.Jobs = append(jc.Jobs, newJC)
 		}
 		jcPubDataAsByte, _ := json.Marshal(&jc)
-		pdhVals = append(pdhVals, ID, pdhIDs[index], currentTime, false, true, false, false, "New Job has been published", currentTime, currentTime, string(jcPubDataAsByte))
+		jcPubDataAsByteUnescaped, _ := json.RawMessage(jcPubDataAsByte).MarshalJSON()
+
+		pdhVals = append(pdhVals, ID, pdhIDs[index], currentTime, false, true, false, false, "New Job has been published", currentTime, currentTime, string(jcPubDataAsByteUnescaped))
 	}
 	//pjInsertCmd = pjInsertCmd[0 : len(pjInsertCmd)-1]
 	stmt, err := Db.Prepare(pjInsertCmd)

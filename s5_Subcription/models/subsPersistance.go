@@ -9,7 +9,7 @@ import (
 )
 
 //Insert ....
-func (subs *SubscriptionReq) Insert(stakeholder string, subscriberID string) <-chan DbModelError {
+func (subs *SubscriptionReq) Insert(stakeholder string, subscriberID string, pubStakeholder string) <-chan DbModelError {
 	Job := make(chan DbModelError, 1)
 	successResp := map[string]string{}
 	var customError DbModelError
@@ -23,18 +23,30 @@ func (subs *SubscriptionReq) Insert(stakeholder string, subscriberID string) <-c
 	switch stakeholder {
 	case "Corporate":
 		rsp = "CRP"
-		shRsp = "UNV"
 		break
 	case "University":
 		rsp = "UNV"
-		shRsp = "CRP"
 		break
 	case "Student":
 		rsp = "STU"
-		shRsp = "CRP"
 		break
 	default:
-		customError = DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid Stakeholder type", Err: fmt.Errorf("" + stakeholder + " is invaild,  Expecting Corporate,University or Student"), SuccessResp: successResp}
+		customError = DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid Stakeholder type", Err: fmt.Errorf("" + stakeholder + " is invalid,  Expecting Corporate,University or Student"), SuccessResp: successResp}
+		Job <- customError
+		return Job
+	}
+	switch pubStakeholder {
+	case "Corporate":
+		shRsp = "CRP"
+		break
+	case "University":
+		shRsp = "UNV"
+		break
+	case "Student":
+		shRsp = "STU"
+		break
+	default:
+		customError = DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid Stakeholder type", Err: fmt.Errorf("" + pubStakeholder + " is invalid,  Expecting Corporate,University or Student"), SuccessResp: successResp}
 		Job <- customError
 		return Job
 	}

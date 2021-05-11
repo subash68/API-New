@@ -29,6 +29,7 @@ type DbEnv struct {
 	LutDepartments          string `json:"LUT_DEPARTMENTS"`
 	LutLangProf             string `json:"LUT_LANG_PROF"`
 	StuAcademics            string `json:"STU_ACADEMICS"`
+	StuSemDbName            string `json:"STU_SEM_DB"`
 	StuLangKnown            string `json:"STU_LANG"`
 	StuCertsDbName          string `json:"STU_CERTS"`
 	StuAssessmentDbName     string `json:"STU_ASSESSMENT"`

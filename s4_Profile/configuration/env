@@ -15,6 +15,7 @@
     "LUT_DEPARTMENTS":"LUT_BranchCatalog",
     "LUT_LANG_PROF":"LUT_LanguageProficiency",
     "STU_ACADEMICS":"Stud_Grades",
+    "STU_SEM_DB":"Stud_Grades_GradandPG",
     "STU_LANG":"Stud_LanguagesKnown",
     "STU_CERTS":"Stud_Certifications",
     "STU_ASSESSMENT":"Stud_AssessmentScores",

@@ -166,3 +166,16 @@ func GetUnvDetailsByID(ID string) UnvCDDataModel {
 	fmt.Printf("\n\n Got UD --> %v", ud)
 	return ud
 }
+
+// GetCorpDetailsByID ...
+func GetCorpDetailsByID(ID string) CorpCDDataModel {
+	sp, _ := RetriveSP("CORP_GET_PROFILE_BY_ID")
+	var ud CorpCDDataModel
+	err := Db.QueryRow(sp, ID).Scan(&ud.Name, &ud.CIN, &ud.Location, &ud.Category)
+	if err != nil {
+		fmt.Printf("\n=========Error getting Corporate details ========= %v\n", err)
+	}
+	ud.CorporateID = ID
+	fmt.Printf("\n\n Got UD --> %v", ud)
+	return ud
+}

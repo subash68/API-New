@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -103,10 +104,10 @@ func (cdi *campusDriveInvitationsController) Invite(c *gin.Context) {
 		if userType == "University" {
 			usr.UniversityDetails = models.GetUnvDetailsByID(i)
 		} else if userType == "Corporate" {
-
+			usr.CorporateDetails = models.GetCorpDetailsByID(i)
 		}
 		reqAsBytes, _ = json.Marshal(usr)
-		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": CDNotificationType, "content": string(reqAsBytes), "publishFlag": "false", "publishID": "", "receiverID": r, "redirectedURL": "", "isGeneric": "false", "notificationTypeID": CDNotificationID}
+		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": CDNotificationType, "content": fmt.Sprint(string(reqAsBytes)), "publishFlag": "false", "publishID": "", "receiverID": r, "redirectedURL": "", "isGeneric": "false", "notificationTypeID": CDNotificationID}
 		nftResp, err := makeNFTServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6PJ", ErrTyp: "Error while interacting with Notification service", Err: fmt.Errorf("%v , %v", err, nftResp), SuccessResp: successResp})
@@ -156,6 +157,14 @@ func (cdi *campusDriveInvitationsController) Respond(c *gin.Context) {
 		}
 		var cdm models.CampusDriveDataModel
 		cdm.CampusDriveID = usr.CampusDriveID
+		reqContent, err := models.GetContentByNftID(usr.NftID, ID)
+		if err != nil {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6PJ", ErrTyp: "Unauthorized", Err: fmt.Errorf("Unauthorized or Invalid Notification ID " + usr.NftID), SuccessResp: successResp})
+			c.JSON(http.StatusUnprocessableEntity, resp)
+			c.Abort()
+			return
+		}
+
 		reqAsBytes, _ := json.Marshal(usr)
 		i, r, err := cdm.GetIRByID(userType, ID, true)
 		if r != ID {
@@ -164,8 +173,15 @@ func (cdi *campusDriveInvitationsController) Respond(c *gin.Context) {
 			c.Abort()
 			return
 		}
-
-		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": CDRNotificationType, "content": string(reqAsBytes), "publishFlag": "false", "publishID": "", "receiverID": i, "redirectedURL": "", "isGeneric": "false", "notificationTypeID": CDRNotificationID}
+		nftRespContent := struct {
+			Request  string `json:"requestContent"`
+			Response string `json:"responseContent"`
+		}{
+			Request:  strings.ReplaceAll(reqContent, "\\", ""),
+			Response: strings.ReplaceAll(string(reqAsBytes), "\\", ""),
+		}
+		nftRespContentAsBytes, _ := json.Marshal(nftRespContent)
+		reqBody := map[string]string{"senderID": ID, "senderUserRole": userType, "notificationType": CDRNotificationType, "content": strings.ReplaceAll(string(nftRespContentAsBytes), "\\", ""), "publishFlag": "false", "publishID": "", "receiverID": i, "redirectedURL": "", "isGeneric": "false", "notificationTypeID": CDRNotificationID}
 		nftResp, err := makeNFTServiceCall("/nft/addNotification", reqBody)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6PJ", ErrTyp: "Error while interacting with Notification service", Err: fmt.Errorf("%v , %s", err, nftResp), SuccessResp: successResp})

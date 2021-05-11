@@ -80,7 +80,7 @@ func Subscribe(c *gin.Context) {
 		fmt.Println("==================== token resp ======", resp)
 		go func() {
 			select {
-			case insertJobChan := <-newSubscriptions.Insert(stakeholder.(string), ID.(string)):
+			case insertJobChan := <-newSubscriptions.Insert(stakeholder.(string), ID.(string), newSubscriptions.PublisherType):
 				jobdb <- insertJobChan
 			case <-ctx.Done():
 				return

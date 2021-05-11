@@ -72,6 +72,7 @@ type CampusDriveDataModel struct {
 // CampusDriveRespondDataModel ...
 type CampusDriveRespondDataModel struct {
 	CampusDriveID  string `form:"campusDriveID" json:"campusDriveID" binding:"required"`
+	NftID          string `form:"nftID" json:"nftID" binding:"required"`
 	Accepted       bool   `form:"accepted" json:"accepted"`
 	ReasonToReject string `form:"reasonToReject" json:"reasonToReject"`
 }
@@ -86,14 +87,24 @@ type UnvCDDataModel struct {
 	Accredations string `json:"accredations,omitempty"`
 }
 
+// CorpCDDataModel ...
+type CorpCDDataModel struct {
+	Name        string `json:"corporateName,omitempty"`
+	Location    string `json:"location,omitempty"`
+	Category    int    `json:"category,omitempty"`
+	CIN         string `json:"cin,omitempty"`
+	CorporateID string `json:"corporateID,omitempty"`
+}
+
 // CampusDriveInviteEmailModel ...
 type CampusDriveInviteEmailModel struct {
-	CampusDriveID     string         `form:"campusDriveID" json:"campusDriveID" binding:"required"`
-	EmailFrom         string         `form:"emailFrom" json:"emailFrom" binding:"required,email"`
-	EmailTo           string         `form:"emailTo" json:"emailTo" binding:"required,email"`
-	EmailSubject      string         `form:"emailSubject" json:"emailSubject" binding:"required"`
-	EmailBody         string         `form:"emailBody" json:"emailBody" binding:"required"`
-	UniversityDetails UnvCDDataModel `form:"-" json:"universityDetails,omitempty"`
+	CampusDriveID     string          `form:"campusDriveID" json:"campusDriveID" binding:"required"`
+	EmailFrom         string          `form:"emailFrom" json:"emailFrom" binding:"required,email"`
+	EmailTo           string          `form:"emailTo" json:"emailTo" binding:"required,email"`
+	EmailSubject      string          `form:"emailSubject" json:"emailSubject" binding:"required"`
+	EmailBody         string          `form:"emailBody" json:"emailBody" binding:"required"`
+	UniversityDetails UnvCDDataModel  `form:"-" json:"universityDetails,omitempty"`
+	CorporateDetails  CorpCDDataModel `form:"-" json:"corporateDetails,omitempty"`
 }
 
 // CampusDriveDirectInviteEmailModel ...

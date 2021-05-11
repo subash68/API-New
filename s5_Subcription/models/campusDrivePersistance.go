@@ -163,3 +163,14 @@ func (cdm *CampusDriveDataModel) GetIRByID(userType string, ID string, isRespons
 	}
 	return i, r, nil
 }
+
+// GetContentByNftID ...
+func GetContentByNftID(nftID string, ID string) (string, error) {
+	newUISubIns, _ := RetriveSP("NFT_GET_BY_ID")
+	var content string
+	err := Db.QueryRow(newUISubIns, nftID, ID).Scan(&content)
+	if err != nil {
+		return "", err
+	}
+	return content, nil
+}

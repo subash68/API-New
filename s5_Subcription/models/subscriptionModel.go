@@ -26,6 +26,7 @@ type SubscriptionReq struct {
 	Publisher          string    `form:"-" json:"publisher"`
 	DateOfSubscription time.Time `form:"-" json:"dateOfSubscription"`
 	PublishID          string    `form:"publishId" json:"publishId" binding:"required"`
+	PublisherType      string    `form:"publisherType" json:"publisherType" binding:"required"`
 	BonusTokensUsed    float64   `form:"bonusTokensUsed" json:"bonusTokensUsed,omitempty"`
 	PaidTokensUsed     float64   `form:"paidTokensUsed" json:"paidTokensUsed,omitempty" `
 	TransactionID      string    `form:"transactionID" json:"transactionID,omitempty"`
