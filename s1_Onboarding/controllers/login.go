@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,79 +15,6 @@ type UserCredsModel struct {
 	StakeholderType string `form:"stakeholder" binding:"required"`
 	UserID          string `form:"userID" binding:"required"`
 	Password        string `form:"password" binding:"required,min=8,max=15"`
-}
-
-// LoginRespModel ...
-type LoginRespModel struct {
-	Token       string `json:"token" binding:"required"`
-	RedirectURL string `json:"redirectURL" binding:"required"`
-}
-
-// Offchain ...
-type Offchain struct {
-	FromMSP     string `json:"fromMSP"`
-	ToMSP       string `json:"toMSP"`
-	Data        string `json:"data"`
-	DataHash    string `json:"dataHash"`
-	TimeStamp   string `json:"timeStamp"`
-	ReferenceID string `json:"id"`
-}
-
-// RefID ...
-var RefID string
-
-// APICheck ...
-func APICheck(c *gin.Context) {
-	RefID = c.Param("refID")
-	body, _ := ioutil.ReadAll(c.Request.Body)
-	var od Offchain
-	err := json.Unmarshal(body, &od)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
-	}
-	fmt.Println(od)
-	c.JSON(http.StatusOK, od)
-	return
-}
-
-// APIGetCheck ...
-func APIGetCheck(c *gin.Context) {
-	RefID = c.Query("refID")
-	od := Offchain{"ORG1", "ORG2", "ZGF0YTEyMzQ=", "4508767822a67b7a051a8fe50250897c38c044ab10d9070d740a05a21deb4499", "1617606953358906651", RefID}
-	fmt.Println(od)
-	c.JSON(http.StatusOK, od)
-	return
-}
-
-// APIDelCheck ...
-func APIDelCheck(c *gin.Context) {
-	rf := c.Param("refID")
-	fmt.Println(rf, RefID)
-	if rf == RefID {
-		RefID = "Del"
-	}
-	fmt.Println("DELETE -------> ", RefID)
-	c.JSON(http.StatusOK, "Deleted resp from api")
-	return
-}
-
-// APIGetAllCheck ...
-func APIGetAllCheck(c *gin.Context) {
-	str := struct {
-		ReferenceIds []string `json:"referenceIds"`
-	}{}
-	fmt.Println("get all -------> ", RefID)
-	if RefID == "" {
-		str.ReferenceIds = []string{"ref1", "ref2"}
-	} else if RefID == "Del" {
-		str.ReferenceIds = []string{}
-	} else {
-		str.ReferenceIds = []string{RefID}
-	}
-	fmt.Println(str)
-	c.JSON(http.StatusOK, str)
-	return
 }
 
 // Login ...
@@ -162,7 +87,8 @@ func Login(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		}
-		c.JSON(http.StatusOK, LoginRespModel{Token: token, RedirectURL: redirectURL})
+		counts := models.GetRegisteredCounts()
+		c.JSON(http.StatusOK, models.LoginRespModel{Token: token, RedirectURL: redirectURL, Stats: counts})
 		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1LGN", ErrTyp: "Required Information not found", Err: err})

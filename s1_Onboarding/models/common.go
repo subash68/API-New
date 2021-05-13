@@ -271,3 +271,25 @@ func ChangePassword(password string, id string, stakeholder string) DbModelError
 	return customError
 
 }
+
+// RegCount ...
+type RegCount struct {
+	CorpCount int `json:"corporatesRegistered,omitempty"`
+	StuCount  int `json:"studentsRegistered,omitempty"`
+	UnvCount  int `json:"universitiesRegistered,omitempty"`
+}
+
+// LoginRespModel ...
+type LoginRespModel struct {
+	Token       string   `json:"token" binding:"required"`
+	RedirectURL string   `json:"redirectURL" binding:"required"`
+	Stats       RegCount `json:"stats"`
+}
+
+// GetRegisteredCounts ...
+func GetRegisteredCounts() RegCount {
+	var rc RegCount
+	dbQuery, _ := RetriveSP("REG_SH_COUNT")
+	_ = Db.QueryRow(dbQuery).Scan(&rc.CorpCount, &rc.StuCount, &rc.UnvCount)
+	return rc
+}
