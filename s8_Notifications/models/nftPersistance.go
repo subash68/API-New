@@ -121,8 +121,11 @@ func (np *nftPersistance) GetNotificationByID(ID string, nftID string) (Notifica
 	err := Db.QueryRow(nftGetAllCmd, nftID, ID, ID).Scan(&allNfts.NotificationID, &allNfts.SenderID, &allNfts.SenderUserRole, &allNfts.ReceiverID,
 		&allNfts.DateofNotification, &allNfts.NotificationType, &allNfts.Content, &allNfts.AttachFile, &allNfts.RedirectedURL,
 		&allNfts.PublishID, &allNfts.PublishFlag, &allNfts.CreationDate, &allNfts.LastUpdatedDate)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return allNfts, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	}
+	if err != nil && err == sql.ErrNoRows {
+		return allNfts, fmt.Errorf("Invalid / Unauthorized Notification ID")
 	}
 
 	return allNfts, nil

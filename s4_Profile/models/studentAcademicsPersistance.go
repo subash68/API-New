@@ -126,8 +126,11 @@ func GetAcademics(ID string) (StudentAcademicsModelReq, error) {
 	var pg StudentPGModel
 	getByIDSP, _ := RetriveSP("STU_GET_ACADEMICS")
 	err := Db.QueryRow(getByIDSP, ID).Scan(&tenN.Name, &tenN.Location, &tenN.MonthAndYearOfPassing, &tenN.Board, &tenN.Percentage, &tenN.AttachmentFile, &twelfthN.Name, &twelfthN.Location, &twelfthN.MonthAndYearOfPassing, &twelfthN.Board, &twelfthN.Percentage, &twelfthN.AttachmentFile, &grad.UniversityStakeholderIDUniv, &grad.CollegeRollNumber, &grad.ExpectedYearOfPassing, &grad.ProgramID, &grad.ProgramName, &grad.BranchID, &grad.BranchName, &grad.FinalCGPA, &grad.FinalPercentage, &grad.ActiveBacklogsNumber, &grad.TotalNumberOfBacklogs, &pg.UniversityStakeholderIDUniv, &pg.CollegeRollNumber, &pg.ExpectedYearOfPassing, &pg.ProgramID, &pg.ProgramName, &pg.BranchID, &pg.BranchName, &pg.FinalCGPA, &pg.FinalPercentage)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return sa, fmt.Errorf("Failed to retrieving Academics : %v", err.Error())
+	}
+	if err != nil && err == sql.ErrNoRows {
+		return sa, nil
 	}
 	sa.Tenth = tenN.ConvertToJSONStruct()
 	sa.Twelfth = twelfthN.ConvertToJSONStruct()
