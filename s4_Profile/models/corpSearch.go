@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jaswanth-gorripati/PGK/s4_Profile/configuration"
 )
 
 // CorpSearchModel ...
@@ -74,8 +76,16 @@ func SeacrhCorporate(corporateName string, industry []string, skills []string, l
 }
 
 // GetCorpByID ...
-func GetCorpByID(ID string, count int, shID string) (CorporateByIDResp, error) {
+func GetCorpByID(ID string, count int, shID string, userType string) (CorporateByIDResp, error) {
+	dbNames := configuration.DbConfig()
+	subDbName := ""
+	if userType == "University" {
+		subDbName = dbNames.UnvSubDBName
+	} else if userType == "Student" {
+		subDbName = dbNames.StuSubDBName
+	}
 	sp, _ := RetriveSP("CORP_GET_PROFILE_BY_ID")
+	sp = strings.ReplaceAll(sp, "//RPLCSUB", subDbName)
 	fmt.Println("========================== CORP_GET_PROFILE_BY_ID==========", sp)
 	row := Db.QueryRow(sp, shID, count, ID)
 	corpDb := CorporateByIDResp{}

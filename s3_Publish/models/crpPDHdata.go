@@ -55,10 +55,15 @@ func GetCrpPublishedData(publishID string, isOwner bool, subscriber string, subT
 	getByIDSP, _ := RetriveSP("CRP_PDH_GET_PID")
 	err := Db.QueryRow(getByIDSP, publishID).Scan(&hc, &jb, &prf, &oi, &pd)
 	fmt.Println(getByIDSP)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		customError.ErrTyp = "S3PJ003"
 		customError.ErrCode = "500"
 		customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByIDSP)
+		return customError, resp, ""
+	} else if err == sql.ErrNoRows {
+		customError.ErrTyp = "S3PJ003"
+		customError.ErrCode = "500"
+		customError.Err = fmt.Errorf("No data found for specified Publish ID")
 		return customError, resp, ""
 	}
 	fmt.Println("====================>>>>>>>>>>>>>>>>>", hc, jb, prf, oi)

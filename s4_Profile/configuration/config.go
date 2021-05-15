@@ -51,6 +51,9 @@ type DbEnv struct {
 	UnvInsightsDbName       string `json:"UNV_INSIGHTS"`
 	CorpHcInsightsDbName    string `json:"CORP_HC_INSIGHTS"`
 	UnvStuDataDbName        string `json:"UNV_STU_DB"`
+	UnvSubDBName            string `json:"UNV_SUB_DB"`
+	CrpSubDBName            string `json:"CRP_SUB_DB"`
+	StuSubDBName            string `json:"STU_SUB_DB"`
 	DbRedisAddr             string `json:"DB_REDIS_ADDRESS"`
 	DbRedisPort             string `json:"DB_REDIS_PORT"`
 	DbRedisPass             string `json:"DB_REDIS_PASS"`

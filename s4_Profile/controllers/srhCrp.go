@@ -26,14 +26,8 @@ func SearchCrp(c *gin.Context) {
 
 // GetCrpByID ...
 func GetCrpByID(c *gin.Context) {
-	ctx, _, _, _ := getFuncReq(c, "Get Corporate by ID")
-	ID, ok := c.Get("userID")
+	ctx, ID, userType, _ := getFuncReq(c, "Get Corporate by ID")
 
-	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S4Profile001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		c.Abort()
-	}
 	corporateID := c.Param("corporateID")
 	if corporateID == "" {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot find CorporateID"), SuccessResp: successResp})
@@ -41,7 +35,7 @@ func GetCrpByID(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	corpDb, err := models.GetCorpByID(corporateID, 5, ID.(string))
+	corpDb, err := models.GetCorpByID(corporateID, 5, ID, userType)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to get Corporate information", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)

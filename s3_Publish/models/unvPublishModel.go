@@ -35,14 +35,14 @@ type UnvYearWiseRanking struct {
 type UnvAccredationsDBModel struct {
 	ID                     int       `form:"-" json:"id"`
 	StakeholderID          string    `form:"-" json:"stakeholder,omitempty"`
-	AccredationName        string    `form:"accredationName" binding:"required"`
-	AccredationType        string    `form:"accredationType" binding:"required"`
-	AccredationDescription string    `form:"accredationDescription" binding:"required"`
+	AccredationName        string    `form:"accredationName" json:"accredationName" binding:"required"`
+	AccredationType        string    `form:"accredationType" json:"accredationType"`
+	AccredationDescription string    `form:"accredationDescription" json:"accredationDescription"`
 	IssuingAuthority       string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
 	AccredationFile        string    `form:"accredationFile" json:"accredationfile"`
 	StartDate              string    `form:"startDate" json:"startDate" binding:"required"`
-	EndDate                string    `form:"endDate" json:"endDate" binding:"required"`
-	EnablingFlag           string    `form:"enablingFlag" json:"enablingFlag" binding:"required"`
+	EndDate                string    `form:"endDate" json:"endDate" `
+	EnablingFlag           string    `form:"enablingFlag" json:"enablingFlag"`
 	CreationDate           time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate        time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
 }
