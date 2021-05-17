@@ -167,6 +167,18 @@ func GetUnvDetailsByID(ID string) UnvCDDataModel {
 	return ud
 }
 
+// GetEmailsForCH ...
+func GetEmailsForCH(CID string, UID string) (string, string) {
+	sp, _ := RetriveSP("GET_CI_EMAILS")
+	var ce, ue string
+	err := Db.QueryRow(sp, CID, UID).Scan(&ce, &ue)
+	if err != nil {
+		fmt.Printf("\n=========Error getting Emails ========= %v\n", err)
+	}
+
+	return ce, ue
+}
+
 // GetCorpDetailsByID ...
 func GetCorpDetailsByID(ID string) CorpCDDataModel {
 	sp, _ := RetriveSP("CORP_GET_PROFILE_BY_ID")

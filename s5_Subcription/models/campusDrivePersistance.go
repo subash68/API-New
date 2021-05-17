@@ -29,6 +29,7 @@ const (
 // SubscribeToInviteForCD ...
 func (cdm *CampusDriveDataModel) SubscribeToInviteForCD(userType string) error {
 	var lastQueryCmd, code, insCmd string
+	//var initiatorEmail,receiverEmail string
 	switch userType {
 	case Corporate:
 		lastQueryCmd, code, insCmd = LastCrpID, CrpCode, CrpInsCmd

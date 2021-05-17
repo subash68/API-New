@@ -488,39 +488,40 @@ type StudentAllVolunteerExperienceModel struct {
 
 // StudentContactInfoModel ...
 type StudentContactInfoModel struct {
-	StakeholderID            string `form:"stakeholderID" json:"stakeholderID,omitempty"`
-	FirstName                string `form:"firstName" json:"firstName" binding:"required"`
-	MiddleName               string `form:"middleName" json:"middleName"`
-	LastName                 string `form:"lastName" json:"lastName" binding:"required"`
-	PersonalEmail            string `form:"personalEmail" json:"personalEmail"`
-	CollegeEmail             string `form:"collegeEmail" json:"collegeEmail" binding:"required,email"`
-	PhoneNumber              string `form:"phoneNumber" json:"phoneNumber" binding:"required"`
-	AlternatePhoneNumber     string `form:"alternatePhoneNumber" json:"alternatePhoneNumber"`
-	CollegeID                string `form:"collegeID" json:"collegeID" binding:"required"`
-	Gender                   string `form:"gender" json:"gender" binding:"required"`
-	DateOfBirth              string `form:"dateOfBirth" json:"dateOfBirth" binding:"required"`
-	AadharNumber             string `form:"aadharNumber" json:"aadharNumber" binding:"required"`
-	PermanentAddressLine1    string `form:"permanentAddressLine1" json:"permanentAddressLine1" binding:"required"`
-	PermanentAddressLine2    string `form:"permanentAddressLine2" json:"permanentAddressLine2" binding:"required"`
-	PermanentAddressLine3    string `form:"permanentAddressLine3" json:"permanentAddressLine3"`
-	PermanentAddressCountry  string `form:"permanentAddressCountry" json:"permanentAddressCountry" binding:"required"`
-	PermanentAddressState    string `form:"permanentAddressState" json:"permanentAddressState" binding:"required"`
-	PermanentAddressCity     string `form:"permanentAddressCity" json:"permanentAddressCity" binding:"required"`
-	PermanentAddressDistrict string `form:"permanentAddressDistrict" json:"permanentAddressDistrict" binding:"required"`
-	PermanentAddressZipcode  string `form:"permanentAddressZipcode" json:"permanentAddressZipcode" binding:"required"`
-	PermanentAddressPhone    string `form:"permanentAddressPhone" json:"permanentAddressPhone" binding:"required"`
-	PresentAddressLine1      string `form:"presentAddressLine1" json:"presentAddressLine1" binding:"required"`
-	PresentAddressLine2      string `form:"presentAddressLine2" json:"presentAddressLine2" binding:"required"`
-	PresentAddressLine3      string `form:"presentAddressLine3" json:"presentAddressLine3"`
-	PresentAddressCountry    string `form:"presentAddressCountry" json:"presentAddressCountry" binding:"required"`
-	PresentAddressState      string `form:"presentAddressState" json:"presentAddressState" binding:"required"`
-	PresentAddressCity       string `form:"presentAddressCity" json:"presentAddressCity" binding:"required"`
-	PresentAddressDistrict   string `form:"presentAddressDistrict" json:"presentAddressDistrict" binding:"required"`
-	PresentAddressZipcode    string `form:"presentAddressZipcode" json:"presentAddressZipcode" binding:"required"`
-	PresentAddressPhone      string `form:"presentAddressPhone" json:"presentAddressPhone" binding:"required"`
-	AboutMe                  string `form:"aboutMe" json:"aboutMe"`
-	UniversityName           string `form:"universityName" json:"universityName"`
-	UniversityID             string `form:"universityID" json:"-"`
+	StakeholderID            string    `form:"stakeholderID" json:"stakeholderID,omitempty"`
+	FirstName                string    `form:"firstName" json:"firstName" binding:"required"`
+	MiddleName               string    `form:"middleName" json:"middleName"`
+	LastName                 string    `form:"lastName" json:"lastName" binding:"required"`
+	PersonalEmail            string    `form:"personalEmail" json:"personalEmail"`
+	CollegeEmail             string    `form:"collegeEmail" json:"collegeEmail" binding:"required,email"`
+	PhoneNumber              string    `form:"phoneNumber" json:"phoneNumber" binding:"required"`
+	AlternatePhoneNumber     string    `form:"alternatePhoneNumber" json:"alternatePhoneNumber"`
+	CollegeID                string    `form:"collegeID" json:"collegeID" binding:"required"`
+	Gender                   string    `form:"gender" json:"gender" binding:"required"`
+	DateOfBirth              string    `form:"dateOfBirth" json:"dateOfBirth" binding:"required"`
+	AadharNumber             string    `form:"aadharNumber" json:"aadharNumber" binding:"required"`
+	PermanentAddressLine1    string    `form:"permanentAddressLine1" json:"permanentAddressLine1" binding:"required"`
+	PermanentAddressLine2    string    `form:"permanentAddressLine2" json:"permanentAddressLine2" binding:"required"`
+	PermanentAddressLine3    string    `form:"permanentAddressLine3" json:"permanentAddressLine3"`
+	PermanentAddressCountry  string    `form:"permanentAddressCountry" json:"permanentAddressCountry" binding:"required"`
+	PermanentAddressState    string    `form:"permanentAddressState" json:"permanentAddressState" binding:"required"`
+	PermanentAddressCity     string    `form:"permanentAddressCity" json:"permanentAddressCity" binding:"required"`
+	PermanentAddressDistrict string    `form:"permanentAddressDistrict" json:"permanentAddressDistrict" binding:"required"`
+	PermanentAddressZipcode  string    `form:"permanentAddressZipcode" json:"permanentAddressZipcode" binding:"required"`
+	PermanentAddressPhone    string    `form:"permanentAddressPhone" json:"permanentAddressPhone" binding:"required"`
+	PresentAddressLine1      string    `form:"presentAddressLine1" json:"presentAddressLine1" binding:"required"`
+	PresentAddressLine2      string    `form:"presentAddressLine2" json:"presentAddressLine2" binding:"required"`
+	PresentAddressLine3      string    `form:"presentAddressLine3" json:"presentAddressLine3"`
+	PresentAddressCountry    string    `form:"presentAddressCountry" json:"presentAddressCountry" binding:"required"`
+	PresentAddressState      string    `form:"presentAddressState" json:"presentAddressState" binding:"required"`
+	PresentAddressCity       string    `form:"presentAddressCity" json:"presentAddressCity" binding:"required"`
+	PresentAddressDistrict   string    `form:"presentAddressDistrict" json:"presentAddressDistrict" binding:"required"`
+	PresentAddressZipcode    string    `form:"presentAddressZipcode" json:"presentAddressZipcode" binding:"required"`
+	PresentAddressPhone      string    `form:"presentAddressPhone" json:"presentAddressPhone" binding:"required"`
+	AboutMe                  string    `form:"aboutMe" json:"aboutMe"`
+	UniversityName           string    `form:"universityName" json:"universityName"`
+	UniversityID             string    `form:"universityID" json:"-"`
+	DateOfJoining            time.Time `json:"dateOfJoining,omitempty" time_format="2006-12-01T21:23:34.409Z"`
 }
 
 // StudentCompleteProfileDataModel ...

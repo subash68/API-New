@@ -1,4 +1,4 @@
-// Package configuration will export all the environment details for the project to consume
+// Package  configuration will export all the environment details for the project to consume
 package configuration
 
 import (

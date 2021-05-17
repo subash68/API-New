@@ -25,6 +25,8 @@ type campusDriveInvitationsController struct{}
 type cdRespModel struct {
 	Message       string `json:"message,omitempty"`
 	CampusDriveID string `json:"campusDriveID,omitempty"`
+	EmailTo       string `json:"emailTo"`
+	EmailFrom     string `json:"emailFrom"`
 }
 
 // NftMessageResp ...
@@ -40,6 +42,7 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 	binding.Validator = &defaultValidator{}
 	err := c.ShouldBindWith(&usr, binding.Form)
 	if err == nil {
+
 		if usr.TransactionID == "" {
 			usr.TransactionID = "TX" + GetRandomID(15)
 		}
@@ -68,6 +71,7 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 		cdm.InitiatorID = ID
 		cdm.ReceiverID = usr.ReceiverID
 		err = cdm.SubscribeToInviteForCD(userType)
+
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Internal Server Error", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)
@@ -75,6 +79,11 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 		}
 		var cdResp cdRespModel
 		cdResp.CampusDriveID = cdm.CampusDriveID
+		if userType == "Corporate" {
+			cdResp.EmailTo, cdResp.EmailFrom = models.GetEmailsForCH(ID, usr.ReceiverID)
+		} else {
+			cdResp.EmailTo, cdResp.EmailFrom = models.GetEmailsForCH(usr.ReceiverID, ID)
+		}
 		c.JSON(http.StatusOK, cdResp)
 		c.Abort()
 		return
