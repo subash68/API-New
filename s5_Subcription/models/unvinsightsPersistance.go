@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -48,8 +49,10 @@ func (uim *UnvInsightsModel) GetUnvInsightBySubID() (*UnvInsightsModel, error) {
 	newUISubGet, _ := RetriveSP("UNV_INSIGHTS_GET_SUB")
 	var tr, ts string
 	err := Db.QueryRow(newUISubGet, uim.SubscribedStakeholderID, uim.SubscriptionID).Scan(&uim.SubscriptionID, &uim.SubscriberStakeholderID, &uim.SubscribedStakeholderID, &uim.AverageCGPA, &uim.AveragePercentage, &uim.HighestCGPA, &uim.HighestPercentage, &uim.HighestPackageReceived, &uim.AveragePackageReceived, &uim.UniversityConversionRatio, &uim.TentativeMonthOfPassing, &tr, &ts, &uim.SubscribedDate, &uim.CreationDate, &uim.LastUpdatedDate)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return uim, fmt.Errorf("Cannot prepare University Insights Subscription insert due to %v %v", newUISubGet, err.Error())
+	} else if err == sql.ErrNoRows {
+		return uim, fmt.Errorf("Invalid/unauthorized Subscription ID %s", uim.SubscriptionID)
 	}
 	uim.Top5Recruiters = strings.Split(tr, ",")
 	uim.Top5Skills = strings.Split(ts, ",")
