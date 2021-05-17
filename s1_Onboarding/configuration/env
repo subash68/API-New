@@ -19,7 +19,7 @@
     "EMAIL_TOKEN_TYPE":    "Bearer",
     "JWT_ACCESS_SECRET": "cGdrY3Jqd2t5ZnJkdmR0dG5n",
     "TWILIO_ACCOUNT_SID":"ACe51d6971ffd3c0c3cebcdc4bf161469d",
-    "TWILIO_ACCOUNT_SECRET":"fba9ba2e2ff5bf84f260efeaae3e8bbd",
+    "TWILIO_ACCOUNT_SECRET":"f48549416cb7b2ef1c7f9a62f0225713",
     "TWILIO_VRF_TOKEN":"VA37de93cae2f667885f6ac798ccab6d9f",
     "RAZORPAY_KEY_ID":"rzp_test_8NEh1wdTrWCQdN",
     "RAZORPAY_KEY_SECRET":"F8TjclAyxpxgzAHp8umqXVeb",
