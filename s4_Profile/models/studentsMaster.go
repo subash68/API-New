@@ -525,7 +525,7 @@ type StudentContactInfoModel struct {
 
 // StudentCompleteProfileDataModel ...
 type StudentCompleteProfileDataModel struct {
-	Profile             StudentMasterDb           `form:"-" json:"-"`
+	Profile             StudentMasterDb           `form:"-" json:"profile"`
 	ContactInfo         StudentContactInfoModel   `form:"contactInfo" json:"contactInfo"`
 	Academics           StudentAcademicsModelReq  `form:"academics" json:"academics"`
 	Languages           StudentAllLanguagesModel  `form:"-" json:"-"`
