@@ -67,6 +67,7 @@ func CommonOTPVerifier(c *gin.Context) {
 		emailVerified := false
 		if commonOtpData.Phone != "" && commonOtpData.PhoneOTP != "" {
 			phoneVerified, err = services.ValidateOTP(commonOtpData.PhoneOTP, commonOtpData.Phone)
+			fmt.Printf("\n\n OTP PHONE ERR %v\n\n", err)
 		}
 		if commonOtpData.Email != "" && commonOtpData.EmailOTP != "" {
 			emailVerified, err = services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
