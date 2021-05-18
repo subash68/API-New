@@ -43,8 +43,8 @@ type StudentMasterDb struct {
 	CollegeEmailID           string    `form:"collegeEmailID" json:"collegeEmailID"`
 	Password                 string    `form:"password" json:"password" binding:"required,min=8,max=15" binding:"required"`
 	UniversityApprovedFlag   bool      `form:"-" json:"universityApprovedFlag`
-	CreationDate             time.Time `form:"-" json:"creationDate"`
-	LastUpdatedDate          time.Time `form:"-" json:"lastUpdatedDate"`
+	CreationDate             time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate          time.Time `form:"-" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
 	AccountStatus            string    `form:"accountStatus" json:"accountStatus"`
 	PrimaryPhoneVerified     bool      `form:"primaryPhoneVerified" json:"primaryPhoneVerified"`
 	PrimaryEmailVerified     bool      `form:"primaryEmailVerified" json:"primaryEmailVerified"`

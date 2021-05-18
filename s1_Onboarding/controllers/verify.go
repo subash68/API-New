@@ -71,6 +71,7 @@ func CommonOTPVerifier(c *gin.Context) {
 		if commonOtpData.Email != "" && commonOtpData.EmailOTP != "" {
 			emailVerified, err = services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
 		}
+		fmt.Printf("\n\nOTP DETAILDS : %v,%v, %+v\n\n", phoneVerified, emailVerified, commonOtpData)
 		processOtpValidation(ctx, c, err, successResp, commonOtpData.Stakeholder, commonOtpData.PlatformUID, phoneVerified, emailVerified, true)
 	} else {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
@@ -127,7 +128,7 @@ func VerifyEmail(c *gin.Context) {
 
 func processOtpValidation(ctx context.Context, c *gin.Context, err error, successResp map[string]string, stakeholder string, pid string, phoneVrf bool, emailVrf bool, verified bool) {
 	jobdb := make(chan models.DbModelError, 1)
-
+	fmt.Println("-------------process-------", phoneVrf, emailVrf)
 	if verified {
 		switch stakeholder {
 		case "Corporate":

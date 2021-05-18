@@ -522,6 +522,7 @@ type StudentContactInfoModel struct {
 	UniversityName           string    `form:"universityName" json:"universityName"`
 	UniversityID             string    `form:"universityID" json:"-"`
 	DateOfJoining            time.Time `json:"dateOfJoining,omitempty" time_format="2006-12-01T21:23:34.409Z"`
+	ProfilePicture           []byte    `form:"-" json:"profilePicture"`
 }
 
 // StudentCompleteProfileDataModel ...
