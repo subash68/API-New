@@ -8,7 +8,7 @@ type UniversityMasterDb struct {
 	University                           string `form:"universityCollegeID" binding:"required"`
 	UniversityHQAddressLine1             string `form:"universityHQAddressLine1" binding:"required"`
 	UniversityHQAddressLine2             string `form:"universityHQAddressLine2" binding:"required"`
-	UniversityHQAddressLine3             string `form:"universityHQAddressLine3" binding:"required"`
+	UniversityHQAddressLine3             string `form:"universityHQAddressLine3"`
 	UniversityHQAddressCountry           string `form:"universityHQAddressCountry" binding:"required"`
 	UniversityHQAddressState             string `form:"universityHQAddressState" binding:"required"`
 	UniversityHQAddressCity              string `form:"universityHQAddressCity" binding:"required"`
