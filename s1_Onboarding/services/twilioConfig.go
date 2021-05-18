@@ -93,8 +93,7 @@ func ValidateOTP(otp string, to string) (bool, error) {
 	}
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		var data twiloOtpResp
-		bodyBytes, _ := ioutil.ReadAll(resp.Body)
-		err := json.Unmarshal(bodyBytes, &data)
+		err := json.Unmarshal(bodyBytesResp, &data)
 		if err == nil {
 			return true, nil
 		}
