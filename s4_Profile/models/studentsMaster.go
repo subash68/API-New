@@ -87,7 +87,7 @@ type StudentNullableTTModel struct {
 // StudentGradModel ...
 type StudentGradModel struct {
 	UniversityStakeholderIDUniv string                 `form:"universityID" json:"universityID" binding:"required"`
-	CollegeRollNumber           string                 `form:"collegeRollNumber" json:"collegeRollNumber" binding:"required"`
+	CollegeRollNumber           string                 `form:"collegeRollNumber" json:"collegeRollNumber"`
 	ExpectedYearOfPassing       string                 `form:"expectedYearOfPassing" json:"expectedYearOfPassing" binding:"required"`
 	ProgramID                   string                 `form:"programID" json:"programID" binding:"required"`
 	ProgramName                 string                 `form:"programName" json:"programName" binding:"required"`
@@ -95,15 +95,15 @@ type StudentGradModel struct {
 	BranchName                  string                 `form:"branchName" json:"branchName" binding:"required"`
 	FinalCGPA                   string                 `form:"finalCGPA" json:"finalCGPA"`
 	FinalPercentage             string                 `form:"finalPercentage" json:"finalPercentage"`
-	ActiveBacklogsNumber        int                    `form:"activeBacklogsNumber" json:"activeBacklogsNumber" binding:"required"`
-	TotalNumberOfBacklogs       int                    `form:"totalNumberOfBacklogs" json:"totalNumberOfBacklogs" binding:"required"`
+	ActiveBacklogsNumber        int                    `form:"activeBacklogsNumber" json:"activeBacklogsNumber"`
+	TotalNumberOfBacklogs       int                    `form:"totalNumberOfBacklogs" json:"totalNumberOfBacklogs"`
 	Semesters                   []StudentSemesterModel `form:"semesters" json:"semesters" binding="dive"`
 }
 
 // StudentPGModel ...
 type StudentPGModel struct {
 	UniversityStakeholderIDUniv string                 `form:"universityID" json:"universityID" binding:"required"`
-	CollegeRollNumber           string                 `form:"collegeRollNumber" json:"collegeRollNumber" binding:"required"`
+	CollegeRollNumber           string                 `form:"collegeRollNumber" json:"collegeRollNumber"`
 	ExpectedYearOfPassing       string                 `form:"expectedYearOfPassing" json:"expectedYearOfPassing" binding:"required"`
 	ProgramID                   string                 `form:"programID" json:"programID" binding:"required"`
 	ProgramName                 string                 `form:"programName" json:"programName" binding:"required"`
