@@ -100,8 +100,8 @@ func SendOTPEmail(to string, stakeholderID string) (bool, error) {
 	OTP := EncodeToString(6)
 	otpExp := time.Unix(time.Now().Add(time.Minute*10).Unix(), 0)
 	emailTo := "To: " + to + "\r\n"
-	subject := "Subject: Verificaton OTP for Application\n"
-	body := "Your verification OTP is :<b>" + OTP + " </b> <br> ** It will expire in 10 minutes."
+	subject := "Subject: Verification OTP for Application\n"
+	body := "Hi, Thank you for registering with us.  Your Platform ID is " + stakeholderID + ", Your verification OTP is :" + OTP + " </br>**It will expire in 10 minutes."
 	mime := "MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";\n\n"
 	msg := []byte(emailTo + subject + mime + "\n" + body)
 
