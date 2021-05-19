@@ -89,7 +89,6 @@ type UnvSpecialOfferingsDBModel struct {
 type UnvCEOsDBModel struct {
 	ID                            int       `form:"-" json:"id"`
 	StakeholderID                 string    `form:"-" json:"stakeholder,omitempty"`
-	CoeID                         string    `form:"coeID" json:"coeID,omitempty" binding:"required"`
 	CoeType                       string    `form:"coeType" json:"coeType" binding:"required"`
 	CoeName                       string    `form:"coeName" json:"coeName" binding:"required"`
 	CoeDescription                string    `form:"coeDescription" json:"coeDescription" binding:"required"`
