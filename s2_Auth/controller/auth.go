@@ -64,7 +64,7 @@ func AuthorizeToken(c *gin.Context) {
 
 	err := c.ShouldBindWith(&vrfTokenData, binding.Form)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, "Cannot process required information for creating token")
+		c.JSON(http.StatusUnprocessableEntity, "Cannot process required information for authorizing token")
 		return
 	}
 	tokenClaims, err := services.VerifyToken(vrfTokenData.Token)
@@ -81,7 +81,7 @@ func AuthorizeToken(c *gin.Context) {
 
 // DeleteAuthToken ...
 func DeleteAuthToken(c *gin.Context) {
-	fmt.Println("------>>>>>> Dleteing token")
+	fmt.Println("------>>>>>> Deleting token")
 	var vrfTokenData dto.VrfToken
 	binding.Validator = &defaultValidator{}
 	err := c.ShouldBindWith(&vrfTokenData, binding.Form)

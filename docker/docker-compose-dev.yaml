@@ -96,9 +96,9 @@ services:
       redis:
         condition: service_healthy
 
-  subcription_service:
+  subscription_service:
     image: s5-subcription:dev
-    container_name: subcription_service
+    container_name: subscription_service
     restart: always
     build:
       context: ../s5_Subcription/.
@@ -176,5 +176,5 @@ services:
         condition: service_healthy
       # mysql:
       #   condition: service_healthy
-# docker-compose -f docker-compose-dev.yaml up -d auth_service publish_service profile_service onboard_service subcription_service token_service pg_service ui_service notification_service
+# docker-compose -f docker-compose-dev.yaml up -d auth_service publish_service profile_service onboard_service subscription_service token_service pg_service ui_service notification_service
 # docker-compose -f docker-compose-dev.yaml up -d apigateway
