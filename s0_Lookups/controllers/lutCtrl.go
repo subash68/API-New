@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jaswanth-gorripati/PGK/s0_Lookups/models"
@@ -24,12 +25,17 @@ func (lc *lutController) GetLookUpData(c *gin.Context) {
 	ctx = context.WithValue(ctx, ctxkey, "LUT data")
 
 	defer cancel()
+
 	log.Debug("c query %v", c.QueryArray("lutList"))
+
 	lutList := c.QueryArray("lutList")
+	ignoreCache := strings.ToLower(c.Query("ignoreCache")) == "true"
+
 	log.Debugf("lut query %v ", lutList)
+
 	if len(lutList) > 0 {
 		var ald models.AllLutData
-		err := ald.GetAllLutData(lutList)
+		err := ald.GetAllLutData(lutList, ignoreCache)
 		if err != nil {
 			if fmt.Sprintf("%v", err) == "Internal" {
 				c.JSON(http.StatusInternalServerError, "Try again")

@@ -20,6 +20,18 @@ var (
 		"skills",
 		"sortBy",
 		"stakeholderType",
+		"studentEventResult",
+		"studentEvent",
+		"studentVerificationStatus",
+		"studentVerificationType",
+		"subscriptionType",
+		"tokenEvent",
+		"universityAccreditation",
+		"universityCatalog",
+		"universityCoe",
+		"universitySpecialOfferingType",
+		"universityTieUpType",
+		"universityType",
 	}
 )
 
@@ -134,24 +146,114 @@ type LutStakeholdersModel struct {
 	OneLtrCode string `json:"oneLtrCode"`
 }
 
+// LutStudentEventResultModel ...
+type LutStudentEventResultModel struct {
+	Name string `json:"eventResult"`
+	Code string `json:"eventResultCode"`
+}
+
+// LutStudentEventModel ...
+type LutStudentEventModel struct {
+	Name string `json:"eventName"`
+	Code string `json:"eventCode"`
+}
+
+// LutStudentVerfStatusModel ...
+type LutStudentVerfStatusModel struct {
+	Name string `json:"verificationStatus"`
+	Code string `json:"verificationStatusCode"`
+}
+
+// LutStudentVerfTypeModel ...
+type LutStudentVerfTypeModel struct {
+	Name string `json:"verificationType"`
+	Code string `json:"verificationTypeCode"`
+}
+
+// LutSubscriptionType ...
+type LutSubscriptionType struct {
+	Name string `json:"subscriptionType"`
+	Code string `json:"subscriptionTypeCode"`
+}
+
+// LutTokenEvent ...
+type LutTokenEvent struct {
+	Name            string `json:"tokenEvent"`
+	Code            string `json:"tokenEventCode"`
+	StakeholderType string `json:"stakeholderType"`
+}
+
+// LutUniversityAccreditationModel ...
+type LutUniversityAccreditationModel struct {
+	Name string `json:"accreditationType"`
+	Code string `json:"accreditationCode"`
+}
+
+// LutUniversityCatalogModel ...
+type LutUniversityCatalogModel struct {
+	Name      string `json:"name"`
+	Code      string `json:"code"`
+	Address   string `json:"address"`
+	Type      string `json:"type"`
+	State     string `json:"state"`
+	DateOfEst string `json:"dateOfEstablishment"`
+}
+
+// LutUniversityCoeModel ...
+type LutUniversityCoeModel struct {
+	Name string `json:"coeType"`
+	Code string `json:"coeCode"`
+}
+
+// LutUniversitySplOffTypeModel ...
+type LutUniversitySplOffTypeModel struct {
+	Name string `json:"specialOfferingType"`
+	Code string `json:"specialOfferingCode"`
+}
+
+// LutUniversityTieUpTypeModel ...
+type LutUniversityTieUpTypeModel struct {
+	Name string `json:"tieUpType"`
+	Code string `json:"tieUpCode"`
+}
+
+// LutUniversityTypeModel ...
+type LutUniversityTypeModel struct {
+	Name       string `json:"universitytypeName"`
+	Code       string `json:"universityTypeCode"`
+	OneLtrCode string `json:"oneLtrCode"`
+}
+
 // AllLutData ...
 type AllLutData struct {
-	TenthBoards         []Lut10BoardsModel          `json:"tenthBoards,omitempty"`
-	TwelfthBoards       []Lut10BoardsModel          `json:"twelfthBoards,omitempty"`
-	AccountStatus       []LutAccountStatusModel     `json:"accountStatus,omitempty"`
-	BranchCatalog       []LutBranchCatalogModel     `json:"branchCatalog,omitempty"`
-	CoporateCategory    []LutCorporateCategoryModel `json:"corporateCategory,omitempty"`
-	CoporateIndustry    []LutCorporateIndustryModel `json:"coporateIndustry,omitempty"`
-	CorporateType       []LutCorporateTypeModel     `json:"corporateType,omitempty"`
-	JobType             []LutJobTypeModel           `json:"jobType,omitempty"`
-	LanguageProficiency []LutLangProficiencyModel   `json:"languageProficiency,omitempty"`
-	ModeOfTokenIssue    []LutModeOfTokenIssueModel  `json:"modeOfTokenIssue,omitempty"`
-	NotificationType    []LutNotificationTypeModel  `json:"notificationType,omitempty"`
-	PaymentMode         []LutPaymentModeModel       `json:"paymentMode,omitempty"`
-	ProgramCatalog      []LutProgramCatalogModel    `json:"programCatalog,omitempty"`
-	ProgramType         []LutProgramTypeModel       `json:"programType,omitempty"`
-	SkillProficiency    []LutSkillProficiencyModel  `json:"skillProficiency,omitempty"`
-	Skills              []LutSkillsModel            `json:"skills,omitempty"`
-	SortBy              []LutSortByModel            `json:"sortBy,omitempty"`
-	StakeholderType     []LutStakeholdersModel      `json:"stakeholderType,omitempty"`
+	TenthBoards                   []Lut10BoardsModel                `json:"tenthBoards,omitempty"`
+	TwelfthBoards                 []Lut10BoardsModel                `json:"twelfthBoards,omitempty"`
+	AccountStatus                 []LutAccountStatusModel           `json:"accountStatus,omitempty"`
+	BranchCatalog                 []LutBranchCatalogModel           `json:"branchCatalog,omitempty"`
+	CoporateCategory              []LutCorporateCategoryModel       `json:"corporateCategory,omitempty"`
+	CoporateIndustry              []LutCorporateIndustryModel       `json:"coporateIndustry,omitempty"`
+	CorporateType                 []LutCorporateTypeModel           `json:"corporateType,omitempty"`
+	JobType                       []LutJobTypeModel                 `json:"jobType,omitempty"`
+	LanguageProficiency           []LutLangProficiencyModel         `json:"languageProficiency,omitempty"`
+	ModeOfTokenIssue              []LutModeOfTokenIssueModel        `json:"modeOfTokenIssue,omitempty"`
+	NotificationType              []LutNotificationTypeModel        `json:"notificationType,omitempty"`
+	PaymentMode                   []LutPaymentModeModel             `json:"paymentMode,omitempty"`
+	ProgramCatalog                []LutProgramCatalogModel          `json:"programCatalog,omitempty"`
+	ProgramType                   []LutProgramTypeModel             `json:"programType,omitempty"`
+	SkillProficiency              []LutSkillProficiencyModel        `json:"skillProficiency,omitempty"`
+	Skills                        []LutSkillsModel                  `json:"skills,omitempty"`
+	SortBy                        []LutSortByModel                  `json:"sortBy,omitempty"`
+	StakeholderType               []LutStakeholdersModel            `json:"stakeholderType,omitempty"`
+	StudentEventResult            []LutStudentEventResultModel      `json:"studentEventResult,omitempty"`
+	StudentEvent                  []LutStudentEventModel            `json:"studentEvent,omitempty"`
+	StudentVerificationStatus     []LutStudentVerfStatusModel       `json:"studentVerificationStatus,omitempty"`
+	StudentVerificationType       []LutStudentVerfTypeModel         `json:"studentVerificationType,omitempty"`
+	SubscriptionType              []LutSubscriptionType             `json:"subscriptionType,omitempty"`
+	TokenEvent                    []LutTokenEvent                   `json:"tokenEvent,omitempty"`
+	UniversityAccreditation       []LutUniversityAccreditationModel `json:"universityAccreditation,omitempty"`
+	UniversityCatalog             []LutUniversityCatalogModel       `json:"universityCatalog,omitempty"`
+	UniversityCoe                 []LutUniversityCoeModel           `json:"universityCoe,omitempty"`
+	UniversitySpecialOfferingType []LutUniversitySplOffTypeModel    `json:"universitySpecialOfferingType,omitempty"`
+	UniversityTieUpType           []LutUniversityTieUpTypeModel     `json:"universityTieUpType,omitempty"`
+	UniversityType                []LutUniversityTypeModel          `json:"universityType,omitempty"`
 }

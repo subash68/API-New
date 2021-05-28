@@ -1,51 +1,15 @@
-INSERT INTO `CollabToHire`.`LUT_10thBoardCatalog`
-(
-`BoardName(IssuingAuthority)`,
-`CertificateName`,
-`Board_ID`)
-VALUES
-(<{BoardName(IssuingAuthority): }>,
-<{CertificateName: }>,
-<{Board_ID: }>);
+SELECT `LUT_TokenEventsDefinition`.`Event`,
+    `LUT_TokenEventsDefinition`.`EventCode`,
+    `LUT_TokenEventsDefinition`.`StakeholderType`
+FROM `CollabToHire`.`LUT_TokenEventsDefinition`;
+
+Event,EventCode,StakeholderType
 
 
-SELECT `LUT_12thBoardsCatalog`.`BoardName`,
-    `LUT_12thBoardsCatalog`.`CertificateName`,
-    `LUT_12thBoardsCatalog`.`Board_ID`
-FROM `CollabToHire`.`LUT_12thBoardsCatalog`;
+SELECT `LUT_UniversityAccreditationType`.`AccreditationType`,
+    `LUT_UniversityAccreditationType`.`AccreditationTypeCode`
+FROM `CollabToHire`.`LUT_UniversityAccreditationType`;
 
-SELECT `LUT_AccountStatus`.`AccountStatus`,
-    `LUT_AccountStatus`.`AccountStatusCode`
-FROM `CollabToHire`.`LUT_AccountStatus`;
-
-SELECT `LUT_Branchcatalog`.`Branch_ID`,
-    `LUT_Branchcatalog`.`BranchName`,
-    `LUT_Branchcatalog`.`Duration`,
-    `LUT_Branchcatalog`.`Program_ID`,
-    `LUT_Branchcatalog`.`ProgramType`
-FROM `CollabToHire`.`LUT_Branchcatalog`;
-
-Branch_ID,BranchName,Duration,Program_ID,ProgramType
+AccreditationType,AccreditationTypeCode
 
 
-SELECT 
-    `LUT_CorporateCategory`.`CorporateCategoryName`,
-    `LUT_CorporateCategory`.`CorporateCategoryCode`,
-    `LUT_CorporateCategory`.`OneLtrCode`
-FROM `CollabToHire`.`LUT_CorporateCategory`;
-
-SELECT `LUT_CorporateIndustry`.`CorporateIndutryName`,
-    `LUT_CorporateIndustry`.`CorporateIndustryCode`
-FROM `CollabToHire`.`LUT_CorporateIndustry`;
-
-SELECT `LUT_PaymentMode`.`PaymentMode`,
-    `LUT_PaymentMode`.`PaymentMode_ID`
-FROM `CollabToHire`.`LUT_PaymentMode`
-;
-
-SELECT `LUT_Programcatalog`.`ProgramCode`,
-    `LUT_Programcatalog`.`ProgramName`,
-    `LUT_Programcatalog`.`ProgramType`
-FROM `CollabToHire`.`LUT_Programcatalog`;
-
-ProgramCode,ProgramName,ProgramType
