@@ -144,6 +144,21 @@ services:
       - ../s8_Notifications/notifications
     command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
 
+  lut_service:
+    image: s0-lut:dev
+    container_name: lut_service
+    restart: always
+    build:
+      context: ../s0_Lookups/.
+      target: dev
+    volumes:
+      - ../s0_Lookups:/lut
+      - ../s0_Lookups/lut
+      - ../config.json:/lut/configuration/config.json
+    command: "CompileDaemon -build='go build -o lut' -command=./lut"
+    ports:
+      - 8081:8080
+
   analytics_auth:
     image: s9-analyticsauth
     container_name: analytics_auth

@@ -7,8 +7,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/jaswanth-gorripati/PGK/s0_Lookups/controllers"
 	"github.com/jaswanth-gorripati/PGK/s0_Lookups/middleware"
 )
 
@@ -76,10 +78,12 @@ func InitialzeRoutes() *gin.Engine {
 		c.JSON(http.StatusOK, "Campus Hiring API is working")
 	})
 
-	lut := router.Group("/lut")
-	lut.Use(middleware.AuthorizeRequest())
+	store := persistence.NewInMemoryStore(10 * time.Minute)
 
-	lut.GET("/", middleware.AuthorizeRequest())
+	lut := router.Group("/lut")
+	//lut.Use(middleware.AuthorizeRequest())
+
+	lut.GET("/", middleware.CacheCheck(*store), controllers.LutController.GetLookUpData)
 
 	return router
 }
