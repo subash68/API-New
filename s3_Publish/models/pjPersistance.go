@@ -39,9 +39,9 @@ func (pj *PublishJobs) Insert(ID string) <-chan DbModelError {
 	for index := range pj.PublishedJobs {
 		pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?),"
 
-		var jc FullJobDb
+		var jc JobHcMappingDB
 		getByIDSP, _ := RetriveSP("JOB_HC_GET_BY_ID")
-		err := Db.QueryRow(getByIDSP, pj.PublishedJobs[index].JobID).Scan(&jc.JobID, &jc.StakeholderID, &jc.HiringCriteriaID, &jc.HiringCriteriaName, &jc.JobName, &jc.CreationDate, &jc.PublishedFlag, &jc.PublishID)
+		err := Db.QueryRow(getByIDSP, pj.PublishedJobs[index].JobID).Scan(&jc.JobID, &jc.JobName, &jc.HcID, &jc.HcName, &jc.JobType, &jc.NoOfPositions, &jc.Location, &jc.SalaryMaxRange, &jc.SalaryMinRange, &jc.MonthOfHiring, &jc.Remarks, &jc.AttachmentName, &jc.Attachment, &jc.Status, &jc.CreationDate, &jc.PublishedFlag, &jc.PublishID, &jc.SkillsInString)
 		if err != nil {
 			customError.ErrTyp = "S3PJ003"
 			customError.ErrCode = "500"
@@ -49,35 +49,29 @@ func (pj *PublishJobs) Insert(ID string) <-chan DbModelError {
 			Job <- customError
 			return Job
 		}
-		if jc.HiringCriteriaID.Valid {
-			jc.HcID = jc.HiringCriteriaID.String
-		}
-		if jc.HiringCriteriaName.Valid {
-			jc.HcName = jc.HiringCriteriaName.String
-		}
-		getAllJCSP, _ := RetriveSP("JOB_SKill_GET_BY_ID")
-		jcRows, err := Db.Query(getAllJCSP, pj.PublishedJobs[index].JobID)
-		if err != nil {
-			customError.ErrTyp = "S3PJ003"
-			customError.ErrCode = "500"
-			customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
-			Job <- customError
-			return Job
-		}
-		defer jcRows.Close()
-		for jcRows.Next() {
-			var newJC JobSkillsMapping
-			err = jcRows.Scan(&newJC.ID, &newJC.JobID, &newJC.JobName, &newJC.SkillID, &newJC.Skill, &newJC.NoOfPositions, &newJC.Location, &newJC.SalaryRange, &newJC.DateOfHiring, &newJC.Status, &newJC.Remarks, &newJC.Attachment, &newJC.CreationDate)
-			if err != nil {
-				customError.ErrTyp = "S3PJ003"
-				customError.ErrCode = "500"
-				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
-				Job <- customError
-				return Job
-			}
-			newJC.Attachment = []byte("")
-			jc.Jobs = append(jc.Jobs, newJC)
-		}
+		// getAllJCSP, _ := RetriveSP("JOB_SKill_GET_BY_ID")
+		// jcRows, err := Db.Query(getAllJCSP, pj.PublishedJobs[index].JobID)
+		// if err != nil {
+		// 	customError.ErrTyp = "S3PJ003"
+		// 	customError.ErrCode = "500"
+		// 	customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+		// 	Job <- customError
+		// 	return Job
+		// }
+		// defer jcRows.Close()
+		// for jcRows.Next() {
+		// 	var newJC JobSkillsMapping
+		// 	err = jcRows.Scan(&newJC.ID, &newJC.JobID, &newJC.JobName, &newJC.SkillID, &newJC.Skill, &newJC.NoOfPositions, &newJC.Location, &newJC.SalaryRange, &newJC.DateOfHiring, &newJC.Status, &newJC.Remarks, &newJC.Attachment, &newJC.CreationDate)
+		// 	if err != nil {
+		// 		customError.ErrTyp = "S3PJ003"
+		// 		customError.ErrCode = "500"
+		// 		customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+		// 		Job <- customError
+		// 		return Job
+		// 	}
+		// 	newJC.Attachment = []byte("")
+		// 	jc.Jobs = append(jc.Jobs, newJC)
+		// }
 		jcPubDataAsByte, _ := json.Marshal(&jc)
 		jcPubDataAsByteUnescaped, _ := json.RawMessage(jcPubDataAsByte).MarshalJSON()
 

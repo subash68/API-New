@@ -74,16 +74,26 @@ type MultipleHC struct {
 
 // JobHcMappingDB ...
 type JobHcMappingDB struct {
-	JobID              string     `form:"jobID" json:"jobID"`
-	StakeholderID      string     `form:"-" json:"stakeholderID,omitempty"`
-	HiringCriteriaID   NullString `form:"-" json:"-"`
-	HiringCriteriaName NullString `form:"-" json:"-"`
-	HcID               string     `form:"hiringCriteriaID" json:"hiringCriteriaID"`
-	HcName             string     `form:"hiringCriteriaName" json:"hiringCriteriaName"`
-	JobName            string     `form:"jobName" json:"jobName" binding:"required"`
-	CreationDate       time.Time  `form:"-" json:"creationDate"`
-	PublishedFlag      bool       `form:"-" json:"publishedFlag"`
-	PublishID          string     `form:"-" json:"publishID"`
+	StakeholderID   string    `form:"-" json:"stakeholderID,omitempty"`
+	JobID           string    `form:"jobID" json:"jobID"`
+	JobName         string    `form:"jobName" json:"jobName" binding:"required"`
+	HcID            string    `form:"hiringCriteriaID" json:"hiringCriteriaID"`
+	HcName          string    `form:"hiringCriteriaName" json:"hiringCriteriaName"`
+	JobType         string    `form:"jobType" json:"jobType" binding:"required"`
+	NoOfPositions   int       `form:"noOfPositions" json:"noOfPositions"`
+	Location        string    `form:"location" json:"location"`
+	SalaryMaxRange  string    `form:"salaryMaxRange" json:"salaryMaxRange"`
+	SalaryMinRange  string    `form:"salaryMinRange" json:"salaryMinRange"`
+	MonthOfHiring   time.Time `form:"monthOfHiring" json:"monthOfHiring" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Remarks         string    `form:"remarks" json:"remarks"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
+	Status          string    `form:"status" json:"status"`
+	CreationDate    time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
+	PublishedFlag   bool      `form:"-" json:"publishedFlag"`
+	PublishID       string    `form:"-" json:"publishID"`
+	SkillsInString  string    `form:"-" json:"skillsInString"`
 }
 
 // JobSkillsMapping ...
@@ -92,16 +102,9 @@ type JobSkillsMapping struct {
 	JobID         string    `form:"jobID" json:"jobID"`
 	JobName       string    `form:"jobName" json:"jobName"`
 	StakeholderID string    `form:"-" json:"stakeholder,omitempty"`
-	SkillID       string    `form:"skillID" json:"skillID"`
-	Skill         string    `form:"skill" json:"skill"`
-	NoOfPositions int       `form:"noOfPositions" json:"noOfPositions"`
-	Location      string    `form:"location" json:"location"`
-	SalaryRange   string    `form:"salaryRange" json:"salaryRange"`
-	DateOfHiring  time.Time `form:"dateOfHiring" json:"dateOfHiring" binding:"required"`
-	Status        string    `form:"status" json:"status"`
-	Remarks       string    `form:"remarks" json:"remarks"`
-	Attachment    []byte    `form:"attachment" json:"attachment"`
-	CreationDate  time.Time `form:"creationDate" json:"creationDate"`
+	SkillID       string    `form:"skillID" json:"skillID" binding:"required"`
+	Skill         string    `form:"skill" json:"skill" binding:"required"`
+	CreationDate  time.Time `form:"_" json:"creationDate"`
 }
 
 // FullJobDb ...

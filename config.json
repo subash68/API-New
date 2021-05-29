@@ -60,7 +60,7 @@
   "CRP_MASTER_DB_NAME": "Corporate_Master",
   "CRP_HC_DB": "Corp_HiringCriteria",
   "CRP_HC_Programs": "Corp_HCtoProgramBranchMapping",
-  "CRP_JC_DB": "Corp_CreateJob",
+  "CRP_JC_DB": "Corp_JobsHiringCriteriaMapping",
   "CRP_JSM_DB": "Corp_JobsToSkills_Mapping",
   "CRP_PJ_DB": "Corp_PublishJob",
   "CRP_PDH_DB": "Corp_PublishHistory",

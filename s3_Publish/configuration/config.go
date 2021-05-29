@@ -30,6 +30,7 @@ type DbEnv struct {
 	LutSkillDbName       string `json:"CRP_SKILL_DB"`
 	LutProgramDbName     string `json:"CRP_PRG_DB"`
 	LutDptDbName         string `json:"CRP_DPT_DB"`
+	LutJobTypeDbName     string `json:"LUT_Job"`
 	UnvAccrDbName        string `json:"UNV_ACCR_DB"`
 	UnvCoesDbName        string `json:"UNV_COES_DB"`
 	UnvProgDbName        string `json:"UNV_PROG_DB"`
