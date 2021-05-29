@@ -24,26 +24,47 @@ func (m *MyTime) UnmarshalJSON(data []byte) error {
 
 // HiringCriteriaDB ...
 type HiringCriteriaDB struct {
-	HiringCriteriaID        string     `form:"-" json:"hiringCriteriaID"`
-	HiringCriteriaName      string     `form:"hiringCriteriaName" json:"hiringCriteriaName" binding:"required" validate:"required"`
-	StakeholderID           string     `form:"stakeholderID" json:"stakeholderID,omitempty"`
-	ProgramID               string     `form:"programID" json:"programID" binding:"required"`
-	DepartmentID            string     `form:"courseID" json:"courseID" binding:"required"`
-	CutOffCategory          string     `form:"cutOffCategory" json:"cutOffCategory" binding:"required"`
-	CutOff                  float64    `form:"cutOff" json:"cutOff" binding:"required"`
-	EduGapsSchoolAllowed    bool       `form:"eduGapsSchoolAllowed" json:"eduGapsSchoolAllowed"`
-	EduGaps11N12Allowed     bool       `form:"eduGaps11N12Allowed" json:"eduGaps11N12Allowed"`
-	EduGapsGradAllowed      bool       `form:"eduGapsGradAllowed" json:"eduGapsGradAllowed"`
-	EduGapsPGAllowed        bool       `form:"eduGapsPGAllowed" json:"eduGapsPGAllowed"`
-	AllowActiveBacklogs     bool       `form:"allowActiveBacklogs" json:"allowActiveBacklogs"`
-	NumberOfAllowedBacklogs int        `form:"numberOfAllowedBacklogs" json:"numberOfAllowedBacklogs"`
-	YearOfPassing           int        `form:"yearOfPassing" json:"yearOfPassing" binding:"required"`
-	Remarks                 string     `form:"remarks" json:"remarks"`
-	CreationDate            time.Time  `form:"-" json:"creationDate"`
-	PublishedFlagNull       NullBool   `form:"-" json:"-"`
-	PublishIDNull           NullString `form:"-" json:"-"`
-	PublishedFlag           bool       `form:"-" json:"publishedFlag"`
-	PublishID               string     `form:"-" json:"publishID"`
+	StakeholderID               string            `form:"-" json:"-"`
+	HiringCriteriaID            string            `form:"-" json:"hiringCriteriaID"`
+	HiringCriteriaName          string            `form:"hiringCriteriaName" json:"hiringCriteriaName" binding:"required" validate:"required"`
+	MinimumCutoffPercentage10th float64           `form:"minimumCutoffPercentage10th" json:"minimumCutoffPercentage10th"`
+	MinimumCutoffPercentage12th float64           `form:"minimumCutoffPercentage12th" json:"minimumCutoffPercentage12th"`
+	MinimumCutoffCGPAGrad       float64           `form:"minimumCutoffCGPAGrad" json:"minimumCutoffCGPAGrad"`
+	MinimumCutoffPercentageGrad float64           `form:"minimumCutoffPercentageGrad" json:"minimumCutoffPercentageGrad"`
+	EduGapsSchoolAllowed        bool              `form:"eduGapsSchoolAllowed" json:"eduGapsSchoolAllowed"`
+	EduGaps11N12Allowed         bool              `form:"eduGaps11N12Allowed" json:"eduGaps11N12Allowed"`
+	EduGaps12NGradAllowed       bool              `form:"eduGaps12NGradAllowed" json:"eduGaps12NGradAllowed"`
+	EduGapsGradAllowed          bool              `form:"eduGapsGradAllowed" json:"eduGapsGradAllowed"`
+	EduGapsGradNPGAllowed       bool              `form:"eduGapsGradNPGAllowed" json:"eduGapsGradNPGAllowed"`
+	EduGapsSchool               int               `form:"eduGapsSchool" json:"eduGapsSchool"`
+	EduGaps11N12                int               `form:"eduGaps11N12" json:"eduGaps11N12"`
+	EduGaps12NGrad              int               `form:"eduGaps12NGrad" json:"eduGaps12NGrad"`
+	EduGapsGrad                 int               `form:"eduGapsGrad" json:"eduGapsGrad"`
+	EduGapsGradNPG              int               `form:"eduGapsGradNPG" json:"eduGapsGradNPG"`
+	AllowActiveBacklogs         bool              `form:"allowActiveBacklogs" json:"allowActiveBacklogs"`
+	NumberOfAllowedBacklogs     int               `form:"numberOfAllowedBacklogs" json:"numberOfAllowedBacklogs"`
+	YearOfPassing               int               `form:"yearOfPassing" json:"yearOfPassing" binding:"required"`
+	Remarks                     string            `form:"remarks" json:"remarks"`
+	Programs                    []HcProgramsModel `form:"hcPrograms" json:"hcPrograms,omitempty" binding:"dive"`
+	CreationDate                time.Time         `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate             time.Time         `form:"-" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
+	PublishedFlag               bool              `form:"-" json:"publishedFlag"`
+	PublishID                   string            `form:"-" json:"publishID"`
+	ProgramsInString            string            `json:"hcProgramsInString"`
+}
+
+// HcProgramsModel ...
+type HcProgramsModel struct {
+	HiringCriteriaID   string `json:"hiringCriteriaID,omitempty"`
+	HiringCriteriaName string `json:"hiringCriteriaName,omitempty"`
+	StakeholderID      string `json:"stakeholderID,omitempty"`
+	ProgramName        string `json:"programName" binding:"required"`
+	ProgramID          string `json:"programID" binding:"required"`
+	BranchName         string `json:"branchName" binding:"required"`
+	BranchID           string `json:"branchID" binding:"required"`
+	CreationDate       string `json:"creationDate"`
+	LastUpdatedDate    string `json:"lastUpdatedDate,omitempty"`
+	PublishFlag        string `json:"publishFlag,omitempty"`
 }
 
 // MultipleHC ...

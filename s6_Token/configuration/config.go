@@ -104,7 +104,7 @@ func PaymentConfig() PaymentEnv {
 
 // Config ...
 func Config() {
-	file, err := os.Open("./configuration/env")
+	file, err := os.Open("./configuration/config.json")
 
 	defer file.Close()
 

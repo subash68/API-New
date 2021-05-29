@@ -15,6 +15,7 @@ redis_data
 apilist.txt
 commonadapter-old
 */vendor
+*/configuration/config.json
 */pkg
 s5_Subcription/subscription*
 s4_Profile/profile*

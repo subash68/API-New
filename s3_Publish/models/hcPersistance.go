@@ -27,14 +27,15 @@ func (hc *MultipleHC) Insert(sID string) <-chan DbModelError {
 		return Job
 	}
 
-	// Preparing Databse insert
+	// Preparing Database insert
 	hcInsertCmd, _ := RetriveSP("HC_INS_NEW")
 
 	vals := []interface{}{}
+	currentTime := time.Now().Format(time.RFC3339)
 
 	for index, hc := range hc.HiringCriterias {
-		hcInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, hcIDs[index], hc.HiringCriteriaName, sID, hc.ProgramID, hc.DepartmentID, hc.CutOffCategory, hc.CutOff, hc.EduGapsSchoolAllowed, hc.EduGaps11N12Allowed, hc.EduGapsGradAllowed, hc.EduGapsPGAllowed, hc.AllowActiveBacklogs, hc.NumberOfAllowedBacklogs, hc.YearOfPassing, hc.Remarks)
+		hcInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, sID, hcIDs[index], hc.HiringCriteriaName, hc.MinimumCutoffPercentage10th, hc.MinimumCutoffPercentage12th, hc.MinimumCutoffCGPAGrad, hc.MinimumCutoffPercentageGrad, hc.AllowActiveBacklogs, hc.NumberOfAllowedBacklogs, hc.EduGapsSchoolAllowed, hc.EduGaps11N12Allowed, hc.EduGapsGradAllowed, hc.EduGaps12NGradAllowed, hc.EduGapsGradNPGAllowed, hc.YearOfPassing, hc.Remarks, hc.EduGaps11N12, hc.EduGapsGrad, hc.EduGapsSchool, hc.EduGaps12NGrad, hc.EduGapsGradNPG, currentTime, currentTime)
 	}
 	hcInsertCmd = hcInsertCmd[0 : len(hcInsertCmd)-1]
 
@@ -54,6 +55,18 @@ func (hc *MultipleHC) Insert(sID string) <-chan DbModelError {
 		Job <- customError
 		return Job
 	}
+	for i, hcInfo := range hc.HiringCriterias {
+		hcInfo.HiringCriteriaID, hcInfo.StakeholderID = hcIDs[i], sID
+		err = hcInfo.AddPrograms(currentTime)
+		if err != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Hiring criteria added successfully, Failed to insert Programs in database , due to %v", err.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
+	}
+
 	customError.ErrTyp = "000"
 	successResp["hcIDs"] = fmt.Sprintf("%v", hcIDs)
 	customError.SuccessResp = successResp
@@ -61,6 +74,84 @@ func (hc *MultipleHC) Insert(sID string) <-chan DbModelError {
 	Job <- customError
 	fmt.Printf("\n --> ins : %+v\n", customError)
 	return Job
+}
+
+// AddPrograms ...
+func (hc *HiringCriteriaDB) AddPrograms(currentTime string) error {
+	hcpInsCmd, _ := RetriveSP("HC_Programs_INS_NEW")
+
+	vals := []interface{}{}
+
+	for _, prg := range hc.Programs {
+		hcpInsCmd += "(?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, hc.StakeholderID, hc.HiringCriteriaID, hc.HiringCriteriaName, prg.ProgramName, prg.ProgramID, prg.BranchName, prg.BranchID, currentTime, currentTime, false)
+	}
+	hcpInsCmd = hcpInsCmd[0 : len(hcpInsCmd)-1]
+
+	stmt, err := Db.Prepare(hcpInsCmd)
+	if err != nil {
+		return fmt.Errorf("Failed to Prepare add Programs to Hiring Criteria, Error: %v %v", err, hcpInsCmd)
+	}
+	_, err = stmt.Exec(vals...)
+	if err != nil {
+		return fmt.Errorf("Failed to Insert add Programs to Hiring Criteria, Error: %v", err)
+	}
+	return nil
+}
+
+// DeleteProgramForHc ...
+func (hc *HiringCriteriaDB) DeleteProgramForHc() error {
+	delByIDSP, _ := RetriveSP("HC_Programs_Delete")
+
+	_, err := Db.Exec(delByIDSP, hc.StakeholderID, hc.HiringCriteriaID)
+	if err != nil {
+		fmt.Println("===================delete failed=====%s", delByIDSP)
+		return err
+	}
+	return nil
+}
+
+// Update ...
+func (hc *HiringCriteriaDB) Update() DbModelError {
+	successResp := map[string]string{}
+	var customError DbModelError
+	if CheckPing(&customError); customError.Err != nil {
+		return customError
+	}
+	// Preparing Database insert
+	hcUpdCmd, _ := RetriveSP("HC_UPDATE_BY_HCID")
+
+	vals := []interface{}{}
+	currentTime := time.Now().Format(time.RFC3339)
+
+	stmt, err := Db.Prepare(hcUpdCmd)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Cannot prepare -- %v , %v -- Update due to %v", hcUpdCmd, vals, err.Error())
+		customError.ErrCode = "S3PJ002"
+		return customError
+	}
+	_, err = stmt.Exec(hc.HiringCriteriaName, hc.MinimumCutoffPercentage10th, hc.MinimumCutoffPercentage12th, hc.MinimumCutoffCGPAGrad, hc.MinimumCutoffPercentageGrad, hc.AllowActiveBacklogs, hc.NumberOfAllowedBacklogs, hc.EduGapsSchoolAllowed, hc.EduGaps11N12Allowed, hc.EduGapsGradAllowed, hc.EduGaps12NGradAllowed, hc.EduGapsGradNPGAllowed, hc.YearOfPassing, hc.Remarks, hc.EduGaps11N12, hc.EduGapsGrad, hc.EduGapsSchool, hc.EduGaps12NGrad, hc.EduGapsGradNPG, currentTime)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Failed to updated in database -- %v , %v -- Update due to %v", hcUpdCmd, vals, err.Error())
+		customError.ErrCode = "S3PJ002"
+		return customError
+	}
+	hc.DeleteProgramForHc()
+	err = hc.AddPrograms(currentTime)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Hiring criteria Updated successfully, Failed to insert Programs in database , due to %v %+v", err.Error(), hc)
+		customError.ErrCode = "S3PJ002"
+		return customError
+	}
+
+	customError.ErrTyp = "000"
+	customError.SuccessResp = successResp
+
+	fmt.Printf("\n --> ins : %+v\n", customError)
+	return customError
 }
 
 // GetByID ...
@@ -73,7 +164,8 @@ func (hc *HiringCriteriaDB) GetByID() <-chan DbModelError {
 		return Job
 	}
 	getByIDSP, _ := RetriveSP("HC_GET_BY_ID")
-	err := Db.QueryRow(getByIDSP, hc.HiringCriteriaID).Scan(&hc.HiringCriteriaID, &hc.HiringCriteriaName, &hc.ProgramID, &hc.DepartmentID, &hc.CutOffCategory, &hc.CutOff, &hc.EduGapsSchoolAllowed, &hc.EduGaps11N12Allowed, &hc.EduGapsGradAllowed, &hc.EduGapsPGAllowed, &hc.AllowActiveBacklogs, &hc.NumberOfAllowedBacklogs, &hc.YearOfPassing, &hc.Remarks, &hc.CreationDate, &hc.PublishedFlagNull, &hc.PublishIDNull)
+	fmt.Println(getByIDSP)
+	err := Db.QueryRow(getByIDSP, hc.HiringCriteriaID).Scan(&hc.HiringCriteriaID, &hc.HiringCriteriaName, &hc.MinimumCutoffPercentage10th, &hc.MinimumCutoffPercentage12th, &hc.MinimumCutoffCGPAGrad, &hc.MinimumCutoffPercentageGrad, &hc.AllowActiveBacklogs, &hc.NumberOfAllowedBacklogs, &hc.EduGapsSchoolAllowed, &hc.EduGaps11N12Allowed, &hc.EduGapsGradAllowed, &hc.EduGaps12NGradAllowed, &hc.EduGapsGradNPGAllowed, &hc.YearOfPassing, &hc.Remarks, &hc.EduGaps11N12, &hc.EduGapsGrad, &hc.EduGapsSchool, &hc.EduGaps12NGrad, &hc.EduGapsGradNPG, &hc.CreationDate, &hc.PublishedFlag, &hc.PublishID, &hc.ProgramsInString)
 
 	if err != nil {
 		customError.ErrTyp = "S3PJ003"
@@ -81,13 +173,6 @@ func (hc *HiringCriteriaDB) GetByID() <-chan DbModelError {
 		customError.Err = fmt.Errorf("Failed to retrieve Hiring criteria : %v", err.Error())
 		Job <- customError
 		return Job
-	}
-	if hc.PublishedFlagNull.Valid {
-		hc.PublishedFlag = hc.PublishedFlagNull.Bool
-	}
-
-	if hc.PublishIDNull.Valid {
-		hc.PublishID = hc.PublishIDNull.String
 	}
 	customError.ErrTyp = "000"
 	customError.SuccessResp = successResp
@@ -130,25 +215,14 @@ func (hc *HiringCriteriaDB) GetAllHC(query string) (hcArray []HiringCriteriaDB, 
 	getAllHCSP, _ := RetriveSP(query)
 	hcRows, err := Db.Query(getAllHCSP, hc.StakeholderID) //.Scan()
 	if err != nil && err != sql.ErrNoRows {
-		return hcArray, fmt.Errorf("Cannot get the Rows %v", err.Error())
+		return hcArray, fmt.Errorf("Cannot get the Rows %v %v", err.Error(), hc.StakeholderID)
 	} else if err == sql.ErrNoRows {
 		return hcArray, nil
 	}
 	defer hcRows.Close()
 	for hcRows.Next() {
 		var newHC HiringCriteriaDB
-		err = hcRows.Scan(&newHC.HiringCriteriaID, &newHC.HiringCriteriaName, &newHC.ProgramID, &newHC.DepartmentID, &newHC.CutOffCategory, &newHC.CutOff, &newHC.EduGapsSchoolAllowed, &newHC.EduGaps11N12Allowed, &newHC.EduGapsGradAllowed, &newHC.EduGapsPGAllowed, &newHC.AllowActiveBacklogs, &newHC.NumberOfAllowedBacklogs, &newHC.YearOfPassing, &newHC.Remarks, &newHC.CreationDate, &newHC.PublishedFlagNull, &newHC.PublishIDNull)
-		if newHC.PublishedFlagNull.Valid {
-			newHC.PublishedFlag = newHC.PublishedFlagNull.Bool
-		} else {
-			newHC.PublishedFlag = false
-		}
-
-		if newHC.PublishIDNull.Valid {
-			newHC.PublishID = newHC.PublishIDNull.String
-		} else {
-			newHC.PublishID = ""
-		}
+		err = hcRows.Scan(&newHC.HiringCriteriaID, &newHC.HiringCriteriaName, &newHC.MinimumCutoffPercentage10th, &newHC.MinimumCutoffPercentage12th, &newHC.MinimumCutoffCGPAGrad, &newHC.MinimumCutoffPercentageGrad, &newHC.AllowActiveBacklogs, &newHC.NumberOfAllowedBacklogs, &newHC.EduGapsSchoolAllowed, &newHC.EduGaps11N12Allowed, &newHC.EduGapsGradAllowed, &newHC.EduGaps12NGradAllowed, &newHC.EduGapsGradNPGAllowed, &newHC.YearOfPassing, &newHC.Remarks, &newHC.EduGaps11N12, &newHC.EduGapsGrad, &newHC.EduGapsSchool, &newHC.EduGaps12NGrad, &newHC.EduGapsGradNPG, &newHC.CreationDate, &newHC.PublishedFlag, &newHC.PublishID, &newHC.ProgramsInString)
 		if err != nil {
 			return hcArray, fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}
@@ -213,7 +287,9 @@ func (phc *PublishHiringCriteriasModel) PublishHC() <-chan DbModelError {
 		pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?),"
 		getByIDSP, _ := RetriveSP("HC_GET_BY_ID")
 		var hc HiringCriteriaDB
-		err := Db.QueryRow(getByIDSP, phc.HiringCriteriaIDs[index]).Scan(&hc.HiringCriteriaID, &hc.HiringCriteriaName, &hc.ProgramID, &hc.DepartmentID, &hc.CutOffCategory, &hc.CutOff, &hc.EduGapsSchoolAllowed, &hc.EduGaps11N12Allowed, &hc.EduGapsGradAllowed, &hc.EduGapsPGAllowed, &hc.AllowActiveBacklogs, &hc.NumberOfAllowedBacklogs, &hc.YearOfPassing, &hc.Remarks, &hc.CreationDate, &hc.PublishedFlagNull, &hc.PublishIDNull)
+		err := Db.QueryRow(getByIDSP, phc.HiringCriteriaIDs[index]).Scan(&hc.HiringCriteriaID, &hc.HiringCriteriaName, &hc.MinimumCutoffPercentage10th, &hc.MinimumCutoffPercentage12th, &hc.MinimumCutoffCGPAGrad, &hc.MinimumCutoffPercentageGrad, &hc.AllowActiveBacklogs, &hc.NumberOfAllowedBacklogs, &hc.EduGapsSchoolAllowed, &hc.EduGaps11N12Allowed, &hc.EduGapsGradAllowed, &hc.EduGaps12NGradAllowed, &hc.EduGapsGradNPGAllowed, &hc.YearOfPassing, &hc.Remarks, &hc.EduGaps11N12, &hc.EduGapsGrad, &hc.EduGapsSchool, &hc.EduGaps12NGrad, &hc.EduGapsGradNPG, &hc.CreationDate, &hc.PublishedFlag, &hc.PublishID, &hc.ProgramsInString)
+		hc.PublishID = pdhIDs[index]
+		hc.PublishedFlag = true
 		hcPubDataAsBytes, _ := json.Marshal(&hc)
 		if err != nil {
 			customError.ErrTyp = "S3PJ003"

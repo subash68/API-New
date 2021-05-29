@@ -28,7 +28,7 @@ func CheckPing(customError *DbModelError) {
 }
 
 // UpdateProfileData ...
-func UpdateProfileData(updateQuery url.Values, spName string, spExt string, stakeholder string, attachmentUpdate bool, attachment []byte, ppUpdate bool, ppFile []byte) DbModelError {
+func UpdateProfileData(updateQuery url.Values, spName string, spExt string, stakeholder string, attachmentUpdate bool, attachment []byte, attachmentName string, ppUpdate bool, ppFile []byte) DbModelError {
 	updateString, _ := RetriveSP(spName)
 	values := []interface{}{}
 	var customError DbModelError
@@ -48,8 +48,8 @@ func UpdateProfileData(updateQuery url.Values, spName string, spExt string, stak
 		}
 	}
 	if attachmentUpdate {
-		updateString = updateString + " Attachment= ?,"
-		values = append(values, attachment)
+		updateString = updateString + " Attachment= ?, AttachmentName= ?"
+		values = append(values, attachment, attachmentName)
 	}
 	if ppUpdate {
 		updateString = updateString + " ProfilePicture= ?,"

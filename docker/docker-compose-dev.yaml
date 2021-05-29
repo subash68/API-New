@@ -42,6 +42,7 @@ services:
     volumes:
       - ../s2_Auth:/cr-auth
       - ../s2_Auth/auth
+      - ../config.json:/cr-auth/configuration/config.json
     command: "CompileDaemon -build='go build -o auth' -command=./auth"
     depends_on:
       redis:
@@ -57,6 +58,7 @@ services:
     volumes:
       - ../s3_Publish:/cr-publish
       - ../s3_Publish/publish
+      - ../config.json:/cr-publish/configuration/config.json
     command: "CompileDaemon -build='go build -o publish' -command=./publish"
     depends_on:
       redis:
@@ -74,6 +76,7 @@ services:
     volumes:
       - ../s4_Profile:/cr-profile
       - ../s4_Profile/profile
+      - ../config.json:/cr-profile/configuration/config.json
     command: "CompileDaemon -build='go build -o profile' -command=./profile"
     # ports:
     #   - 8081:8080
@@ -91,6 +94,7 @@ services:
     volumes:
       - ../s1_Onboarding:/Onboarding
       - ../s1_Onboardingonboarding
+      - ../config.json:/Onboarding/configuration/config.json
     command: "CompileDaemon -build='go build -o onboarding' -command=./onboarding"
     depends_on:
       redis:
@@ -106,6 +110,7 @@ services:
     volumes:
       - ../s5_Subcription:/ch-subscription
       - ../s5_Subcription/subscription
+      - ../config.json:/ch-subscription/configuration/config.json
     command: "CompileDaemon -build='go build -o subscription' -command=./subscription"
 
   token_service:
@@ -118,6 +123,7 @@ services:
     volumes:
       - ../s6_Token:/ch-token
       - ../s6_Token/token
+      - ../config.json:/ch-token/configuration/config.json
     command: "CompileDaemon -build='go build -o token' -command=./token"
 
   pg_service:
@@ -130,6 +136,7 @@ services:
     volumes:
       - ../s7_PaymentGateway:/ch-paymentgateway
       - ../s7_PaymentGateway/paymentgateway
+      - ../config.json:/ch-paymentgateway/configuration/config.json
     command: "CompileDaemon -build='go build -o paymentgateway' -command=./paymentgateway"
 
   notification_service:
@@ -142,6 +149,7 @@ services:
     volumes:
       - ../s8_Notifications:/notifications
       - ../s8_Notifications/notifications
+      - ../config.json:/notifications/configuration/config.json
     command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
 
   lut_service:

@@ -50,7 +50,7 @@ func GetLutData(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		c.JSON(http.StatusOK, ld)
+		c.JSON(http.StatusUpgradeRequired, ld)
 		c.Abort()
 		return
 	}

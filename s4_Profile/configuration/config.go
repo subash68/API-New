@@ -16,7 +16,7 @@ type DbEnv struct {
 	DbDatabaseName          string `json:"DB_DATABASE_NAME"`
 	DbHost                  string `json:"DB_HOST"`
 	DbPort                  int    `json:"DB_PORT"`
-	CorpMasterDbName        string `json:"CORP_MASTER_DB_NAME"`
+	CorpMasterDbName        string `json:"CRP_MASTER_DB_NAME"`
 	UnvMasterDbName         string `json:"UNV_MASTER_DB_NAME"`
 	StuMasterDbName         string `json:"STU_MASTER_DB_NAME"`
 	ProfilePicDbName        string `json:"PROFIE_PIC_DB_NAME"`
@@ -155,7 +155,7 @@ func PaymentConfig() PaymentEnv {
 
 // Config ...
 func Config() {
-	file, err := os.Open("./configuration/env")
+	file, err := os.Open("./configuration/config.json")
 
 	defer file.Close()
 

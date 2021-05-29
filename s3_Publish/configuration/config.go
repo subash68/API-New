@@ -11,40 +11,41 @@ import (
 
 // DbEnv ...
 type DbEnv struct {
-	DbUserName       string `json:"DB_USER_NAME"`
-	DbPassword       string `json:"DB_PASSWORD"`
-	DbDatabaseName   string `json:"DB_DATABASE_NAME"`
-	DbHost           string `json:"DB_HOST"`
-	DbPort           int    `json:"DB_PORT"`
-	CorpMasterDbName string `json:"CORP_MASTER_DB_NAME"`
-	UnvMasterDbName  string `json:"UNV_MASTER_DB_NAME"`
-	CorpHCDbName     string `json:"CRP_HC_DB"`
-	JobHcDbName      string `json:"CRP_JC_DB"`
-	JobSkillDbName   string `json:"CRP_JSM_DB"`
-	CorpPJDbName     string `json:"CRP_PJ_DB"`
-	CorpPDHDbName    string `json:"CRP_PDH_DB"`
-	CorpOIDbName     string `json:"CRP_OI_DB"`
-	UnvPDHDbName     string `json:"UNV_PDH_DB"`
-	UnvOIDbName      string `json:"UNV_OI_DB"`
-	LutSkillDbName   string `json:"CRP_SKILL_DB"`
-	LutProgramDbName string `json:"CRP_PRG_DB"`
-	LutDptDbName     string `json:"CRP_DPT_DB"`
-	UnvAccrDbName    string `json:"UNV_ACCR_DB"`
-	UnvCoesDbName    string `json:"UNV_COES_DB"`
-	UnvProgDbName    string `json:"UNV_PROG_DB"`
-	UnvBranchDbName  string `json:"UNV_BRANCH_DB"`
-	UnvRankDbName    string `json:"UNV_RANK_DB"`
-	UnvSplOfrDbName  string `json:"UNV_SPLOFR_DB"`
-	UnvTieupDbName   string `json:"UNV_TIEUP_DB"`
-	UnvSubDBName     string `json:"UNV_SUB_DB"`
-	CrpSubDBName     string `json:"CRP_SUB_DB"`
-	StuSubDBName     string `json:"STU_SUB_DB"`
-	StuPublishDBName string `json:"STU_PUBLISH_DB"`
-	StuOiDBName      string `json:"STU_OI_DB"`
-	DbRedisAddr      string `json:"DB_REDIS_ADDRESS"`
-	DbRedisPort      string `json:"DB_REDIS_PORT"`
-	DbRedisPass      string `json:"DB_REDIS_PASS"`
-	DbRedisDb        string `json:"DB_REDIS_DB"`
+	DbUserName           string `json:"DB_USER_NAME"`
+	DbPassword           string `json:"DB_PASSWORD"`
+	DbDatabaseName       string `json:"DB_DATABASE_NAME"`
+	DbHost               string `json:"DB_HOST"`
+	DbPort               int    `json:"DB_PORT"`
+	CorpMasterDbName     string `json:"CORP_MASTER_DB_NAME"`
+	UnvMasterDbName      string `json:"UNV_MASTER_DB_NAME"`
+	CorpHCDbName         string `json:"CRP_HC_DB"`
+	CorpHCProgramsDbName string `json:"CRP_HC_Programs"`
+	JobHcDbName          string `json:"CRP_JC_DB"`
+	JobSkillDbName       string `json:"CRP_JSM_DB"`
+	CorpPJDbName         string `json:"CRP_PJ_DB"`
+	CorpPDHDbName        string `json:"CRP_PDH_DB"`
+	CorpOIDbName         string `json:"CRP_OI_DB"`
+	UnvPDHDbName         string `json:"UNV_PDH_DB"`
+	UnvOIDbName          string `json:"UNV_OI_DB"`
+	LutSkillDbName       string `json:"CRP_SKILL_DB"`
+	LutProgramDbName     string `json:"CRP_PRG_DB"`
+	LutDptDbName         string `json:"CRP_DPT_DB"`
+	UnvAccrDbName        string `json:"UNV_ACCR_DB"`
+	UnvCoesDbName        string `json:"UNV_COES_DB"`
+	UnvProgDbName        string `json:"UNV_PROG_DB"`
+	UnvBranchDbName      string `json:"UNV_BRANCH_DB"`
+	UnvRankDbName        string `json:"UNV_RANK_DB"`
+	UnvSplOfrDbName      string `json:"UNV_SPLOFR_DB"`
+	UnvTieupDbName       string `json:"UNV_TIEUP_DB"`
+	UnvSubDBName         string `json:"UNV_SUB_DB"`
+	CrpSubDBName         string `json:"CRP_SUB_DB"`
+	StuSubDBName         string `json:"STU_SUB_DB"`
+	StuPublishDBName     string `json:"STU_PUBLISH_DB"`
+	StuOiDBName          string `json:"STU_OI_DB"`
+	DbRedisAddr          string `json:"DB_REDIS_ADDRESS"`
+	DbRedisPort          string `json:"DB_REDIS_PORT"`
+	DbRedisPass          string `json:"DB_REDIS_PASS"`
+	DbRedisDb            string `json:"DB_REDIS_DB"`
 }
 
 // AuthService ...
@@ -142,7 +143,7 @@ func PaymentConfig() PaymentEnv {
 
 // Config ...
 func Config() {
-	file, err := os.Open("./configuration/env")
+	file, err := os.Open("./configuration/config.json")
 
 	defer file.Close()
 

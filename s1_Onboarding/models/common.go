@@ -133,6 +133,7 @@ func LoginStakehodler(userID string, password string, loginSP string) DbModelErr
 
 	dbSP, _ := RetriveSP(loginSP)
 	//fmt.Printf("\n Email: %v , password: %v \n", data.PrimaryContactEmail, data.Password)
+	fmt.Println("Query ", dbSP, userID, userID, userID)
 	err := Db.QueryRow(dbSP, userID, userID, userID).Scan(&sid, &accStatus, &dbPass, &userExists)
 	if err != nil || err == sql.ErrNoRows {
 		customError.Err = fmt.Errorf("%s is not registered ", userID)

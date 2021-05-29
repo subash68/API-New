@@ -42,6 +42,7 @@ type CorporateMasterDB struct {
 	CorporateIndustry                   string `form:"corporateIndustry" binding:"required" `
 	CompanyProfile                      string `form:"companyProfile,omitempty"`
 	Attachment                          []byte `form:"attachment,omitempty"`
+	AttachmentName                      string `form:"attachmentName,omitempty"`
 	YearOfEstablishment                 int64  `form:"yearOfEstablishment" binding:"required" `
 	AccountStatus                       string `form:"accountStatus,omitempty" `
 	Password                            string `form:"password" binding:"required,min=8,max=15"`

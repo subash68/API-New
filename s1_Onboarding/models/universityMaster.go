@@ -42,6 +42,7 @@ type UniversityMasterDb struct {
 	YearOfEstablishment                  int64  `form:"yearOfEstablishment" binding:"required"`
 	UniversityProfile                    string `form:"universityProfile,omitempty"`
 	Attachment                           []byte `form:"attachment,omitempty"`
+	AttachmentName                       string `form:"attachmentName,omitempty"`
 	AccountStatus                        string `form:"accountStatus,omitempty"`
 	Password                             string `form:"password" binding:"required,min=8,max=15"`
 	PrimaryPhoneVerified                 bool   `form:"primaryPhoneVerified,omitempty"`

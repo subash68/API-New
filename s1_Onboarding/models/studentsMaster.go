@@ -50,4 +50,5 @@ type StudentMasterDb struct {
 	PrimaryEmailVerified     bool      `form:"primaryEmailVerified" json:"primaryEmailVerified"`
 	ProfilePicture           []byte    `form:"-" json:"profilePicture"`
 	Attachment               []byte    `form:"-" json:"Attachment"`
+	AttachmentName           string    `form:"attachmentName,omitempty"`
 }

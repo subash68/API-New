@@ -44,6 +44,7 @@ type UniversityMasterDb struct {
 	YearOfEstablishment                  int64     `form:"yearOfEstablishment" binding:"required" json:"yearOfEstablishment"`
 	UniversityProfile                    string    `form:"universityProfile,omitempty" json:"universityProfile"`
 	Attachment                           []byte    `form:"attachment,omitempty" json:"attachment"`
+	AttachmentName                       string    `json:"attachmentName,omitempty"`
 	DateOfJoining                        time.Time `form:"dateOfJoining,omitempty" json:"dateOfJoining"`
 	AccountStatus                        string    `form:"accountStatus,omitempty" json:"accountStatus"`
 	PrimaryPhoneVerified                 bool      `form:"primaryPhoneVerified" json:"primaryPhoneVerified"`
