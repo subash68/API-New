@@ -69,6 +69,29 @@ type CampusDriveDataModel struct {
 	LastUpdatedDate        time.Time `form:"-" json:"lastUpdatedTime" time_format="2006-12-01T21:23:34.409Z"`
 }
 
+// CDSubscriptionReq ...
+type CDSubscriptionReq struct {
+	InitiatorID          string    `form:"-" json:"initiatorID"`
+	InitiatorName        string    `form:"-" json:"initiatorName,omitempty"`
+	InitiatorLocation    string    `json:"initiatorLocation,omitempty"`
+	ReceiverID           string    `form:"-" json:"receiverID"`
+	ReceiverName         string    `form:"-" json:"receiverName,omitempty"`
+	ReceiverLocation     string    `json:"receiverLocation,omitempty"`
+	CampusDriveID        string    `form:"-" json:"campusDriveID"`
+	CampusDriveRequested bool      `form:"-" json:"campusDriveRequested"`
+	RequestedDate        time.Time `form:"-" json:"requestedDate" time_format="2006-12-01T21:23:34.409Z"`
+	CampusDriveStatus    string    `form:"-" json:"campusDriveStatus"`
+	NftID                string    `form:"-" json:"nftID"`
+	TokensUsed           float64   `form:"-" json:"tokensUsed,omitempty"`
+	TransactionID        string    `form:"-" json:"transactionID,omitempty"`
+}
+
+//AllCdInvites ...
+type AllCdInvites struct {
+	CampusInviteSent     []CDSubscriptionReq `json:"campusInviteSent"`
+	CampusInviteReceived []CDSubscriptionReq `json:"campusInviteReceived"`
+}
+
 // CampusDriveRespondDataModel ...
 type CampusDriveRespondDataModel struct {
 	CampusDriveID  string `form:"campusDriveID" json:"campusDriveID" binding:"required"`

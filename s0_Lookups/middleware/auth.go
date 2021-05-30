@@ -127,7 +127,9 @@ func AuthorizeInternalRequest(tknType string, usrTyps []string) gin.HandlerFunc 
 			return
 		}
 		sort.Sort(sort.StringSlice(usrTyps))
+
 		log.Debugf("====================>>", userType.(string), tokenType.(string), sort.StringSlice(usrTyps).Search(userType.(string)) >= 0, tokenType.(string) == tknType, " <<========================")
+
 		if sort.StringSlice(usrTyps).Search(userType.(string)) < 0 || tokenType.(string) != tknType {
 			c.JSON(http.StatusUnauthorized, "Unauthorized request, Only internal calls allowed")
 			c.Abort()

@@ -105,7 +105,7 @@ func getFuncReq(c *gin.Context, ctxKey string) (context.Context, string, string,
 	ID, ok := c.Get("userID")
 
 	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6Profile001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "s0LUT001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		c.Abort()
 		return ctx, "", "", successResp
@@ -113,7 +113,7 @@ func getFuncReq(c *gin.Context, ctxKey string) (context.Context, string, string,
 	log.Debugf("-----> Got ID", ID.(string))
 	userType, ok := c.Get("userType")
 	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S4Profile001", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User Type from the request"), SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "s0LUT002", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User Type from the request"), SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		c.Abort()
 		return ctx, "", "", successResp

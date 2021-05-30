@@ -69,34 +69,34 @@ func GetCrpPublishedData(publishID string, isOwner bool, subscriber string, subT
 	fmt.Println("====================>>>>>>>>>>>>>>>>>", hc, jb, prf, oi)
 
 	if jb {
-		var jpdh JobPdhModel
-		getByPID, _ := RetriveSP("CRP_GET_JOB_BY_PID")
-		getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
-		err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.JobID, &jpdh.JobName, &jpdh.CorporateName, &jpdh.ProgramID, &jpdh.BranchID, &jpdh.MinimumCutoffCategory, &jpdh.MinimumCutoff, &jpdh.ActiveBacklogsAllowed, &jpdh.TotalNumberOfBacklogsAllowed, &jpdh.EduGaps11N12Allowed, &jpdh.EduGapsGradAllowed, &jpdh.EduGapsSchoolAllowed, &jpdh.EduGapsPGAllowed, &jpdh.YearOfPassing, &jpdh.Remarks, &jpdh.Skills)
-		if err != nil {
-			customError.ErrTyp = "S3PJ003"
-			customError.ErrCode = "500"
-			customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
-			return customError, resp, ""
-		}
-		jpdh.Skills = strings.ReplaceAll(jpdh.Skills, "34", "\"")
+		// var jpdh JobPdhModel
+		// getByPID, _ := RetriveSP("CRP_GET_JOB_BY_PID")
+		// getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
+		// err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.JobID, &jpdh.JobName, &jpdh.CorporateName, &jpdh.ProgramID, &jpdh.BranchID, &jpdh.MinimumCutoffCategory, &jpdh.MinimumCutoff, &jpdh.ActiveBacklogsAllowed, &jpdh.TotalNumberOfBacklogsAllowed, &jpdh.EduGaps11N12Allowed, &jpdh.EduGapsGradAllowed, &jpdh.EduGapsSchoolAllowed, &jpdh.EduGapsPGAllowed, &jpdh.YearOfPassing, &jpdh.Remarks, &jpdh.Skills)
+		// if err != nil {
+		// 	customError.ErrTyp = "S3PJ003"
+		// 	customError.ErrCode = "500"
+		// 	customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
+		// 	return customError, resp, ""
+		// }
+		// jpdh.Skills = strings.ReplaceAll(jpdh.Skills, "34", "\"")
 
 		// dataAsByte, _ := json.Marshal(jpdh)
-		resp = map[string]interface{}{"Jobs": jpdh}
+		resp = map[string]interface{}{"Jobs": pd}
 		fmt.Printf("\n============== %s =================== \n", resp["Jobs"])
 		return customError, resp, "Jobs"
 	} else if hc {
-		var jpdh HcPdhModel
-		getByPID, _ := RetriveSP("CRP_GET_HC_BY_PID")
-		getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
-		err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.HcID, &jpdh.HcName, &jpdh.CorporateName, &jpdh.ProgramID, &jpdh.BranchID, &jpdh.MinimumCutoffCategory, &jpdh.MinimumCutoff, &jpdh.ActiveBacklogsAllowed, &jpdh.TotalNumberOfBacklogsAllowed, &jpdh.EduGaps11N12Allowed, &jpdh.EduGapsGradAllowed, &jpdh.EduGapsSchoolAllowed, &jpdh.EduGapsPGAllowed, &jpdh.YearOfPassing, &jpdh.Remarks)
-		if err != nil {
-			customError.ErrTyp = "S3PJ003"
-			customError.ErrCode = "500"
-			customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
-			return customError, resp, ""
-		}
-		resp = map[string]interface{}{"HC": jpdh}
+		// var jpdh HcPdhModel
+		// getByPID, _ := RetriveSP("CRP_GET_HC_BY_PID")
+		// getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
+		// err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.HcID, &jpdh.HcName, &jpdh.CorporateName, &jpdh.ProgramID, &jpdh.BranchID, &jpdh.MinimumCutoffCategory, &jpdh.MinimumCutoff, &jpdh.ActiveBacklogsAllowed, &jpdh.TotalNumberOfBacklogsAllowed, &jpdh.EduGaps11N12Allowed, &jpdh.EduGapsGradAllowed, &jpdh.EduGapsSchoolAllowed, &jpdh.EduGapsPGAllowed, &jpdh.YearOfPassing, &jpdh.Remarks)
+		// if err != nil {
+		// 	customError.ErrTyp = "S3PJ003"
+		// 	customError.ErrCode = "500"
+		// 	customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
+		// 	return customError, resp, ""
+		// }
+		resp = map[string]interface{}{"HC": pd}
 		return customError, resp, "HC"
 	} else if prf {
 		resp = map[string]interface{}{"Profile": pd}

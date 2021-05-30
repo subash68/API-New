@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 // Insert ...
@@ -28,10 +29,10 @@ func (jc *FullJobDb) Insert() <-chan DbModelError {
 	jsInsCmd, _ := RetriveSP("JOB_SKill_MAP_INS")
 
 	vals := []interface{}{}
-
+	currentTime := time.Now().Format(time.RFC3339)
 	for _, jobSkill := range jc.Jobs {
-		jsInsCmd += "(?,?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, jcID, jc.JobHcMappingDB.JobName, jc.StakeholderID, jobSkill.SkillID, jobSkill.Skill, jobSkill.NoOfPositions, jobSkill.Location, jobSkill.SalaryRange, jobSkill.DateOfHiring, jobSkill.Status, jobSkill.Remarks, jobSkill.Attachment)
+		jsInsCmd += "(?,?,?,?,?,?,?,?),"
+		vals = append(vals, jcID, jc.JobName, jc.StakeholderID, jobSkill.SkillID, jobSkill.Skill, false, currentTime, currentTime)
 	}
 	jsInsCmd = jsInsCmd[0 : len(jsInsCmd)-1]
 
@@ -52,11 +53,8 @@ func (jc *FullJobDb) Insert() <-chan DbModelError {
 		job <- customError
 		return job
 	}
-	if jc.HcID != "" && jc.HcName != "" {
-		_, err = jcStmt.Exec(jcID, jc.StakeholderID, jc.HcID, jc.HcName, jc.JobName)
-	} else {
-		_, err = jcStmt.Exec(jcID, jc.StakeholderID, jc.HiringCriteriaID, jc.HiringCriteriaName, jc.JobName)
-	}
+
+	_, err = jcStmt.Exec(jc.StakeholderID, jcID, jc.JobName, jc.HcID, jc.HcName, jc.JobType, jc.NoOfPositions, jc.Location, jc.SalaryMaxRange, jc.SalaryMinRange, jc.MonthOfHiring, jc.Remarks, jc.AttachmentName, jc.Attachment, jc.Status, false, currentTime, currentTime)
 
 	if err != nil {
 		customError.ErrTyp = "500"
@@ -85,7 +83,7 @@ func (jc *FullJobDb) Insert() <-chan DbModelError {
 }
 
 // GetByID ...
-func (jc *FullJobDb) GetByID() <-chan DbModelError {
+func (jc *JobHcMappingDB) GetByID() <-chan DbModelError {
 	Job := make(chan DbModelError, 1)
 	successResp := map[string]string{}
 	var customError DbModelError
@@ -94,7 +92,8 @@ func (jc *FullJobDb) GetByID() <-chan DbModelError {
 		return Job
 	}
 	getByIDSP, _ := RetriveSP("JOB_HC_GET_BY_ID")
-	err := Db.QueryRow(getByIDSP, jc.JobID).Scan(&jc.JobID, &jc.StakeholderID, &jc.HiringCriteriaID, &jc.HiringCriteriaName, &jc.JobName, &jc.CreationDate, &jc.PublishedFlag, &jc.PublishID)
+	fmt.Println("==========%s=========", getByIDSP)
+	err := Db.QueryRow(getByIDSP, jc.JobID).Scan(&jc.JobID, &jc.JobName, &jc.HcID, &jc.HcName, &jc.JobType, &jc.NoOfPositions, &jc.Location, &jc.SalaryMaxRange, &jc.SalaryMinRange, &jc.MonthOfHiring, &jc.Remarks, &jc.AttachmentName, &jc.Attachment, &jc.Status, &jc.CreationDate, &jc.PublishedFlag, &jc.PublishID, &jc.SkillsInString)
 	if err != nil {
 		customError.ErrTyp = "S3PJ003"
 		customError.ErrCode = "500"
@@ -102,34 +101,28 @@ func (jc *FullJobDb) GetByID() <-chan DbModelError {
 		Job <- customError
 		return Job
 	}
-	if jc.HiringCriteriaID.Valid {
-		jc.HcID = jc.HiringCriteriaID.String
-	}
-	if jc.HiringCriteriaName.Valid {
-		jc.HcName = jc.HiringCriteriaName.String
-	}
-	getAllJCSP, _ := RetriveSP("JOB_SKill_GET_BY_ID")
-	jcRows, err := Db.Query(getAllJCSP, jc.JobID)
-	if err != nil {
-		customError.ErrTyp = "S3PJ003"
-		customError.ErrCode = "500"
-		customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
-		Job <- customError
-		return Job
-	}
-	defer jcRows.Close()
-	for jcRows.Next() {
-		var newJC JobSkillsMapping
-		err = jcRows.Scan(&newJC.ID, &newJC.JobID, &newJC.JobName, &newJC.SkillID, &newJC.Skill, &newJC.NoOfPositions, &newJC.Location, &newJC.SalaryRange, &newJC.DateOfHiring, &newJC.Status, &newJC.Remarks, &newJC.Attachment, &newJC.CreationDate)
-		if err != nil {
-			customError.ErrTyp = "S3PJ003"
-			customError.ErrCode = "500"
-			customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
-			Job <- customError
-			return Job
-		}
-		jc.Jobs = append(jc.Jobs, newJC)
-	}
+	// getAllJCSP, _ := RetriveSP("JOB_SKill_GET_BY_ID")
+	// jcRows, err := Db.Query(getAllJCSP, jc.JobID)
+	// if err != nil {
+	// 	customError.ErrTyp = "S3PJ003"
+	// 	customError.ErrCode = "500"
+	// 	customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+	// 	Job <- customError
+	// 	return Job
+	// }
+	// defer jcRows.Close()
+	// for jcRows.Next() {
+	// 	var newJC JobSkillsMapping
+	// 	err = jcRows.Scan(&newJC.ID, &newJC.JobID, &newJC.JobName, &newJC.SkillID, &newJC.Skill, &newJC.NoOfPositions, &newJC.Location, &newJC.SalaryRange, &newJC.DateOfHiring, &newJC.Status, &newJC.Remarks, &newJC.Attachment, &newJC.CreationDate)
+	// 	if err != nil {
+	// 		customError.ErrTyp = "S3PJ003"
+	// 		customError.ErrCode = "500"
+	// 		customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+	// 		Job <- customError
+	// 		return Job
+	// 	}
+	// 	jc.Jobs = append(jc.Jobs, newJC)
+	// }
 	customError.ErrTyp = "000"
 	customError.SuccessResp = successResp
 
@@ -151,7 +144,7 @@ func (jc *JobHcMappingDB) DeleteByID() <-chan DbModelError {
 	if err != nil {
 		customError.ErrTyp = "S3PJ005"
 		customError.ErrCode = "500"
-		customError.Err = fmt.Errorf("Failed to retrieve Job_HiringCriteria : %v", err.Error())
+		customError.Err = fmt.Errorf("Failed to retrieve Job Hiring mapping : %v", err.Error())
 		Job <- customError
 		return Job
 	}
@@ -226,16 +219,10 @@ func (jc *JobHcMappingDB) GetAllJC() (jcArray []JobHcMappingDB, err error) {
 	defer jcRows.Close()
 	for jcRows.Next() {
 		var newJC JobHcMappingDB
-		err = jcRows.Scan(&newJC.JobID, &newJC.HiringCriteriaID, &newJC.HiringCriteriaName, &newJC.JobName, &newJC.CreationDate, &newJC.PublishedFlag, &newJC.PublishID)
+		err = jcRows.Scan(&newJC.JobID, &newJC.JobName, &newJC.HcID, &newJC.HcName, &newJC.JobType, &newJC.NoOfPositions, &newJC.Location, &newJC.SalaryMaxRange, &newJC.SalaryMinRange, &newJC.MonthOfHiring, &newJC.Remarks, &newJC.AttachmentName, &newJC.Attachment, &newJC.Status, &newJC.CreationDate, &newJC.PublishedFlag, &newJC.PublishID, &newJC.SkillsInString)
 
 		if err != nil {
 			return jcArray, fmt.Errorf("Cannot read the Rows %v", err.Error())
-		}
-		if newJC.HiringCriteriaID.Valid {
-			newJC.HcID = newJC.HiringCriteriaID.String
-		}
-		if newJC.HiringCriteriaName.Valid {
-			newJC.HcName = newJC.HiringCriteriaName.String
 		}
 		jcArray = append(jcArray, newJC)
 	}
@@ -279,11 +266,11 @@ func (jc *SkillsUpdateJobDb) AddSkillsToJC() <-chan DbModelError {
 
 	jsInsCmd, _ := RetriveSP("JOB_SKill_MAP_INS")
 	jsDelCmd, _ := RetriveSP("JS_SM_DELETE_All")
-
+	currentTime := time.Now().Format(time.RFC3339)
 	vals := []interface{}{}
 	for _, jobSkill := range jc.Jobs {
-		jsInsCmd += "(?,?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, jc.JobID, jc.JobName, jc.StakeholderID, jobSkill.SkillID, jobSkill.Skill, jobSkill.NoOfPositions, jobSkill.Location, jobSkill.SalaryRange, jobSkill.DateOfHiring, jobSkill.Status, jobSkill.Remarks, jobSkill.Attachment)
+		jsInsCmd += "(?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, jc.JobID, jc.JobName, jc.StakeholderID, jobSkill.SkillID, jobSkill.Skill, false, currentTime, currentTime)
 	}
 	jsInsCmd = jsInsCmd[0 : len(jsInsCmd)-1]
 	fmt.Println(jsInsCmd)
@@ -327,6 +314,86 @@ func (jc *SkillsUpdateJobDb) AddSkillsToJC() <-chan DbModelError {
 	job <- customError
 	fmt.Printf("\n --> ins : %+v\n", customError)
 	return job
+}
+
+// DeleteJobSkills ...
+func (jc *FullJobDb) DeleteJobSkills() error {
+	delByIDSP, _ := RetriveSP("JS_SM_DELETE_All")
+
+	_, err := Db.Exec(delByIDSP, jc.JobID, jc.StakeholderID)
+	if err != nil {
+		fmt.Println("===================delete failed=====%s", delByIDSP)
+		return err
+	}
+	return nil
+}
+
+// Update ...
+func (jc *FullJobDb) Update() DbModelError {
+
+	successResp := map[string]string{}
+	var customError DbModelError
+	if CheckPing(&customError); customError.Err != nil {
+		return customError
+	}
+	jcInsertCmd, _ := RetriveSP("JOB_HC_MAP_UPD")
+
+	jsInsCmd, _ := RetriveSP("JOB_SKill_MAP_INS")
+
+	vals := []interface{}{}
+	currentTime := time.Now().Format(time.RFC3339)
+	for _, jobSkill := range jc.Jobs {
+		jsInsCmd += "(?,?,?,?,?,?,?,?),"
+		vals = append(vals, jc.JobID, jc.JobName, jc.StakeholderID, jobSkill.SkillID, jobSkill.Skill, false, currentTime, currentTime)
+	}
+	jsInsCmd = jsInsCmd[0 : len(jsInsCmd)-1]
+
+	jcStmt, err := Db.Prepare(jcInsertCmd)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot prepare  job Update due to %v", err.Error())
+		return customError
+	}
+	fmt.Println(jsInsCmd)
+	jsStmt, err := Db.Prepare(jsInsCmd)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot prepare  skill insert due to %v %v", jsInsCmd, err.Error())
+		return customError
+	}
+
+	_, err = jcStmt.Exec(jc.JobName, jc.HcID, jc.HcName, jc.JobType, jc.NoOfPositions, jc.Location, jc.SalaryMaxRange, jc.SalaryMinRange, jc.MonthOfHiring, jc.Remarks, jc.AttachmentName, jc.Attachment, jc.Status, currentTime, jc.JobID, jc.StakeholderID)
+
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Failed to Update Job hiring Mapping in database due to : %v", err.Error())
+		customError.ErrCode = "S3PJ002"
+		return customError
+	}
+
+	err = jc.DeleteJobSkills()
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Job details updated but failed to update skills, due to : %v", err.Error())
+		customError.ErrCode = "S3PJ002"
+		return customError
+	}
+
+	_, err = jsStmt.Exec(vals...)
+	if err != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Failed to insert into Skills database due to : %v", err.Error())
+		customError.ErrCode = "S3PJ002"
+		return customError
+	}
+
+	customError.ErrTyp = "000"
+	customError.SuccessResp = successResp
+
+	fmt.Printf("\n --> ins : %+v\n", customError)
+	return customError
 }
 
 // // UpdateJobSkills ...

@@ -60,10 +60,12 @@ func AddHiringCriteria(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
 	binding.Validator = &defaultValidator{}
 
 	err = c.ShouldBindWith(&hc, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
 
+	fmt.Printf("\nhc: %+v\n", c.Request.PostForm)
 	if len(hc.HiringCriterias) <= 0 {
 		err = fmt.Errorf("Require HiringCriterias in Array format")
 	}
@@ -225,6 +227,14 @@ func UpdateHiringCriteria(c *gin.Context) {
 
 	defer cancel()
 	defer close(jobdb)
+	var err error
+	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
+	if reqContentType != "application/json" || reqContentType == "" {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "InvalidContentType", Err: fmt.Errorf("Content type is not 'application/json'"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		c.Abort()
+		return
+	}
 
 	hc.HiringCriteriaID = c.Param("hcID")
 	if hc.HiringCriteriaID == "" {
@@ -239,17 +249,24 @@ func UpdateHiringCriteria(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		return
 	}
-	hc.StakeholderID = ID.(string)
-	updateReq := c.Request.PostForm
-	fmt.Printf("\n ^^^^^ %+v\n", updateReq)
-	customError := models.UpdatePublishedData(updateReq, "HC_UPDATE_BY_ID", "HC_UPDATE_WHERE", hc.StakeholderID, hc.HiringCriteriaID, nil, "")
-	if customError.ErrTyp != "000" {
-		resp := ErrCheck(ctx, customError)
-		c.Error(customError.Err)
-		c.JSON(http.StatusInternalServerError, resp)
+	binding.Validator = &defaultValidator{}
+	err = c.ShouldBindWith(&hc, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
+	if err == nil {
+
+		hc.StakeholderID = ID.(string)
+		customError := hc.Update()
+		if customError.ErrTyp != "000" {
+			resp := ErrCheck(ctx, customError)
+			c.Error(customError.Err)
+			c.JSON(http.StatusInternalServerError, resp)
+			return
+		}
+
+		c.JSON(http.StatusOK, DelHCResp{"Successfully updated"})
 		return
 	}
-	c.JSON(http.StatusOK, DelHCResp{"Successfully updated"})
+	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+	c.JSON(http.StatusUnprocessableEntity, resp)
 	return
 }
 

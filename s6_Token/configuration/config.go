@@ -17,8 +17,11 @@ type DbEnv struct {
 	DbHost                  string `json:"DB_HOST"`
 	DbPort                  int    `json:"DB_PORT"`
 	TokenBalanceDbName      string `json:"TKN_BLNC"`
-	TokenAllocatinoDbName   string `json:"TKN_ALLOC"`
+	TokenAllocationDbName   string `json:"TKN_ALLOC"`
 	TokenTransactionsDbName string `json:"TKN_TRANSAC"`
+	CrpPaymentDbName        string `json:"CRP_PAYMENT"`
+	UnvPaymentDbName        string `json:"UNV_PAYMENT"`
+	StuPaymentDbName        string `json:"STU_PAYMENT"`
 }
 
 // AuthService ...
@@ -104,7 +107,7 @@ func PaymentConfig() PaymentEnv {
 
 // Config ...
 func Config() {
-	file, err := os.Open("./configuration/env")
+	file, err := os.Open("./configuration/config.json")
 
 	defer file.Close()
 

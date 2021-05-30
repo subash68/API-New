@@ -87,6 +87,12 @@ func AddJobsCreation(c *gin.Context) {
 				c.Abort()
 				return
 			}
+			if (jc.Attachment != nil || jc.AttachmentName != "") && (jc.Attachment == nil || jc.AttachmentName == "") {
+				resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Required attachment along with attachmentName"), SuccessResp: successResp})
+				c.JSON(http.StatusUnprocessableEntity, resp)
+				c.Abort()
+				return
+			}
 			go func() {
 				select {
 				case insertJobChan := <-jc.Insert():
@@ -116,7 +122,7 @@ func AddJobsCreation(c *gin.Context) {
 // GetJobsCreationByID ...
 func GetJobsCreationByID(c *gin.Context) {
 	successResp = map[string]string{}
-	var jc models.FullJobDb
+	var jc models.JobHcMappingDB
 	jobdb := make(chan models.DbModelError, 1)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -200,30 +206,45 @@ func UpdateJobsCreation(c *gin.Context) {
 	//var customError models.DbModelError
 	defer cancel()
 	defer close(jobdb)
-	jc.JobID = c.Param("jobID")
-	if jc.JobID == "" {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot find created Job ID in query"), SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		return
+	var err error
+	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
+	if reqContentType != "application/json" || reqContentType == "" {
+		err = fmt.Errorf("Invalid content type %s , Required %s", reqContentType, "application/json")
+	} else {
+		binding.Validator = &defaultValidator{}
+		//err := c.ShouldBindWith(&jc, binding.Form)
+		err = c.ShouldBindWith(&jc, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
+		if err == nil {
+
+			jc.JobID = c.Param("jobID")
+			if jc.JobID == "" {
+				resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot find created Job ID in query"), SuccessResp: successResp})
+				c.JSON(http.StatusUnprocessableEntity, resp)
+				return
+			}
+			ID, ok := c.Get("userID")
+			fmt.Println("-----> Got ID", ID.(string), c.PostForm("id"))
+			if !ok {
+				resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+				c.JSON(http.StatusUnprocessableEntity, resp)
+				return
+			}
+			jc.StakeholderID = ID.(string)
+			customError := jc.Update()
+			if customError.ErrTyp != "000" {
+				resp := ErrCheck(ctx, customError)
+				c.Error(customError.Err)
+				c.JSON(http.StatusInternalServerError, resp)
+				return
+			}
+			c.JSON(http.StatusOK, DelHCResp{"Successfully updated"})
+			return
+		}
 	}
-	ID, ok := c.Get("userID")
-	fmt.Println("-----> Got ID", ID.(string), c.PostForm("id"))
-	if !ok {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
-		c.JSON(http.StatusUnprocessableEntity, resp)
-		return
-	}
-	jc.StakeholderID = ID.(string)
-	updateReq := c.Request.PostForm
-	customError := models.UpdatePublishedData(updateReq, "JOB_UPDATE_BY_ID", "JOB_UPDATE_WHERE", jc.StakeholderID, jc.JobID, nil, "")
-	if customError.ErrTyp != "000" {
-		resp := ErrCheck(ctx, customError)
-		c.Error(customError.Err)
-		c.JSON(http.StatusInternalServerError, resp)
-		return
-	}
-	c.JSON(http.StatusOK, DelHCResp{"Successfully updated"})
+	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+	c.JSON(http.StatusUnprocessableEntity, resp)
 	return
+
 }
 
 // MapJobToHC ...
@@ -355,25 +376,7 @@ func AddSkills(c *gin.Context) {
 		}
 	}
 	if err == nil {
-		form, _ := c.MultipartForm()
-		for index := range jc.Jobs {
-			files := form.File["attachment"+strconv.Itoa(index)]
-			if len(files) > 1 {
-				resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Upload multiple files is not supported for single skill mapping "), SuccessResp: successResp})
-				c.JSON(http.StatusUnprocessableEntity, resp)
-				return
-			}
-			for index, file := range files {
-				fileContent, _ := file.Open()
-				byteContainer, err := ioutil.ReadAll(fileContent)
-				if err != nil {
-					c.JSON(http.StatusUnprocessableEntity, err.Error())
-					return
-				}
-				jc.Jobs[index].Attachment = byteContainer
-			}
 
-		}
 		ID, ok := c.Get("userID")
 		fmt.Println("-----> Got ID", ID.(string))
 		if !ok {

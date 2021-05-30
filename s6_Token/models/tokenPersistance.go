@@ -3,7 +3,10 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/jaswanth-gorripati/PGK/s6_Token/configuration"
 )
 
 // GetGenTokenBalanceByID ...
@@ -254,6 +257,51 @@ func (tkn *TokenTransactions) GetTokenTransactionsForID(ID string) error {
 			}
 			tkn.Transactions = append(tkn.Transactions, newTx)
 		}
+	}
+
+	return nil
+}
+
+// GetTransactionsOfTokensOfID ...
+func (tkn *TxTokens) GetTransactionsOfTokensOfID(ID string, userType string) error {
+	var payDbName string
+	dbConfig := configuration.DbConfig()
+	switch userType {
+	case "Corporate":
+		payDbName = dbConfig.CrpPaymentDbName
+		break
+	case "University":
+		payDbName = dbConfig.UnvPaymentDbName
+		break
+	case "Student":
+		payDbName = dbConfig.StuPaymentDbName
+		break
+	default:
+		return fmt.Errorf("Invalid Usertype %s", userType)
+	}
+	sp, _ := RetriveSP("GET_Token_Transactions_BY_ID")
+	sp = strings.ReplaceAll(sp, "REPLACE", payDbName)
+	rows, err := Db.Query(sp, ID)
+	if err != nil && err != sql.ErrNoRows {
+
+		fmt.Println("error while Fetching token Allocations " + err.Error())
+
+		return fmt.Errorf("Error While Getting token Allocations %v ", err.Error())
+	}
+
+	if err == sql.ErrNoRows {
+		tkn.AllocatedTokens = append(tkn.AllocatedTokens, TokenTxAllocationModel{})
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var newAlloc TokenTxAllocationModel
+		err = rows.Scan(&newAlloc.AllocatedTokens, &newAlloc.AllocatedDate, &newAlloc.PaymentID, &newAlloc.AmountPaid, &newAlloc.ModeOfTokenissue)
+		if err != nil {
+			return fmt.Errorf("Cannot read the Allocation  Rows %v", err.Error())
+		}
+		tkn.AllocatedTokens = append(tkn.AllocatedTokens, newAlloc)
 	}
 
 	return nil

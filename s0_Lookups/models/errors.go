@@ -8,6 +8,11 @@ import (
 	"gopkg.in/go-playground/validator.v8"
 )
 
+var (
+	QueryFetchError        = "Error getting the results form Database"
+	ScanError       string = "Error while scaning the Rows"
+)
+
 // DbModelError for creating custom errors resulting from Database calls
 type DbModelError struct {
 	ErrCode     string

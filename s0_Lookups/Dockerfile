@@ -8,7 +8,7 @@ WORKDIR /lut
 COPY . .
 
 # Coping configuration
-COPY ../config.json /lut/configuration/
+#COPY ../config.json /lut/configuration/
 
 # Runing dependencies
 RUN go get github.com/githubnemo/CompileDaemon && go build -o lut 

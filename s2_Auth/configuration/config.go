@@ -46,7 +46,7 @@ func JwtConfig() JwtEnv {
 
 // Config ...
 func Config() {
-	file, err := os.Open("./configuration/env")
+	file, err := os.Open("./configuration/config.json")
 
 	defer file.Close()
 
@@ -56,7 +56,7 @@ func Config() {
 
 		fmt.Printf("Error in reading Configration file : %v \n", err.Error())
 	}
-	fmt.Printf("\n%v\n", dat)
+	//fmt.Printf("\n%v\n", dat)
 	err = json.Unmarshal(dat, &dbConfig)
 	//fmt.Printf(" db Config %+v \n ", dbConfig)
 

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"time"
 	// Blank import for initializing
 	//_ "github.com/go-sql-driver/mysql"
 )
@@ -45,7 +46,7 @@ func (data *CorporateMasterDB) Insert(expiryDate string) <-chan DbModelError {
 
 	}
 
-	sID, cbError := createCrpSID(data.CorporateType, data.CorporateCategory, strconv.FormatInt(data.YearOfEstablishment, 10))
+	sID, rfCode, cbError := createCrpSID(data.CorporateType, data.CorporateCategory, strconv.FormatInt(data.YearOfEstablishment, 10))
 	if cbError.ErrCode != "000" {
 		Job <- cbError
 		return Job
@@ -65,7 +66,7 @@ func (data *CorporateMasterDB) Insert(expiryDate string) <-chan DbModelError {
 	}
 	defer stmt.Close()
 
-	stmt.Exec(data.StakeholderID, data.CorporateName, data.CIN, data.CorporateHQAddressLine1, data.CorporateHQAddressLine2, data.CorporateHQAddressLine3, data.CorporateHQAddressCountry, data.CorporateHQAddressState, data.CorporateHQAddressCity, data.CorporateHQAddressDistrict, data.CorporateHQAddressZipCode, data.CorporateHQAddressPhone, data.CorporateHQAddressEmail, data.CorporateLocalBranchAddressLine1, data.CorporateLocalBranchAddressLine2, data.CorporateLocalBranchAddressLine3, data.CorporateLocalBranchAddressCountry, data.CorporateLocalBranchAddressState, data.CorporateLocalBranchAddressCity, data.CorporateLocalBranchAddressDistrict, data.CorporateLocalBranchAddressZipCode, data.CorporateLocalBranchAddressPhone, data.CorporateLocalBranchAddressEmail, data.PrimaryContactFirstName, data.PrimaryContactMiddleName, data.PrimaryContactLastName, data.PrimaryContactDesignation, data.PrimaryContactPhone, data.PrimaryContactEmail, data.SecondaryContactFirstName, data.SecondaryContactMiddleName, data.SecondaryContactLastName, data.SecondaryContactDesignation, data.SecondaryContactPhone, data.SecondaryContactEmail, data.CorporateType, data.CorporateCategory, data.CorporateIndustry, data.CompanyProfile, data.Attachment, data.YearOfEstablishment, data.AccountStatus, data.Password, expiryDate)
+	stmt.Exec(data.StakeholderID, data.CorporateName, data.CIN, data.CorporateHQAddressLine1, data.CorporateHQAddressLine2, data.CorporateHQAddressLine3, data.CorporateHQAddressCountry, data.CorporateHQAddressState, data.CorporateHQAddressCity, data.CorporateHQAddressDistrict, data.CorporateHQAddressZipCode, data.CorporateHQAddressPhone, data.CorporateHQAddressEmail, data.CorporateLocalBranchAddressLine1, data.CorporateLocalBranchAddressLine2, data.CorporateLocalBranchAddressLine3, data.CorporateLocalBranchAddressCountry, data.CorporateLocalBranchAddressState, data.CorporateLocalBranchAddressCity, data.CorporateLocalBranchAddressDistrict, data.CorporateLocalBranchAddressZipCode, data.CorporateLocalBranchAddressPhone, data.CorporateLocalBranchAddressEmail, data.PrimaryContactFirstName, data.PrimaryContactMiddleName, data.PrimaryContactLastName, data.PrimaryContactDesignation, data.PrimaryContactPhone, data.PrimaryContactEmail, data.SecondaryContactFirstName, data.SecondaryContactMiddleName, data.SecondaryContactLastName, data.SecondaryContactDesignation, data.SecondaryContactPhone, data.SecondaryContactEmail, data.CorporateType, data.CorporateCategory, data.CorporateIndustry, data.CompanyProfile, data.Attachment, data.AttachmentName, data.YearOfEstablishment, data.AccountStatus, data.Password, expiryDate, rfCode)
 
 	if err != nil {
 
@@ -74,6 +75,20 @@ func (data *CorporateMasterDB) Insert(expiryDate string) <-chan DbModelError {
 			"500", "S1AUT004", fmt.Errorf("Error While inseting Corporate Table %v ", err.Error()), successResp,
 		}
 		return Job
+	}
+
+	if data.ReferredCode != "" && data.ReferredByID != "" {
+		dbSP, _ = RetriveSP("RF_INS")
+		stmt, err := Db.Prepare(dbSP)
+		if err != nil {
+			fmt.Println("error while inserting" + err.Error())
+		}
+		defer stmt.Close()
+		currentTime := time.Now().Format(time.RFC3339)
+		stmt.Exec(data.StakeholderID, data.ReferredByID, data.ReferredCode, currentTime, currentTime)
+		if err != nil {
+			fmt.Println("error while inserting" + err.Error())
+		}
 	}
 
 	// Print data in Console
@@ -213,7 +228,7 @@ func (data *CorporateMasterDB) VerifyAccountToken() <-chan DbModelError {
 
 }
 
-func createCrpSID(crTyp string, crCat string, estYear string) (string, DbModelError) {
+func createCrpSID(crTyp string, crCat string, estYear string) (string, string, DbModelError) {
 
 	fmt.Printf("\n ---> crptype : %v , crpcat: %v yoe: %v\n", crTyp, crCat, estYear)
 	lutSP, _ := RetriveSP("LUT_GET_CRP_TYPE")
@@ -231,12 +246,12 @@ func createCrpSID(crTyp string, crCat string, estYear string) (string, DbModelEr
 	fmt.Printf("\n ---> updated crptype : %v , crpcat: %v yoe: %v \n", crTyp, crCat, estYear)
 	fmt.Printf("\n ---> got  crptype : %v , crpcat: %v yoe: %v \n", crpTypeExists, crpCatExists, rowCount)
 	if err != nil || !crpTypeExists || !crpCatExists {
-		return "", DbModelError{
+		return "", "", DbModelError{
 			"500", "S1AUT004", fmt.Errorf("Invalid Corporate Type / Sector  %+v", err), map[string]string{},
 		}
 	}
 	partialID := fmt.Sprintf("%010d", (rowCount + 1))
-	return fmt.Sprint("C", crTyp, crCat, estYear, partialID), DbModelError{
+	return fmt.Sprint("C", crTyp, crCat, estYear, partialID), fmt.Sprint("C", crTyp, crCat, estYear, partialID), DbModelError{
 		"000", "S1AUT004", nil, map[string]string{},
 	}
 }

@@ -230,3 +230,9 @@ func (cdi *campusDriveInvitationsController) Respond(c *gin.Context) {
 	c.JSON(http.StatusUnprocessableEntity, resp)
 	return
 }
+
+// GetAllCD ...
+func (cdi *campusDriveInvitationsController) GetAllCD(c *gin.Context) {
+	//ctx, ID, userType, successResp := getFuncReq(c, "Responding Campus Drive")
+	return
+}

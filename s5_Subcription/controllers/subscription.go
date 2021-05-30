@@ -172,6 +172,46 @@ func GetAllSubscriptions(c *gin.Context) {
 	return
 }
 
+// GetAllCampusInvites ...
+func GetAllCampusInvites(c *gin.Context) {
+	successResp = map[string]string{}
+	ctx, cancel := context.WithCancel(context.Background())
+	ctxkey = ctxFunc("Target")
+	ctx = context.WithValue(ctx, ctxkey, "Get All Subscriptions")
+	defer cancel()
+
+	ID, ok := c.Get("userID")
+	fmt.Println("-----> Got ID", ID.(string))
+	if !ok {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
+
+	stakeholder, ok := c.Get("userType")
+	fmt.Println("-----> Got ID", stakeholder.(string))
+	if !ok {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User Type from the request"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
+	var subs models.AllCdInvites
+
+	insertJob := subs.GetCDForSH(ID.(string), stakeholder.(string))
+	fmt.Printf("\n insertjob: %+v\n", insertJob)
+	if insertJob.ErrTyp != "000" {
+		resp := ErrCheck(ctx, insertJob)
+		c.Error(insertJob.Err)
+		c.JSON(http.StatusInternalServerError, resp)
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, subs)
+	c.Abort()
+	return
+}
+
 // getSubPayment ...
 func getSubPayment(pID string) (float64, float64) {
 

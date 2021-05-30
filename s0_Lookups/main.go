@@ -10,8 +10,14 @@ import (
 )
 
 func main() {
+	var logLevel string
 
-	services.InitLogger(os.Args[1])
+	if len(os.Args) > 1 {
+		logLevel = os.Args[1]
+	} else {
+		logLevel = "debug"
+	}
+	services.InitLogger(logLevel)
 
 	// Loading Environment
 	configuration.Config()

@@ -46,6 +46,7 @@ type CorporateMasterDB struct {
 	CorporateIndustry                   string    `json:"corporateIndustry" binding:"required" `
 	CompanyProfile                      string    `json:"companyProfile,omitempty"`
 	Attachment                          []byte    `json:"attachment,omitempty"`
+	AttachmentName                      string    `json:"attachmentName,omitempty"`
 	YearOfEstablishment                 int64     `json:"yearOfEstablishment" binding:"required" `
 	DateOfJoining                       time.Time `json:"dateOfJoining,omitempty" `
 	AccountStatus                       string    `json:"accountStatus,omitempty" `
@@ -53,6 +54,7 @@ type CorporateMasterDB struct {
 	PrimaryEmailVerified                bool      `json:"primaryEmailVerified"`
 	ProfilePicture                      []byte    `form:"-" json:"profilePicture"`
 	AccountExpiryDate                   time.Time `form:"-" json:"accountExpiryDate"`
+	PublishedFlag                       bool      `json:"publishedFlag"`
 }
 
 // CorporateByIDResp ....

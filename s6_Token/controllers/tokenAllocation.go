@@ -67,3 +67,19 @@ func GetTokenAllocationsOfID(c *gin.Context) {
 	c.JSON(http.StatusOK, tokenAllocs.AllocatedTokens)
 	return
 }
+
+// GetPaymentTxOfID ...
+func GetPaymentTxOfID(c *gin.Context) {
+	ctx, ID, userType, _ := getFuncReq(c, "Get All Payment transactions")
+
+	var tokenAllocs models.TxTokens
+	err := tokenAllocs.GetTransactionsOfTokensOfID(ID, userType)
+
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6TKN003", ErrTyp: "INTERNAL SERVER ERROR", Err: fmt.Errorf("Failed to get Token Allocation details %s", err.Error()), SuccessResp: successResp})
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+	c.JSON(http.StatusOK, tokenAllocs.AllocatedTokens)
+	return
+}

@@ -62,6 +62,8 @@ type StudentMasterDb struct {
 	BranchID                   string     `form:"branchID" json:"branchID"`
 	CollegeID                  string     `form:"collegeID" json:"collegeID" `
 	CollegeEmailID             string     `form:"collegeEmailID" json:"collegeEmailID"`
+	Attachment                 []byte     `form:"-" json:"Attachment"`
+	AttachmentName             string     `json:"attachmentName,omitempty"`
 }
 
 // StudentTTModel ...

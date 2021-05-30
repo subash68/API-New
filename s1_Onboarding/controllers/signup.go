@@ -41,6 +41,37 @@ type ctxFunc string
 // ctxkey
 var ctxkey ctxFunc
 
+type RefCodeResp struct {
+	StakeholderID string `json:"stakeholderID"`
+}
+
+// CheckRefCode ...
+func CheckRefCode(c *gin.Context) {
+	successResp = map[string]string{}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	ctxkey = ctxFunc("Target")
+	ctx = context.WithValue(ctx, ctxkey, "Check Referral Code")
+
+	defer cancel()
+	if c.Param("refCode") == "" {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required referralCode information not found ", Err: fmt.Errorf("Require 'refCode' in params"), SuccessResp: successResp})
+		c.JSON(http.StatusBadRequest, resp)
+		c.Abort()
+		return
+	}
+	stakeholderID, err := models.CheckRefCode(c.Param(("refCode")))
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Inalid referral code", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusBadRequest, resp)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, RefCodeResp{stakeholderID})
+	c.Abort()
+	return
+}
+
 // Signup ...
 func Signup(c *gin.Context) {
 	successResp = map[string]string{}
@@ -185,7 +216,7 @@ func serializeCorporateData(ctx context.Context, c *gin.Context, encodedPass str
 	if err == nil {
 		corporateData.Password = encodedPass
 		corporateData.AccountStatus = "1"
-		corporateData.Attachment = attachFile(c)
+		corporateData.Attachment, corporateData.AttachmentName = attachFile(c)
 		return corporateData
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
@@ -201,7 +232,7 @@ func serializeUniversityData(ctx context.Context, c *gin.Context, encodedPass st
 	if err == nil {
 		universityData.Password = encodedPass
 		universityData.AccountStatus = "1"
-		universityData.Attachment = attachFile(c)
+		universityData.Attachment, universityData.AttachmentName = attachFile(c)
 		return universityData
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
@@ -217,7 +248,7 @@ func serializeStudentData(ctx context.Context, c *gin.Context, encodedPass strin
 	if err == nil {
 		studentData.Password = encodedPass
 		studentData.AccountStatus = "1"
-		studentData.Attachment = attachFile(c)
+		studentData.Attachment, studentData.AttachmentName = attachFile(c)
 		return studentData
 	}
 	fmt.Println(studentData)
@@ -228,7 +259,7 @@ func serializeStudentData(ctx context.Context, c *gin.Context, encodedPass strin
 
 }
 
-func attachFile(c *gin.Context) []byte {
+func attachFile(c *gin.Context) ([]byte, string) {
 	form, _ := c.MultipartForm()
 	files := form.File["attachment"]
 	for _, file := range files {
@@ -237,11 +268,11 @@ func attachFile(c *gin.Context) []byte {
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, err.Error())
 			c.Abort()
-			return nil
+			return nil, ""
 		}
-		return byteContainer
+		return byteContainer, file.Filename
 	}
-	return nil
+	return nil, ""
 }
 
 func raiseBonusTokenReq(ID string) (float64, error) {

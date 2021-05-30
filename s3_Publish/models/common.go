@@ -25,7 +25,6 @@ func UpdatePublishedData(updateQuery url.Values, spName string, spExt string, st
 	values := []interface{}{}
 	var customError DbModelError
 	for key, val := range updateQuery {
-
 		dbKey, exists := GetDbKey(key)
 		if !exists {
 			customError.ErrTyp = "500"

@@ -52,6 +52,7 @@ func AddOtherInfo(c *gin.Context) {
 				c.JSON(http.StatusUnprocessableEntity, err.Error())
 				return
 			}
+			oi.AttachmentName = file.Filename
 			oi.Attachment = byteContainer
 		}
 

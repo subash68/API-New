@@ -24,26 +24,47 @@ func (m *MyTime) UnmarshalJSON(data []byte) error {
 
 // HiringCriteriaDB ...
 type HiringCriteriaDB struct {
-	HiringCriteriaID        string     `form:"-" json:"hiringCriteriaID"`
-	HiringCriteriaName      string     `form:"hiringCriteriaName" json:"hiringCriteriaName" binding:"required" validate:"required"`
-	StakeholderID           string     `form:"stakeholderID" json:"stakeholderID,omitempty"`
-	ProgramID               string     `form:"programID" json:"programID" binding:"required"`
-	DepartmentID            string     `form:"courseID" json:"courseID" binding:"required"`
-	CutOffCategory          string     `form:"cutOffCategory" json:"cutOffCategory" binding:"required"`
-	CutOff                  float64    `form:"cutOff" json:"cutOff" binding:"required"`
-	EduGapsSchoolAllowed    bool       `form:"eduGapsSchoolAllowed" json:"eduGapsSchoolAllowed"`
-	EduGaps11N12Allowed     bool       `form:"eduGaps11N12Allowed" json:"eduGaps11N12Allowed"`
-	EduGapsGradAllowed      bool       `form:"eduGapsGradAllowed" json:"eduGapsGradAllowed"`
-	EduGapsPGAllowed        bool       `form:"eduGapsPGAllowed" json:"eduGapsPGAllowed"`
-	AllowActiveBacklogs     bool       `form:"allowActiveBacklogs" json:"allowActiveBacklogs"`
-	NumberOfAllowedBacklogs int        `form:"numberOfAllowedBacklogs" json:"numberOfAllowedBacklogs"`
-	YearOfPassing           int        `form:"yearOfPassing" json:"yearOfPassing" binding:"required"`
-	Remarks                 string     `form:"remarks" json:"remarks"`
-	CreationDate            time.Time  `form:"-" json:"creationDate"`
-	PublishedFlagNull       NullBool   `form:"-" json:"-"`
-	PublishIDNull           NullString `form:"-" json:"-"`
-	PublishedFlag           bool       `form:"-" json:"publishedFlag"`
-	PublishID               string     `form:"-" json:"publishID"`
+	StakeholderID               string            `form:"-" json:"-"`
+	HiringCriteriaID            string            `form:"-" json:"hiringCriteriaID"`
+	HiringCriteriaName          string            `form:"hiringCriteriaName" json:"hiringCriteriaName" binding:"required" validate:"required"`
+	MinimumCutoffPercentage10th float64           `form:"minimumCutoffPercentage10th" json:"minimumCutoffPercentage10th"`
+	MinimumCutoffPercentage12th float64           `form:"minimumCutoffPercentage12th" json:"minimumCutoffPercentage12th"`
+	MinimumCutoffCGPAGrad       float64           `form:"minimumCutoffCGPAGrad" json:"minimumCutoffCGPAGrad"`
+	MinimumCutoffPercentageGrad float64           `form:"minimumCutoffPercentageGrad" json:"minimumCutoffPercentageGrad"`
+	EduGapsSchoolAllowed        bool              `form:"eduGapsSchoolAllowed" json:"eduGapsSchoolAllowed"`
+	EduGaps11N12Allowed         bool              `form:"eduGaps11N12Allowed" json:"eduGaps11N12Allowed"`
+	EduGaps12NGradAllowed       bool              `form:"eduGaps12NGradAllowed" json:"eduGaps12NGradAllowed"`
+	EduGapsGradAllowed          bool              `form:"eduGapsGradAllowed" json:"eduGapsGradAllowed"`
+	EduGapsGradNPGAllowed       bool              `form:"eduGapsGradNPGAllowed" json:"eduGapsGradNPGAllowed"`
+	EduGapsSchool               int               `form:"eduGapsSchool" json:"eduGapsSchool"`
+	EduGaps11N12                int               `form:"eduGaps11N12" json:"eduGaps11N12"`
+	EduGaps12NGrad              int               `form:"eduGaps12NGrad" json:"eduGaps12NGrad"`
+	EduGapsGrad                 int               `form:"eduGapsGrad" json:"eduGapsGrad"`
+	EduGapsGradNPG              int               `form:"eduGapsGradNPG" json:"eduGapsGradNPG"`
+	AllowActiveBacklogs         bool              `form:"allowActiveBacklogs" json:"allowActiveBacklogs"`
+	NumberOfAllowedBacklogs     int               `form:"numberOfAllowedBacklogs" json:"numberOfAllowedBacklogs"`
+	YearOfPassing               int               `form:"yearOfPassing" json:"yearOfPassing" binding:"required"`
+	Remarks                     string            `form:"remarks" json:"remarks"`
+	Programs                    []HcProgramsModel `form:"hcPrograms" json:"hcPrograms,omitempty" binding:"dive"`
+	CreationDate                time.Time         `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate             time.Time         `form:"-" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
+	PublishedFlag               bool              `form:"-" json:"publishedFlag"`
+	PublishID                   string            `form:"-" json:"publishID"`
+	ProgramsInString            string            `json:"hcProgramsInString"`
+}
+
+// HcProgramsModel ...
+type HcProgramsModel struct {
+	HiringCriteriaID   string `json:"hiringCriteriaID,omitempty"`
+	HiringCriteriaName string `json:"hiringCriteriaName,omitempty"`
+	StakeholderID      string `json:"stakeholderID,omitempty"`
+	ProgramName        string `json:"programName" binding:"required"`
+	ProgramID          string `json:"programID" binding:"required"`
+	BranchName         string `json:"branchName" binding:"required"`
+	BranchID           string `json:"branchID" binding:"required"`
+	CreationDate       string `json:"creationDate"`
+	LastUpdatedDate    string `json:"lastUpdatedDate,omitempty"`
+	PublishFlag        string `json:"publishFlag,omitempty"`
 }
 
 // MultipleHC ...
@@ -53,16 +74,26 @@ type MultipleHC struct {
 
 // JobHcMappingDB ...
 type JobHcMappingDB struct {
-	JobID              string     `form:"jobID" json:"jobID"`
-	StakeholderID      string     `form:"-" json:"stakeholderID,omitempty"`
-	HiringCriteriaID   NullString `form:"-" json:"-"`
-	HiringCriteriaName NullString `form:"-" json:"-"`
-	HcID               string     `form:"hiringCriteriaID" json:"hiringCriteriaID"`
-	HcName             string     `form:"hiringCriteriaName" json:"hiringCriteriaName"`
-	JobName            string     `form:"jobName" json:"jobName" binding:"required"`
-	CreationDate       time.Time  `form:"-" json:"creationDate"`
-	PublishedFlag      bool       `form:"-" json:"publishedFlag"`
-	PublishID          string     `form:"-" json:"publishID"`
+	StakeholderID   string    `form:"-" json:"stakeholderID,omitempty"`
+	JobID           string    `form:"jobID" json:"jobID"`
+	JobName         string    `form:"jobName" json:"jobName" binding:"required"`
+	HcID            string    `form:"hiringCriteriaID" json:"hiringCriteriaID"`
+	HcName          string    `form:"hiringCriteriaName" json:"hiringCriteriaName"`
+	JobType         string    `form:"jobType" json:"jobType" binding:"required"`
+	NoOfPositions   int       `form:"noOfPositions" json:"noOfPositions"`
+	Location        string    `form:"location" json:"location"`
+	SalaryMaxRange  string    `form:"salaryMaxRange" json:"salaryMaxRange"`
+	SalaryMinRange  string    `form:"salaryMinRange" json:"salaryMinRange"`
+	MonthOfHiring   time.Time `form:"monthOfHiring" json:"monthOfHiring" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Remarks         string    `form:"remarks" json:"remarks"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
+	Status          string    `form:"status" json:"status"`
+	CreationDate    time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
+	PublishedFlag   bool      `form:"-" json:"publishedFlag"`
+	PublishID       string    `form:"-" json:"publishID"`
+	SkillsInString  string    `form:"-" json:"skillsInString"`
 }
 
 // JobSkillsMapping ...
@@ -71,16 +102,9 @@ type JobSkillsMapping struct {
 	JobID         string    `form:"jobID" json:"jobID"`
 	JobName       string    `form:"jobName" json:"jobName"`
 	StakeholderID string    `form:"-" json:"stakeholder,omitempty"`
-	SkillID       string    `form:"skillID" json:"skillID"`
-	Skill         string    `form:"skill" json:"skill"`
-	NoOfPositions int       `form:"noOfPositions" json:"noOfPositions"`
-	Location      string    `form:"location" json:"location"`
-	SalaryRange   string    `form:"salaryRange" json:"salaryRange"`
-	DateOfHiring  time.Time `form:"dateOfHiring" json:"dateOfHiring" binding:"required"`
-	Status        string    `form:"status" json:"status"`
-	Remarks       string    `form:"remarks" json:"remarks"`
-	Attachment    []byte    `form:"attachment" json:"attachment"`
-	CreationDate  time.Time `form:"creationDate" json:"creationDate"`
+	SkillID       string    `form:"skillID" json:"skillID" binding:"required"`
+	Skill         string    `form:"skill" json:"skill" binding:"required"`
+	CreationDate  time.Time `form:"_" json:"creationDate"`
 }
 
 // FullJobDb ...
@@ -128,7 +152,8 @@ type OtherInformationModel struct {
 	StakeholderID   string    `form:"-" json:"-"`
 	Title           string    `form:"title" json:"title" binding:"required"`
 	Information     string    `form:"information" json:"information" binding:"required"`
-	Attachment      []byte    `form:"-" json:"-"`
+	Attachment      []byte    `form:"-" json:"attachment"`
+	AttachmentName  string    `form:"-" json:"attachmentName"`
 	ID              int       `form:"-" json:"id"`
 	PublishID       string    `form:"-" json:"publishID,omitempty"`
 	PublishedFlag   bool      `form:"-" json:"publishedFlag"`

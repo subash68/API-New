@@ -76,6 +76,7 @@ func InitialzeRoutes() *gin.Engine {
 		c.Header("Title", "Campus Hiring")
 		c.JSON(http.StatusOK, "Campus Hiring API is working")
 	})
+	onboard.GET("/validateRefCode/:refCode", controllers.CheckRefCode)
 	onboard.POST("/signUp/:stakeholder", controllers.Signup)
 	onboard.POST("/verifyOTP", controllers.CommonOTPVerifier)
 	onboard.POST("/verifyMobile", controllers.VerifyMobile)
