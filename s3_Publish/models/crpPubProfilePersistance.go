@@ -55,6 +55,18 @@ func (profilePub *PublishDataModel) Insert() <-chan DbModelError {
 	successResp["publishID"] = pdhIDs[0]
 	customError.SuccessResp = successResp
 
+	pdhInsertCmd, _ = RetriveSP("CRP_PRF_PUB_UPD")
+	pdhStmt, err = Db.Prepare(pdhInsertCmd)
+	fmt.Println("Query ==> ", pdhInsertCmd, profilePub.StakeholderID)
+	if err != nil {
+		fmt.Printf("Cannot prepare Profile Publish update due to %v", err.Error())
+	}
+
+	_, err = pdhStmt.Exec(profilePub.StakeholderID)
+	if err != nil {
+		fmt.Printf("Cannot prepare Profile Publish update due to %v", err.Error())
+	}
+
 	Job <- customError
 	return Job
 }

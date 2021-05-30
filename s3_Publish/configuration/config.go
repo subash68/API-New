@@ -16,7 +16,7 @@ type DbEnv struct {
 	DbDatabaseName       string `json:"DB_DATABASE_NAME"`
 	DbHost               string `json:"DB_HOST"`
 	DbPort               int    `json:"DB_PORT"`
-	CorpMasterDbName     string `json:"CORP_MASTER_DB_NAME"`
+	CorpMasterDbName     string `json:"CRP_MASTER_DB_NAME"`
 	UnvMasterDbName      string `json:"UNV_MASTER_DB_NAME"`
 	CorpHCDbName         string `json:"CRP_HC_DB"`
 	CorpHCProgramsDbName string `json:"CRP_HC_Programs"`

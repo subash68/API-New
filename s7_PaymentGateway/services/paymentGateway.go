@@ -41,21 +41,21 @@ func CheckPaymentStatus(id string) (map[string]interface{}, error) {
 	if err != nil {
 		return notes, err
 	}
-	// if body["amount_due"].(float64) == 0 && body["status"].(string) == "paid" {
-	// 	notes = body["notes"].(map[string]interface{})
-	// 	notes["amountPaid"] = body["amount_paid"]
-	// 	return notes, nil
-	// } else {
-	// 	return notes, fmt.Errorf("Payment status %v" + body["status"].(string))
-	// }
-
-	// For testing
-	if body["amount_due"].(float64) != 0 || body["status"].(string) == "paid" {
+	if body["amount_due"].(float64) == 0 && body["status"].(string) == "paid" {
 		notes = body["notes"].(map[string]interface{})
-		notes["amountPaid"] = body["amount_due"]
+		notes["amountPaid"] = body["amount_paid"]
 		return notes, nil
 	} else {
 		return notes, fmt.Errorf("Payment status %v" + body["status"].(string))
 	}
+
+	// // For testing
+	// if body["amount_due"].(float64) != 0 || body["status"].(string) == "paid" {
+	// 	notes = body["notes"].(map[string]interface{})
+	// 	notes["amountPaid"] = body["amount_due"]
+	// 	return notes, nil
+	// } else {
+	// 	return notes, fmt.Errorf("Payment status %v" + body["status"].(string))
+	// }
 
 }

@@ -152,7 +152,8 @@ type OtherInformationModel struct {
 	StakeholderID   string    `form:"-" json:"-"`
 	Title           string    `form:"title" json:"title" binding:"required"`
 	Information     string    `form:"information" json:"information" binding:"required"`
-	Attachment      []byte    `form:"-" json:"-"`
+	Attachment      []byte    `form:"-" json:"attachment"`
+	AttachmentName  string    `form:"-" json:"attachmentName"`
 	ID              int       `form:"-" json:"id"`
 	PublishID       string    `form:"-" json:"publishID,omitempty"`
 	PublishedFlag   bool      `form:"-" json:"publishedFlag"`

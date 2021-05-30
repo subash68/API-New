@@ -83,6 +83,7 @@ func InitialzeRoutes() *gin.Engine {
 	token.GET("/balance", controllers.GetTokenBalanceForID)
 	token.GET("/allocations", controllers.GetTokenAllocationsOfID)
 	token.GET("/txs", controllers.GetTokenTxsOfID)
+	token.GET("/allTransactions", controllers.GetPaymentTxOfID)
 
 	token.POST("/addAllocation", middleware.AuthorizeInternalRequest("INTERNAL", []string{"S1", "S7"}), controllers.AddTokenAllocationForID)
 	token.POST("/addTx", middleware.AuthorizeInternalRequest("INTERNAL", []string{"S1", "S7", "S5"}), controllers.AddTokenTransactionsForID)

@@ -32,7 +32,7 @@ func (oi *OtherInformationModel) Insert() <-chan DbModelError {
 		return Job
 	}
 	currentTime := time.Now()
-	row, err := oiStmt.Exec(oi.StakeholderID, oi.Title, oi.Information, oi.Attachment, currentTime, currentTime)
+	row, err := oiStmt.Exec(oi.StakeholderID, oi.Title, oi.Information, oi.Attachment, oi.AttachmentName, currentTime, currentTime)
 	insID, _ := row.LastInsertId()
 	fmt.Printf("\n ============= Last inserted ID : %v ==\n", insID)
 	if err != nil {
@@ -75,7 +75,7 @@ func (oi *OtherInformationModel) PublishOI() <-chan DbModelError {
 	currentTime := time.Now()
 
 	getAllHCSP, _ := RetriveSP("OI_GET_BY_ID")
-	err := Db.QueryRow(getAllHCSP, oi.StakeholderID, oi.ID).Scan(&oi.Title, &oi.Information, &oi.CreationDate)
+	err := Db.QueryRow(getAllHCSP, oi.StakeholderID, oi.ID).Scan(&oi.Title, &oi.Information, &oi.Attachment, &oi.AttachmentName, &oi.CreationDate)
 	if err != nil {
 		customError.ErrTyp = "500"
 		customError.Err = fmt.Errorf("Failed to retrive Other information due to %v", err.Error())
@@ -151,7 +151,7 @@ func (oi *OtherInformationModel) GetAllOI(query string) (oiArray []OtherInformat
 	defer hcRows.Close()
 	for hcRows.Next() {
 		var newOI OtherInformationModel
-		err = hcRows.Scan(&newOI.ID, &newOI.Title, &newOI.Information, &newOI.Attachment, &newOI.CreationDate, &newOI.LastUpdatedDate, &newOI.PublishedFlag, &newOI.PublishID)
+		err = hcRows.Scan(&newOI.ID, &newOI.Title, &newOI.Information, &newOI.Attachment, &newOI.AttachmentName, &newOI.CreationDate, &newOI.LastUpdatedDate, &newOI.PublishedFlag, &newOI.PublishID)
 		if err != nil {
 			return oiArray, fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}

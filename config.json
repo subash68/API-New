@@ -119,6 +119,8 @@
 
   "NOTIFICATIONS": "Notification_Master",
 
+  "REFERRAL_MASTER": "Referral_Master",
+
   "LUT_SER_HOST": "lut_service",
   "LUT_SER_PORT": 8080,
   "ONBOARD_SER_HOST": "onboard_service",

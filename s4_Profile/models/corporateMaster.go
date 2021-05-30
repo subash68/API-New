@@ -54,6 +54,7 @@ type CorporateMasterDB struct {
 	PrimaryEmailVerified                bool      `json:"primaryEmailVerified"`
 	ProfilePicture                      []byte    `form:"-" json:"profilePicture"`
 	AccountExpiryDate                   time.Time `form:"-" json:"accountExpiryDate"`
+	PublishedFlag                       bool      `json:"publishedFlag"`
 }
 
 // CorporateByIDResp ....

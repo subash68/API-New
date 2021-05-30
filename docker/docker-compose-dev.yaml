@@ -164,8 +164,6 @@ services:
       - ../s0_Lookups/lut
       - ../config.json:/lut/configuration/config.json
     command: "CompileDaemon -build='go build -o lut' -command=./lut"
-    ports:
-      - 8081:8080
 
   analytics_auth:
     image: s9-analyticsauth

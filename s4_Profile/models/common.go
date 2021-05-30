@@ -48,7 +48,7 @@ func UpdateProfileData(updateQuery url.Values, spName string, spExt string, stak
 		}
 	}
 	if attachmentUpdate {
-		updateString = updateString + " Attachment= ?, AttachmentName= ?"
+		updateString = updateString + " Attachment= ?, AttachFile_Name= ?,"
 		values = append(values, attachment, attachmentName)
 	}
 	if ppUpdate {

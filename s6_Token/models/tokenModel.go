@@ -21,6 +21,17 @@ type TokenAllocationModel struct {
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
 }
 
+// TokenTxAllocationModel ...
+type TokenTxAllocationModel struct {
+	StakeholderID    string    `form:"stakeholderID" json:"stakeholderID,omitempty" binding:"required"`
+	PaymentID        string    `form:"paymentID" json:"paymentID" binding:"required"`
+	AmountPaid       float64   `json:"amountPaid"`
+	ModeOfTokenissue string    `form:"modeOfTokenissue" json:"modeOfTokenissue" binding:"required"`
+	AllocatedTokens  float64   `form:"allocatedTokens" json:"allocatedTokens"  binding:"required"`
+	AllocatedDate    time.Time `form:"allocatedDate" json:"allocatedDate"`
+	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
+}
+
 // TokenTransactionsModel ...
 type TokenTransactionsModel struct {
 	StakeholderID         string    `form:"stakeholderID" json:"stakeholderID,omitempty" binding:"required"`
@@ -34,6 +45,11 @@ type TokenTransactionsModel struct {
 // AllocatedTokens ...
 type AllocatedTokens struct {
 	AllocatedTokens []TokenAllocationModel `json:"allocatedToken"`
+}
+
+// TxTokens ...
+type TxTokens struct {
+	AllocatedTokens []TokenTxAllocationModel `json:"paymentTransactions"`
 }
 
 // TokenTransactions ...

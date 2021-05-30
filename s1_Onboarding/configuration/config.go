@@ -11,18 +11,19 @@ import (
 
 // DbEnv ...
 type DbEnv struct {
-	DbUserName       string `json:"DB_USER_NAME"`
-	DbPassword       string `json:"DB_PASSWORD"`
-	DbDatabaseName   string `json:"DB_DATABASE_NAME"`
-	DbHost           string `json:"DB_HOST"`
-	DbPort           int    `json:"DB_PORT"`
-	CorpMasterDbName string `json:"CRP_MASTER_DB_NAME"`
-	UnvMasterDbName  string `json:"UNV_MASTER_DB_NAME"`
-	StuMasterDbName  string `json:"STU_MASTER_DB_NAME"`
-	DbRedisAddr      string `json:"DB_REDIS_ADDRESS"`
-	DbRedisPort      string `json:"DB_REDIS_PORT"`
-	DbRedisPass      string `json:"DB_REDIS_PASS"`
-	DbRedisDb        string `json:"DB_REDIS_DB"`
+	DbUserName           string `json:"DB_USER_NAME"`
+	DbPassword           string `json:"DB_PASSWORD"`
+	DbDatabaseName       string `json:"DB_DATABASE_NAME"`
+	DbHost               string `json:"DB_HOST"`
+	DbPort               int    `json:"DB_PORT"`
+	CorpMasterDbName     string `json:"CRP_MASTER_DB_NAME"`
+	UnvMasterDbName      string `json:"UNV_MASTER_DB_NAME"`
+	StuMasterDbName      string `json:"STU_MASTER_DB_NAME"`
+	ReferralMasterDbName string `json:"REFERRAL_MASTER"`
+	DbRedisAddr          string `json:"DB_REDIS_ADDRESS"`
+	DbRedisPort          string `json:"DB_REDIS_PORT"`
+	DbRedisPass          string `json:"DB_REDIS_PASS"`
+	DbRedisDb            string `json:"DB_REDIS_DB"`
 }
 
 // AuthService ...

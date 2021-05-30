@@ -294,3 +294,25 @@ func GetRegisteredCounts() RegCount {
 	_ = Db.QueryRow(dbQuery).Scan(&rc.CorpCount, &rc.StuCount, &rc.UnvCount)
 	return rc
 }
+
+// CheckRefCode ...
+func CheckRefCode(rfCode string) (string, error) {
+	dbSP, _ := RetriveSP("GET_ID_BY_RF_CODE")
+	var c, u, s string
+	var exists bool
+
+	err := Db.QueryRow(dbSP, rfCode, rfCode, rfCode).Scan(&c, &u, &s, &exists)
+	if err != nil {
+		return "", fmt.Errorf("Error while Querying " + err.Error())
+	}
+	fmt.Println("=============", dbSP, exists)
+	if c != "" {
+		return c, nil
+	} else if u != "" {
+		return u, nil
+	} else if s != "" {
+		return s, nil
+	}
+	return "", fmt.Errorf("Invalid Referral Code")
+
+}

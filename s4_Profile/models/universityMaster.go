@@ -51,6 +51,7 @@ type UniversityMasterDb struct {
 	PrimaryEmailVerified                 bool      `form:"primaryEmailVerified" json:"primaryEmailVerified"`
 	ProfilePicture                       []byte    `form:"-" json:"profilePicture" json:"profilePicture"`
 	AccountExpiryDate                    time.Time `form:"-" json:"accountExpiryDate" json:"accountExpiryDate"`
+	PublishedFlag                        bool      `json:"publishedFlag"`
 }
 
 // UniversityGetByIDModel ...

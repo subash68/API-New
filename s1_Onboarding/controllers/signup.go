@@ -41,6 +41,37 @@ type ctxFunc string
 // ctxkey
 var ctxkey ctxFunc
 
+type RefCodeResp struct {
+	StakeholderID string `json:"stakeholderID"`
+}
+
+// CheckRefCode ...
+func CheckRefCode(c *gin.Context) {
+	successResp = map[string]string{}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	ctxkey = ctxFunc("Target")
+	ctx = context.WithValue(ctx, ctxkey, "Check Referral Code")
+
+	defer cancel()
+	if c.Param("refCode") == "" {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required referralCode information not found ", Err: fmt.Errorf("Require 'refCode' in params"), SuccessResp: successResp})
+		c.JSON(http.StatusBadRequest, resp)
+		c.Abort()
+		return
+	}
+	stakeholderID, err := models.CheckRefCode(c.Param(("refCode")))
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Inalid referral code", Err: err, SuccessResp: successResp})
+		c.JSON(http.StatusBadRequest, resp)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, RefCodeResp{stakeholderID})
+	c.Abort()
+	return
+}
+
 // Signup ...
 func Signup(c *gin.Context) {
 	successResp = map[string]string{}

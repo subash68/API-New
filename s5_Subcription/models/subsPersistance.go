@@ -252,7 +252,7 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			var cdReq, cdAr bool
 			var rqDate, arDate time.Time
 			var reqNftID, arNftID string
-			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName)
+			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			if err != nil {
 				customError.ErrTyp = "500"
@@ -296,7 +296,7 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			var cdReq, cdAr bool
 			var rqDate, arDate time.Time
 			var reqNftID, arNftID string
-			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName)
+			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			if err != nil {
 				customError.ErrTyp = "500"
@@ -326,4 +326,122 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 	Job <- customError
 	return Job
 
+}
+
+// GetCDForSH ...
+func (subs *AllCdInvites) GetCDForSH(ID string, stakeholder string) DbModelError {
+	var sentReqSp, receivedReqSp string
+	var customError DbModelError
+	switch stakeholder {
+	case "Corporate":
+		sentReqSp = "CORP_CD_GET_ALL"
+		receivedReqSp = "UNV_CD_RETURN_RECEIVED"
+		break
+	case "University":
+		sentReqSp = "UNV_CD_GET_ALL"
+		receivedReqSp = "CORP_CD_RETURN_RECEIVED"
+		break
+	default:
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Invalid user Type %s", stakeholder)
+		return customError
+	}
+
+	subSP, _ := RetriveSP(sentReqSp)
+	fmt.Println("========================== sentReqSp==========", subSP, ID)
+	subrow, err := Db.Query(subSP, ID)
+	if err != nil && err != sql.ErrNoRows {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+		return customError
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub CDSubscriptionReq
+			var cdReq, cdAr bool
+			var rqDate, arDate time.Time
+			var reqNftID, arNftID string
+			err = subrow.Scan(&newsub.InitiatorID, &newsub.ReceiverID, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.ReceiverName, &newsub.ReceiverLocation)
+			if err != nil {
+				customError.ErrTyp = "500"
+				customError.ErrCode = "S3PJ002"
+				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+				return customError
+			}
+			fmt.Printf("\n\n==== Campus details %+v , cdr %v , adAr %v===\n\n", newsub, cdReq, cdAr)
+			if cdReq == true && cdAr == true && arNftID != "" {
+				newsub.CampusDriveStatus = "Accepted"
+				newsub.NftID = arNftID
+				newsub.RequestedDate = rqDate
+				newsub.CampusDriveRequested = true
+			} else if cdReq == true && cdAr == false && arNftID != "" {
+				newsub.CampusDriveStatus = "Rejected"
+				newsub.NftID = arNftID
+				newsub.RequestedDate = rqDate
+				newsub.CampusDriveRequested = true
+			} else if cdReq == true && cdAr == false && arNftID == "" {
+				newsub.CampusDriveStatus = "Pending"
+				newsub.NftID = reqNftID
+				newsub.RequestedDate = rqDate
+				newsub.CampusDriveRequested = true
+			}
+			if !newsub.CampusDriveRequested {
+				newsub.CampusDriveStatus = "subscribed"
+				newsub.RequestedDate = rqDate
+			}
+			subs.CampusInviteSent = append(subs.CampusInviteSent, newsub)
+		}
+	}
+	subSP, _ = RetriveSP(receivedReqSp)
+	fmt.Println("========================== receivedReqSp==========", subSP, ID)
+	subrow, err = Db.Query(subSP, ID)
+	if err != nil && err != sql.ErrNoRows {
+		customError.ErrTyp = "500"
+		customError.ErrCode = "S3PJ002"
+		customError.Err = fmt.Errorf("Cannot get the Rows %v", err.Error())
+		return customError
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub CDSubscriptionReq
+			var cdReq, cdAr bool
+			var rqDate, arDate time.Time
+			var reqNftID, arNftID string
+			err = subrow.Scan(&newsub.InitiatorID, &newsub.ReceiverID, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.InitiatorName, &newsub.InitiatorLocation)
+			if err != nil {
+				customError.ErrTyp = "500"
+				customError.ErrCode = "S3PJ002"
+				customError.Err = fmt.Errorf("Cannot read the Rows %v", err.Error())
+				return customError
+			}
+			fmt.Printf("\n\n==== Campus details %+v , cdr %v , adAr %v===\n\n", newsub, cdReq, cdAr)
+			if cdReq == true && cdAr == true && arNftID != "" {
+				newsub.CampusDriveStatus = "Accepted"
+				newsub.NftID = arNftID
+				newsub.RequestedDate = rqDate
+				newsub.CampusDriveRequested = true
+			} else if cdReq == true && cdAr == false && arNftID != "" {
+				newsub.CampusDriveStatus = "Rejected"
+				newsub.NftID = arNftID
+				newsub.RequestedDate = rqDate
+				newsub.CampusDriveRequested = true
+			} else if cdReq == true && cdAr == false && arNftID == "" {
+				newsub.CampusDriveStatus = "Pending"
+				newsub.NftID = reqNftID
+				newsub.RequestedDate = rqDate
+				newsub.CampusDriveRequested = true
+			}
+			if newsub.NftID != "" {
+				subs.CampusInviteReceived = append(subs.CampusInviteReceived, newsub)
+			}
+		}
+	}
+	customError.ErrTyp = "000"
+	return customError
 }

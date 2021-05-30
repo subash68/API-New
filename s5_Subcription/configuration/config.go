@@ -16,7 +16,7 @@ type DbEnv struct {
 	DbDatabaseName       string `json:"DB_DATABASE_NAME"`
 	DbHost               string `json:"DB_HOST"`
 	DbPort               int    `json:"DB_PORT"`
-	CorpMasterDbName     string `json:"CORP_MASTER_DB_NAME"`
+	CorpMasterDbName     string `json:"CRP_MASTER_DB_NAME"`
 	UnvMasterDbName      string `json:"UNV_MASTER_DB_NAME"`
 	StuMasterDbName      string `json:"STU_MASTER_DB_NAME"`
 	ProfilePicDbName     string `json:"PROFIE_PIC_DB_NAME"`
@@ -36,7 +36,7 @@ type DbEnv struct {
 	CorpCDDbName         string `json:"CRP_CD_DB"`
 	UnvCPDbName          string `json:"UNV_CP_DB"`
 	UnvInsightsDbName    string `json:"UNV_INSIGHTS"`
-	CorpHcInsightsDbName string `json:"CORP_HC_INSIGHTS"`
+	CorpHcInsightsDbName string `json:"CRP_HC_INSIGHTS"`
 	UnvStuDataDbName     string `json:"UNV_STU_DB"`
 	DbRedisAddr          string `json:"DB_REDIS_ADDRESS"`
 	DbRedisPort          string `json:"DB_REDIS_PORT"`
