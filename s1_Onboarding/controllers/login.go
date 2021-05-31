@@ -88,6 +88,9 @@ func Login(c *gin.Context) {
 			return
 		}
 		counts := models.GetRegisteredCounts()
+		if credsModel.StakeholderType == "Corporate" {
+			counts.GetJobsPublishedCount(insertJob.SuccessResp["StakeholderID"])
+		}
 		c.JSON(http.StatusOK, models.LoginRespModel{Token: token, RedirectURL: redirectURL, Stats: counts})
 		return
 	}
