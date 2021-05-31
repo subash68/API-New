@@ -19,6 +19,7 @@ type DbEnv struct {
 	CorpMasterDbName     string `json:"CRP_MASTER_DB_NAME"`
 	UnvMasterDbName      string `json:"UNV_MASTER_DB_NAME"`
 	StuMasterDbName      string `json:"STU_MASTER_DB_NAME"`
+	JobHcDbName          string `json:"CRP_JC_DB"`
 	ReferralMasterDbName string `json:"REFERRAL_MASTER"`
 	DbRedisAddr          string `json:"DB_REDIS_ADDRESS"`
 	DbRedisPort          string `json:"DB_REDIS_PORT"`

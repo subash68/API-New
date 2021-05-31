@@ -207,3 +207,17 @@ func UploadProfilePic(c *gin.Context) {
 	return
 
 }
+
+// PlatformStats ...
+func PlatformStats(c *gin.Context) {
+	_, ID, usertype, _ := getFuncReq(c, "Platform Stats")
+
+	stats := models.GetRegisteredCounts()
+	if usertype == "Corporate" {
+		stats.GetJobsPublishedCount(ID)
+	}
+
+	c.JSON(http.StatusOK, stats)
+	return
+
+}

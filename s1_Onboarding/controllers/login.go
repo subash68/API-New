@@ -87,8 +87,11 @@ func Login(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		}
-		counts := models.GetRegisteredCounts()
-		c.JSON(http.StatusOK, models.LoginRespModel{Token: token, RedirectURL: redirectURL, Stats: counts})
+		// counts := models.GetRegisteredCounts()
+		// if credsModel.StakeholderType == "Corporate" {
+		// 	counts.GetJobsPublishedCount(insertJob.SuccessResp["StakeholderID"])
+		// }
+		c.JSON(http.StatusOK, models.LoginRespModel{Token: token, RedirectURL: redirectURL})
 		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1LGN", ErrTyp: "Required Information not found", Err: err})

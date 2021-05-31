@@ -275,16 +275,16 @@ func ChangePassword(password string, id string, stakeholder string) DbModelError
 
 // RegCount ...
 type RegCount struct {
-	CorpCount int `json:"corporatesRegistered,omitempty"`
-	StuCount  int `json:"studentsRegistered,omitempty"`
-	UnvCount  int `json:"universitiesRegistered,omitempty"`
+	CorpCount     int `json:"corporatesRegistered,omitempty"`
+	StuCount      int `json:"studentsRegistered,omitempty"`
+	UnvCount      int `json:"universitiesRegistered,omitempty"`
+	JobsPublished int `json:"jobsPublished,omitempty"`
 }
 
 // LoginRespModel ...
 type LoginRespModel struct {
-	Token       string   `json:"token" binding:"required"`
-	RedirectURL string   `json:"redirectURL" binding:"required"`
-	Stats       RegCount `json:"stats"`
+	Token       string `json:"token" binding:"required"`
+	RedirectURL string `json:"redirectURL" binding:"required"`
 }
 
 // GetRegisteredCounts ...
@@ -293,6 +293,14 @@ func GetRegisteredCounts() RegCount {
 	dbQuery, _ := RetriveSP("REG_SH_COUNT")
 	_ = Db.QueryRow(dbQuery).Scan(&rc.CorpCount, &rc.StuCount, &rc.UnvCount)
 	return rc
+}
+
+// GetJobsPublishedCount ...
+func (rc *RegCount) GetJobsPublishedCount(ID string) {
+	dbQuery, _ := RetriveSP("PJ_GET_COUNT")
+	_ = Db.QueryRow(dbQuery, ID).Scan(&rc.JobsPublished)
+	fmt.Printf("Getting Jobs published %s = %v ", dbQuery, rc.JobsPublished)
+	return
 }
 
 // CheckRefCode ...

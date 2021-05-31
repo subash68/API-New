@@ -91,6 +91,7 @@ func InitialzeRoutes() *gin.Engine {
 
 	// middleware.RestrictContentType("multipart/form-data"),
 	profile.GET("/", controllers.GetProfile)
+	profile.GET("/stats", controllers.PlatformStats)
 	profile.PATCH("/", controllers.UpdateProfile)
 	profilePicture.POST("/", controllers.UploadProfilePic)
 	profilePicture.GET("/", controllers.GetProfilePic)

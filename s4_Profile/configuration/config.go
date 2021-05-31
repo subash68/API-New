@@ -20,6 +20,7 @@ type DbEnv struct {
 	UnvMasterDbName         string `json:"UNV_MASTER_DB_NAME"`
 	StuMasterDbName         string `json:"STU_MASTER_DB_NAME"`
 	ProfilePicDbName        string `json:"PROFIE_PIC_DB_NAME"`
+	JobHcDbName             string `json:"CRP_JC_DB"`
 	LutCrpTyp               string `json:"LUT_CRP_TYPE"`
 	LutCrpCat               string `json:"LUT_CRP_CAT"`
 	LutCrpInd               string `json:"LUT_CRP_IND"`

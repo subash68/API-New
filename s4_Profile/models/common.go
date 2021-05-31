@@ -171,3 +171,37 @@ func GetProfilePic(stakeholderID string, userType string, sp string) ([]byte, Db
 	customError.ErrTyp = "000"
 	return ppic, customError
 }
+
+// RegCount ...
+type RegCount struct {
+	CorpCount            int `json:"corporatesRegistered,omitempty"`
+	StuCount             int `json:"studentsRegistered,omitempty"`
+	UnvCount             int `json:"universitiesRegistered,omitempty"`
+	JobsPublished        int `json:"jobsPublished,omitempty"`
+	ApplicationsReceived int `json:"applicationsReceived,omitempty"`
+	JobOffersMade        int `json:"jobOffersMade,omitempty"`
+	CurrentlyOnline      int `json:"currentlyOnline,omitempty"`
+	JoinedLastWeek       int `json:"joinedLastWeek,omitempty"`
+	GotPlaced            int `json:"gotPlaced,omitempty"`
+}
+
+// GetRegisteredCounts ...
+func GetRegisteredCounts() RegCount {
+	var rc RegCount
+	dbQuery, _ := RetriveSP("REG_SH_COUNT")
+	_ = Db.QueryRow(dbQuery).Scan(&rc.CorpCount, &rc.StuCount, &rc.UnvCount)
+	rc.CurrentlyOnline = 1571
+	rc.JoinedLastWeek = 82
+	rc.GotPlaced = 25152
+	return rc
+}
+
+// GetJobsPublishedCount ...
+func (rc *RegCount) GetJobsPublishedCount(ID string) {
+	dbQuery, _ := RetriveSP("PJ_GET_COUNT")
+	_ = Db.QueryRow(dbQuery, ID).Scan(&rc.JobsPublished)
+	fmt.Printf("Getting Jobs published %s = %v ", dbQuery, rc.JobsPublished)
+	rc.ApplicationsReceived = 647
+	rc.JobOffersMade = 392
+	return
+}
