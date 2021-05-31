@@ -283,9 +283,8 @@ type RegCount struct {
 
 // LoginRespModel ...
 type LoginRespModel struct {
-	Token       string   `json:"token" binding:"required"`
-	RedirectURL string   `json:"redirectURL" binding:"required"`
-	Stats       RegCount `json:"stats"`
+	Token       string `json:"token" binding:"required"`
+	RedirectURL string `json:"redirectURL" binding:"required"`
 }
 
 // GetRegisteredCounts ...
