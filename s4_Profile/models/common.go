@@ -183,6 +183,9 @@ type RegCount struct {
 	CurrentlyOnline      int `json:"currentlyOnline,omitempty"`
 	JoinedLastWeek       int `json:"joinedLastWeek,omitempty"`
 	GotPlaced            int `json:"gotPlaced,omitempty"`
+	JobOpenings          int `json:"jobOpenings,omitempty"`
+	StudentsPlaced       int `json:"studentsPlaced,omitempty"`
+	StudentsAwaitingJobs int `json:"studentsAwaitingJobs,omitempty"`
 }
 
 // GetRegisteredCounts ...
@@ -203,5 +206,16 @@ func (rc *RegCount) GetJobsPublishedCount(ID string) {
 	fmt.Printf("Getting Jobs published %s = %v ", dbQuery, rc.JobsPublished)
 	rc.ApplicationsReceived = 647
 	rc.JobOffersMade = 392
+	return
+}
+
+// GetUnvStatsCount ...
+func (rc *RegCount) GetUnvStatsCount() {
+	// dbQuery, _ := RetriveSP("PJ_GET_COUNT")
+	// _ = Db.QueryRow(dbQuery, ID).Scan(&rc.JobsPublished)
+	// fmt.Printf("Getting Jobs published %s = %v ", dbQuery, rc.JobsPublished)
+	rc.JobOpenings = 647
+	rc.StudentsPlaced = 592
+	rc.StudentsAwaitingJobs = 172
 	return
 }
