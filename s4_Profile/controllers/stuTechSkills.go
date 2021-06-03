@@ -51,30 +51,37 @@ func (saw *studentTechSkills) AddTechSkills(c *gin.Context) {
 func (saw *studentTechSkills) GetAllTechSkills(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get TechSkills")
 
-	var sa models.StudentAllTechSkillsModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_TECH_SKILLS_GETALL", ID)
+	sa, err := getTechSkills(ID)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get TechSkills", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
 	}
+	c.JSON(http.StatusOK, sa.TechSkills)
+	c.Abort()
+	return
+
+}
+
+func getTechSkills(ID string) (models.StudentAllTechSkillsModel, error) {
+	var sa models.StudentAllTechSkillsModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_TECH_SKILLS_GETALL", ID)
+	if err != nil {
+
+		return sa, err
+	}
 	defer awardRows.Close()
 	for awardRows.Next() {
 		var newSl models.StudentTechSkillsModel
 		err = awardRows.Scan(&newSl.ID, &newSl.SkillID, &newSl.SkillName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
 		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
+
+			return sa, err
 		}
 		sa.TechSkills = append(sa.TechSkills, newSl)
 	}
-	c.JSON(http.StatusOK, sa.TechSkills)
-	c.Abort()
-	return
-
+	return sa, nil
 }
 
 // UpdateTechSkills ...

@@ -56,20 +56,21 @@ type UniversityMasterDb struct {
 
 // UniversityGetByIDModel ...
 type UniversityGetByIDModel struct {
-	StakeholderID           string            `json:"stakeholderID"`
-	UniversityName          string            `json:"universityName"`
-	UniversityCollegeID     string            `json:"universityCollegeID"`
-	UniversityHQAddressCity string            `json:"universityHQAddressCity,omitempty"`
-	YearOfEstablishment     int64             `json:"yearOfEstablishment"`
-	UniversityProfile       string            `json:"universityProfile"`
-	ProgramsOffered         string            `json:"programsOffered"`
-	Ranking                 string            `json:"ranking"`
-	Accredations            string            `json:"accredations"`
-	StudentStrengthNullable NullString        `form:"-" json:"-"`
-	StudentDbAvailable      bool              `form:"-" json:"studentDbAvailable"`
-	StudentDbPublishID      string            `form:"-" json:"studentDbPublishID,omitempty"`
-	UnvInsightsAvailable    bool              `form:"-" json:"universityInsight"`
-	Subscriptions           []SubscriptionReq `json:"subscriptions"`
+	StakeholderID           string               `json:"stakeholderID"`
+	UniversityName          string               `json:"universityName"`
+	UniversityCollegeID     string               `json:"universityCollegeID"`
+	UniversityHQAddressCity string               `json:"universityHQAddressCity,omitempty"`
+	YearOfEstablishment     int64                `json:"yearOfEstablishment"`
+	UniversityProfile       string               `json:"universityProfile"`
+	ProgramsOffered         string               `json:"programsOffered"`
+	Ranking                 string               `json:"ranking"`
+	Accredations            string               `json:"accredations"`
+	StudentStrengthNullable NullString           `form:"-" json:"-"`
+	StudentDbAvailable      bool                 `form:"-" json:"studentDbAvailable"`
+	StudentDbPublishID      string               `form:"-" json:"studentDbPublishID,omitempty"`
+	UnvInsightsAvailable    bool                 `form:"-" json:"universityInsight"`
+	Subscriptions           []SubscriptionReq    `json:"subscriptions"`
+	PublishedData           []UnvPublishReqModel `json:"publishedData"`
 }
 
 // SubscriptionReq ...
@@ -87,4 +88,36 @@ type SubscriptionReq struct {
 	CampusDriveStatus  string    `form:"-" json:"campusDriveStatus,omitempty"`
 	NftID              string    `form:"-" json:"nftID,omitempty"`
 	SearchCriteria     string    `form:"-" json:"searchCriteria,omitempty"`
+}
+
+// UnvPublishReqModel ...
+type UnvPublishReqModel struct {
+	PublishID                string            `form:"-" json:"publishID"`
+	DateOfPublish            time.Time         `form:"-" json:"dateOfPublish"`
+	ProgramsPublished        bool              `form:"programsPublished" json:"programsPublished"`
+	BranchesPublished        bool              `form:"branchesPublished" json:"branchesPublished"`
+	StudentStrengthPublished bool              `form:"studentStrengthPublished" json:"studentStrengthPublished"`
+	AcredPublished           bool              `form:"acredPublished" json:"acredPublished"`
+	COEsPublished            bool              `form:"coesPublished" json:"coesPublished"`
+	RankingPublished         bool              `form:"rankingPublished" json:"rankingPublished"`
+	OtherPublished           bool              `form:"otherPublished" json:"otherPublished"`
+	ProfilePublished         bool              `form:"profilePublished" json:"profilePublished"`
+	InfoPublished            bool              `form:"infoPublished" json:"infoPublished"`
+	GeneralNote              string            `form:"-" json:"generalNote"`
+	IsSubscribed             bool              `form:"isSubscribed" json:"isSubscribed"`
+	PublishedData            string            `form:"-" json:"-"`
+	Info                     map[string]string `form:"info" json:"info"`
+}
+
+// UnvOtherInformationModel ...
+type UnvOtherInformationModel struct {
+	StakeholderID   string    `form:"-" json:"-"`
+	Title           string    `form:"title" json:"title" binding:"required"`
+	Information     string    `form:"information" json:"information" binding:"required"`
+	Attachment      []byte    `form:"-" json:"attachment,omitEmpty"`
+	ID              int       `form:"-" json:"id,omitEmpty"`
+	PublishID       string    `form:"-" json:"publishID"`
+	PublishedFlag   string    `form:"-" json:"publishedFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate,omitEmpty"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate,omitEmpty"`
 }

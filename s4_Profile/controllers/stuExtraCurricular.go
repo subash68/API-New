@@ -44,6 +44,7 @@ func (saw *studentExtraCurricular) AddExtraCurricular(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
@@ -70,30 +71,35 @@ func (saw *studentExtraCurricular) AddExtraCurricular(c *gin.Context) {
 func (saw *studentExtraCurricular) GetAllExtraCurricular(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get ExtraCurricular")
 
-	var sa models.StudentAllExtraCurricularModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_EXTRA_CURRICULAR_GETALL", ID)
+	sa, err := getAllExtraCurricular(ID)
 	if err != nil {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get ExtraCurricular", Err: err, SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
-	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentExtraCurricularModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.ExtraCurricular = append(sa.ExtraCurricular, newSl)
 	}
 	c.JSON(http.StatusOK, sa.ExtraCurricular)
 	c.Abort()
 	return
 
+}
+
+func getAllExtraCurricular(ID string) (models.StudentAllExtraCurricularModel, error) {
+	var sa models.StudentAllExtraCurricularModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_EXTRA_CURRICULAR_GETALL", ID)
+	if err != nil {
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentExtraCurricularModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+			return sa, err
+		}
+		sa.ExtraCurricular = append(sa.ExtraCurricular, newSl)
+	}
+	return sa, nil
 }
 
 // UpdateExtraCurricular ...
@@ -115,6 +121,7 @@ func (saw *studentExtraCurricular) UpdateExtraCurricular(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +131,7 @@ func (saw *studentExtraCurricular) UpdateExtraCurricular(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdateExtraCurricular()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_EXTRA_CURRICULAR_UPD", []interface{}{sa.Name, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_EXTRA_CURRICULAR_UPD", []interface{}{sa.Name, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

@@ -30,6 +30,7 @@ func AddCert(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		err := sa.InsertCert()
 		if err != nil {
@@ -88,6 +89,7 @@ func UpdateCert(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID == 0 || err != nil {

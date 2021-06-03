@@ -115,7 +115,7 @@ func GetDbKey(apiKey string) (string, bool) {
 		"programID":                            "Program_ID",
 		"branchName":                           "BranchName",
 		"branchID":                             "Branch_ID",
-		"collegeID":                            "Student_CollegeID",
+		"collegeRollNumber":                    "Student_CollegeRollNo",
 		"collegeEmailID":                       "Student_CollegeEmailID",
 	}
 	key := DbModelKeys[apiKey]

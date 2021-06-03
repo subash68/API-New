@@ -2,9 +2,12 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/jaswanth-gorripati/PGK/s4_Profile/configuration"
 )
 
 // UnvSearchModel ...
@@ -83,7 +86,16 @@ func SearchUniversities(unvName string, hcID string, skills []string, locations 
 }
 
 // GetUnvByID ...
-func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
+func GetUnvByID(ID string, subID string, subUserType string) (UniversityGetByIDModel, error) {
+	dbNames := configuration.DbConfig()
+	var subDbName string
+	if subUserType == "University" {
+		subDbName = dbNames.UnvSubDBName
+	} else if subUserType == "Student" {
+		subDbName = dbNames.StuSubDBName
+	} else if subUserType == "Corporate" {
+		subDbName = dbNames.CrpSubDBName
+	}
 	sp, _ := RetriveSP("UNV_GET_PROFILE_BY_ID")
 	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
 	row := Db.QueryRow(sp, ID)
@@ -97,7 +109,8 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		return unvDB, fmt.Errorf("Cannot scan ros due to : %v", err.Error())
 	}
 	subSP, _ := RetriveSP("UNV_SUB_DATA_IN_SRH")
-	fmt.Println("========================== UNV_SUB_DATA_IN_SRH==========", sp)
+	subSP = strings.ReplaceAll(subSP, "//REPLCESUBDB", subDbName)
+	fmt.Println("========================== UNV_SUB_DATA_IN_SRH==========", subSP)
 	subrow, err := Db.Query(subSP, subID, ID)
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
@@ -116,7 +129,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		}
 	}
 	subSP, _ = RetriveSP("UNV_STU_DB_SUB_GET_ALL")
-	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
+	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", subSP)
 	subrow, err = Db.Query(subSP, subID, ID)
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
@@ -136,7 +149,7 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 	}
 
 	subSP, _ = RetriveSP("UNV_INSIGHTS_GET_ALL")
-	fmt.Println("========================== UNV_INSIGHTS_GET_ALL==========", sp)
+	fmt.Println("========================== UNV_INSIGHTS_GET_ALL==========", subSP)
 	subrow, err = Db.Query(subSP, subID, ID)
 	if err != nil && err != sql.ErrNoRows {
 		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
@@ -198,6 +211,68 @@ func GetUnvByID(ID string, subID string) (UniversityGetByIDModel, error) {
 		unvDB.StudentDbAvailable = true
 		unvDB.StudentDbPublishID = unvDB.StudentStrengthNullable.String
 	}
+	pubSP, _ := RetriveSP("UNV_GET_PUBDATA_FOR_ID")
+	pubSP = strings.ReplaceAll(pubSP, "//REPLCESUBDB", subDbName)
+	fmt.Println("========================== UNV_GET_PUBDATA_FOR_ID==========", pubSP)
+	pubrow, err := Db.Query(pubSP, subID, ID)
+	if err != nil && err != sql.ErrNoRows {
+		return unvDB, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer pubrow.Close()
+		for pubrow.Next() {
+			var newpub UnvPublishReqModel
+			err = pubrow.Scan(&newpub.PublishID, &newpub.DateOfPublish, &newpub.ProgramsPublished, &newpub.BranchesPublished, &newpub.StudentStrengthPublished, &newpub.AcredPublished, &newpub.COEsPublished, &newpub.RankingPublished, &newpub.OtherPublished, &newpub.ProfilePublished, &newpub.GeneralNote, &newpub.IsSubscribed, &newpub.PublishedData)
+			newpub.GeneralNote = strings.Split(newpub.GeneralNote, " has been published")[0]
+			newpub.Info = make(map[string]string)
+			if newpub.GeneralNote == "Profile" {
+				publishedTypes := ""
+				if newpub.ProgramsPublished {
+					publishedTypes += "Programs,"
+				}
+				if newpub.BranchesPublished {
+					publishedTypes += "Branches,"
+				}
+				if newpub.StudentStrengthPublished {
+					publishedTypes += "Student Strength,"
+				}
+				if newpub.AcredPublished {
+					publishedTypes += "Accredations,"
+				}
+				if newpub.COEsPublished {
+					publishedTypes += "COEs,"
+				}
+				if newpub.RankingPublished {
+					publishedTypes += "Ranking,"
+				}
+				if newpub.ProfilePublished {
+					publishedTypes += "Profile,"
+				}
+				newpub.Info["PublishedData"] = publishedTypes[:len(publishedTypes)-1]
+			}
+			if newpub.OtherPublished {
+
+				newpub.parseOtherInfo()
+			}
+			if err != nil {
+				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			unvDB.PublishedData = append(unvDB.PublishedData, newpub)
+		}
+	}
 
 	return unvDB, nil
+}
+
+func (upr *UnvPublishReqModel) parseOtherInfo() {
+	oi := UnvOtherInformationModel{}
+	err := json.Unmarshal([]byte(upr.PublishedData), &oi)
+	if err != nil {
+		fmt.Println("========= Error while parsing oi ===", err.Error())
+	}
+	fmt.Printf("\n%+v\n", oi)
+	upr.Info["Title"] = oi.Title
+	return
+
 }

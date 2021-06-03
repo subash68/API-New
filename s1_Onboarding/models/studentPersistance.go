@@ -44,7 +44,7 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 		return Job
 
 	}
-	sID, cbError := createStuSID(data.DateOfBirth)
+	sID, refCode, cbError := createStuSID(data.DateOfBirth)
 	if cbError.ErrCode != "000" {
 		Job <- cbError
 		return Job
@@ -65,7 +65,7 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 	defer stmt.Close()
 	data.CreationDate = time.Now()
 	data.LastUpdatedDate = data.CreationDate
-	results, err := stmt.Exec(&data.StakeholderID, &data.FirstName, &data.MiddleName, &data.LastName, &data.PersonalEmail, &data.PhoneNumber, &data.AlternatePhoneNumber, &data.Gender, &data.DateOfBirth, &data.AadharNumber, &data.PermanentAddressLine1, &data.PermanentAddressLine2, &data.PermanentAddressLine3, &data.PermanentAddressCountry, &data.PermanentAddressState, &data.PermanentAddressCity, &data.PermanentAddressDistrict, &data.PermanentAddressZipcode, &data.PermanentAddressPhone, &data.PresentAddressLine1, &data.PresentAddressLine2, &data.PresentAddressLine3, &data.PresentAddressCountry, &data.PresentAddressState, &data.PresentAddressCity, &data.PresentAddressDistrict, &data.PresentAddressZipcode, &data.PresentAddressPhone, &data.UniversityName, &data.UniversityID, &data.ProgramName, &data.ProgramID, &data.BranchName, &data.BranchID, &data.CollegeID, &data.CollegeEmailID, &data.Password, &data.UniversityApprovedFlag, &data.CreationDate, &data.LastUpdatedDate, &data.AccountStatus, false, false, expiryDate, &data.Attachment, data.AttachmentName, &data.CreationDate)
+	results, err := stmt.Exec(&data.StakeholderID, &data.FirstName, &data.MiddleName, &data.LastName, &data.PersonalEmail, &data.PhoneNumber, &data.AlternatePhoneNumber, &data.Gender, &data.DateOfBirth, &data.AadharNumber, &data.PermanentAddressLine1, &data.PermanentAddressLine2, &data.PermanentAddressLine3, &data.PermanentAddressCountry, &data.PermanentAddressState, &data.PermanentAddressCity, &data.PermanentAddressDistrict, &data.PermanentAddressZipcode, &data.PermanentAddressPhone, &data.PresentAddressLine1, &data.PresentAddressLine2, &data.PresentAddressLine3, &data.PresentAddressCountry, &data.PresentAddressState, &data.PresentAddressCity, &data.PresentAddressDistrict, &data.PresentAddressZipcode, &data.PresentAddressPhone, &data.UniversityName, &data.UniversityID, &data.ProgramName, &data.ProgramID, &data.BranchName, &data.BranchID, &data.CollegeID, &data.CollegeEmailID, &data.Password, &data.UniversityApprovedFlag, &data.CreationDate, &data.LastUpdatedDate, &data.AccountStatus, false, false, expiryDate, &data.Attachment, data.AttachmentName, &data.CreationDate, refCode)
 	fmt.Printf("results: %+v \n %+v", results, err)
 	if err != nil {
 
@@ -91,7 +91,7 @@ func (data *StudentMasterDb) Insert(expiryDate string) <-chan DbModelError {
 
 }
 
-func createStuSID(dob time.Time) (string, DbModelError) {
+func createStuSID(dob time.Time) (string, string, DbModelError) {
 
 	fmt.Printf("\n ---> dob: %v yoe: %v\n", dob)
 	rowCount := 0
@@ -99,13 +99,13 @@ func createStuSID(dob time.Time) (string, DbModelError) {
 	lutSP, _ := RetriveSP("STU_ROW_CNT")
 	err := Db.QueryRow(lutSP).Scan(&rowCount)
 	if err != nil {
-		return "", DbModelError{
+		return "", "", DbModelError{
 			"500", "", fmt.Errorf("Failed to Create Platform Unique ID, due to db connection error"), map[string]string{},
 		}
 	}
 
 	partialID := fmt.Sprintf("%010d", (rowCount + 1))
-	return fmt.Sprint("S", strconv.Itoa(dob.Year()), partialID), DbModelError{
+	return fmt.Sprint("S", strconv.Itoa(dob.Year()), partialID), fmt.Sprint("S", strconv.Itoa(dob.Year()), partialID), DbModelError{
 		"000", "", nil, map[string]string{},
 	}
 }

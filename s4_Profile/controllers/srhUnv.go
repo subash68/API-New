@@ -26,7 +26,7 @@ func SearchUnv(c *gin.Context) {
 
 // GetUnvByID ...
 func GetUnvByID(c *gin.Context) {
-	ctx, ID, _, _ := getFuncReq(c, "Get University by ID")
+	ctx, ID, userType, _ := getFuncReq(c, "Get University by ID")
 
 	universityID := c.Param("unvID")
 	if universityID == "" {
@@ -35,7 +35,7 @@ func GetUnvByID(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	unvDb, err := models.GetUnvByID(universityID, ID)
+	unvDb, err := models.GetUnvByID(universityID, ID, userType)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to get Corporate information", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)

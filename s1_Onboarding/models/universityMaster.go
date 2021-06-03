@@ -48,4 +48,7 @@ type UniversityMasterDb struct {
 	PrimaryPhoneVerified                 bool   `form:"primaryPhoneVerified,omitempty"`
 	PrimaryEmailVerified                 bool   `form:"primaryEmailVerified,omitempty"`
 	ProfilePicture                       []byte `form:"-" json:"profilePicture"`
+	ReferredCode                         string `form:"referredCode" json:"referredCode"`
+	ReferredByID                         string `form:"referredByID" json:"referralByID"`
+	ReferralCode                         string `json:"referralCode"`
 }

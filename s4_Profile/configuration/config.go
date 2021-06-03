@@ -20,6 +20,8 @@ type DbEnv struct {
 	UnvMasterDbName         string `json:"UNV_MASTER_DB_NAME"`
 	StuMasterDbName         string `json:"STU_MASTER_DB_NAME"`
 	ProfilePicDbName        string `json:"PROFIE_PIC_DB_NAME"`
+	CorpPDHDbName           string `json:"CRP_PDH_DB"`
+	UnvPDHDbName            string `json:"UNV_PDH_DB"`
 	JobHcDbName             string `json:"CRP_JC_DB"`
 	LutCrpTyp               string `json:"LUT_CorporateType"`
 	LutCrpCat               string `json:"LUT_CorporateCategory"`
@@ -37,7 +39,7 @@ type DbEnv struct {
 	StuIntershipsDbName     string `json:"STU_INTERNSHIPS"`
 	StuAwardsDbName         string `json:"STU_AWARDS"`
 	StuCompetitionDbName    string `json:"STU_COMPETITION"`
-	StuConfWorkshopsDbName  string `json:"STU_CONF_WRKSHP"`
+	StuEventsDbName         string `json:"STU_Events"`
 	StuExtraCurDbName       string `json:"STU_EXTRA_CURRICULAR"`
 	StuPatentsDbName        string `json:"STU_PATENTS"`
 	StuProjectsDbName       string `json:"STU_PROJECTS"`
@@ -50,7 +52,7 @@ type DbEnv struct {
 	CorpCDDbName            string `json:"CRP_CD_DB"`
 	UnvCPDbName             string `json:"UNV_CP_DB"`
 	UnvInsightsDbName       string `json:"UNV_INSIGHTS"`
-	CorpHcInsightsDbName    string `json:"CORP_HC_INSIGHTS"`
+	CorpHcInsightsDbName    string `json:"CRP_HC_INSIGHTS"`
 	UnvStuDataDbName        string `json:"UNV_STU_DB"`
 	UnvSubDBName            string `json:"UNV_SUB_DB"`
 	CrpSubDBName            string `json:"CRP_SUB_DB"`

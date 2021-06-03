@@ -50,31 +50,37 @@ func (saw *studentSocialAccount) AddSocialAccount(c *gin.Context) {
 // GetAllSocialAccount ...
 func (saw *studentSocialAccount) GetAllSocialAccount(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get SocialAccount")
-
-	var sa models.StudentAllSocialAccountModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_SOCIAL_ACCOUNTS_GETALL", ID)
+	sa, err := getSocialAccounts(ID)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get SocialAccount", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
 	}
+	c.JSON(http.StatusOK, sa.SocialAccounts)
+	c.Abort()
+	return
+
+}
+func getSocialAccounts(ID string) (models.StudentAllSocialAccountModel, error) {
+
+	var sa models.StudentAllSocialAccountModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_SOCIAL_ACCOUNTS_GETALL", ID)
+	if err != nil {
+
+		return sa, err
+	}
 	defer awardRows.Close()
 	for awardRows.Next() {
 		var newSl models.StudentSocialAccountModel
 		err = awardRows.Scan(&newSl.ID, &newSl.UserID, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
 		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
+
+			return sa, err
 		}
 		sa.SocialAccounts = append(sa.SocialAccounts, newSl)
 	}
-	c.JSON(http.StatusOK, sa.SocialAccounts)
-	c.Abort()
-	return
-
+	return sa, nil
 }
 
 // UpdateSocialAccount ...

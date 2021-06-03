@@ -16,7 +16,7 @@ func (sa *StudentAssessmentModel) InsertAssessment() error {
 		return fmt.Errorf("Cannot prepare -- %v  -- insert due to %v", slInsertCmd, err.Error())
 	}
 	currentTime := time.Now()
-	_, err = stmt.Exec(sa.StakeholderID, sa.Name, sa.Score, sa.IssuingAuthority, sa.AssessmentDate, sa.Description, sa.Attachment, true, currentTime, currentTime)
+	_, err = stmt.Exec(sa.StakeholderID, sa.Name, sa.Score, sa.IssuingAuthority, sa.AssessmentDate, sa.Description, sa.Attachment, sa.AttachmentName, true, currentTime, currentTime)
 	if err != nil {
 		return fmt.Errorf("Failed to insert in database -- %v -- insert due to %v", slInsertCmd, err.Error())
 	}
@@ -37,7 +37,7 @@ func (sa *StudentAllAssessmentModel) GetAllAssessment() error {
 	defer slRows.Close()
 	for slRows.Next() {
 		var newSl StudentAssessmentModel
-		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.Score, &newSl.IssuingAuthority, &newSl.AssessmentDate, &newSl.Description, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.Score, &newSl.IssuingAuthority, &newSl.AssessmentDate, &newSl.Description, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
 		if err != nil {
 			return fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}
@@ -58,7 +58,7 @@ func (sa *StudentAssessmentModel) UpdateAssessment() error {
 		return fmt.Errorf("Cannot prepare -- %v -- insert due to %v", slInsertCmd, err.Error())
 	}
 
-	_, err = stmt.Exec(sa.Name, sa.Score, sa.IssuingAuthority, sa.AssessmentDate, sa.Description, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID)
+	_, err = stmt.Exec(sa.Name, sa.Score, sa.IssuingAuthority, sa.AssessmentDate, sa.Description, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID)
 	if err != nil {
 		return fmt.Errorf("Failed to update in database -- %v  -- insert due to %v", slInsertCmd, err.Error())
 	}

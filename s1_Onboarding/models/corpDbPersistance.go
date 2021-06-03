@@ -27,7 +27,7 @@ func (data *CorporateMasterDB) Insert(expiryDate string) <-chan DbModelError {
 	var CorporateExists bool
 	dbSP, _ := RetriveSP("CORP_EXISTS_WITH_EMAIL")
 	err := Db.QueryRow(dbSP, data.PrimaryContactEmail).Scan(&data.StakeholderID, &data.PrimaryContactEmail, &CorporateExists)
-
+	fmt.Printf("=============\n %v \n %v \n %v", data.PrimaryContactEmail, CorporateExists, err)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println("query operation failed" + err.Error())
 		Job <- DbModelError{
@@ -66,8 +66,10 @@ func (data *CorporateMasterDB) Insert(expiryDate string) <-chan DbModelError {
 	}
 	defer stmt.Close()
 
-	stmt.Exec(data.StakeholderID, data.CorporateName, data.CIN, data.CorporateHQAddressLine1, data.CorporateHQAddressLine2, data.CorporateHQAddressLine3, data.CorporateHQAddressCountry, data.CorporateHQAddressState, data.CorporateHQAddressCity, data.CorporateHQAddressDistrict, data.CorporateHQAddressZipCode, data.CorporateHQAddressPhone, data.CorporateHQAddressEmail, data.CorporateLocalBranchAddressLine1, data.CorporateLocalBranchAddressLine2, data.CorporateLocalBranchAddressLine3, data.CorporateLocalBranchAddressCountry, data.CorporateLocalBranchAddressState, data.CorporateLocalBranchAddressCity, data.CorporateLocalBranchAddressDistrict, data.CorporateLocalBranchAddressZipCode, data.CorporateLocalBranchAddressPhone, data.CorporateLocalBranchAddressEmail, data.PrimaryContactFirstName, data.PrimaryContactMiddleName, data.PrimaryContactLastName, data.PrimaryContactDesignation, data.PrimaryContactPhone, data.PrimaryContactEmail, data.SecondaryContactFirstName, data.SecondaryContactMiddleName, data.SecondaryContactLastName, data.SecondaryContactDesignation, data.SecondaryContactPhone, data.SecondaryContactEmail, data.CorporateType, data.CorporateCategory, data.CorporateIndustry, data.CompanyProfile, data.Attachment, data.AttachmentName, data.YearOfEstablishment, data.AccountStatus, data.Password, expiryDate, rfCode)
-
+	_, err = stmt.Exec(data.StakeholderID, data.CorporateName, data.CIN, data.CorporateHQAddressLine1, data.CorporateHQAddressLine2, data.CorporateHQAddressLine3, data.CorporateHQAddressCountry, data.CorporateHQAddressState, data.CorporateHQAddressCity, data.CorporateHQAddressDistrict, data.CorporateHQAddressZipCode, data.CorporateHQAddressPhone, data.CorporateHQAddressEmail, data.CorporateLocalBranchAddressLine1, data.CorporateLocalBranchAddressLine2, data.CorporateLocalBranchAddressLine3, data.CorporateLocalBranchAddressCountry, data.CorporateLocalBranchAddressState, data.CorporateLocalBranchAddressCity, data.CorporateLocalBranchAddressDistrict, data.CorporateLocalBranchAddressZipCode, data.CorporateLocalBranchAddressPhone, data.CorporateLocalBranchAddressEmail, data.PrimaryContactFirstName, data.PrimaryContactMiddleName, data.PrimaryContactLastName, data.PrimaryContactDesignation, data.PrimaryContactPhone, data.PrimaryContactEmail, data.SecondaryContactFirstName, data.SecondaryContactMiddleName, data.SecondaryContactLastName, data.SecondaryContactDesignation, data.SecondaryContactPhone, data.SecondaryContactEmail, data.CorporateType, data.CorporateCategory, data.CorporateIndustry, data.CompanyProfile, data.Attachment, data.AttachmentName, data.YearOfEstablishment, data.AccountStatus, data.Password, expiryDate, rfCode)
+	// me, ok := err.(*mysql.MySQLError)
+	// if ok {
+	// }
 	if err != nil {
 
 		fmt.Println("error while inserting" + err.Error())

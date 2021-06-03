@@ -49,21 +49,21 @@ type StudentMasterDb struct {
 	Password                   string     `form:"password" json:"password,omitempty" binding:"required,min=8,max=15" binding:"required"`
 	PrimaryPhoneVerified       bool       `form:"primaryPhoneVerified" json:"primaryPhoneVerified"`
 	PrimaryEmailVerified       bool       `form:"primaryEmailVerified" json:"primaryEmailVerified"`
-	DateOfJoining              time.Time  `json:"dateOfJoining,omitempty" time_format="2006-12-01T21:23:34.409Z"`
+	DateOfJoining              time.Time  `json:"dateOfJoining" time_format="2006-12-01T21:23:34.409Z"`
 	ProfilePicture             []byte     `form:"-" json:"profilePicture"`
 	AccountExpiryDate          time.Time  `form:"-" json:"accountExpiryDate" time_format="2006-12-01T21:23:34.409Z"`
 	AboutMeNullable            NullString `json:"-"`
-	AboutMe                    string     `form:"aboutMe" json:"aboutMe"`
 	UniversityName             string     `form:"universityName" json:"universityName"`
 	UniversityID               string     `form:"universityID" json:"universityID"`
 	ProgramName                string     `form:"programName" json:"programName"`
 	ProgramID                  string     `form:"programID" json:"programID"`
 	BranchName                 string     `form:"branchName" json:"branchName"`
 	BranchID                   string     `form:"branchID" json:"branchID"`
-	CollegeID                  string     `form:"collegeID" json:"collegeID" `
+	CollegeID                  string     `form:"collegeRollNumber" json:"collegeRollNumber" `
 	CollegeEmailID             string     `form:"collegeEmailID" json:"collegeEmailID"`
-	Attachment                 []byte     `form:"-" json:"Attachment"`
+	Attachment                 []byte     `form:"-" json:"attachment"`
 	AttachmentName             string     `json:"attachmentName,omitempty"`
+	ReferralCode               string     `json:"referralCode,omitempty"`
 }
 
 // StudentTTModel ...
@@ -202,13 +202,13 @@ type StudentCertsModel struct {
 	IssuingAuthority string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
 	StartDate        time.Time `form:"startDate" json:"startDate" binding:"required"`
 	EndDate          string    `form:"endDate" json:"endDate"`
-	Result           string    `form:"result" json:"result"`
-	Description      string    `form:"description" json:"description"`
-	Attachment       []byte    `form:"attachment" json:"attachment"`
-	AttachmentName   string    `form:"attachmentName" json:"attachmentName"`
-	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
-	CreationDate     time.Time `form:"-" json:"creationDate"`
-	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
+	// Result           string    `form:"result" json:"result"`
+	// Description      string    `form:"description" json:"description"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
+	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
+	CreationDate    time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
 }
 
 // StudentAllCertsModel ...
@@ -303,23 +303,30 @@ type StudentAllCompetitionModel struct {
 	Competitions  []StudentCompetitionModel `form:"competitions" json:"competitions" binding:"dive"`
 }
 
-// StudentConfWorkshopModel ...
-type StudentConfWorkshopModel struct {
-	StakeholderID   string    `form:"-" json:"-"`
-	ID              int       `form:"-" json:"id"`
-	Name            string    `form:"name" json:"name" binding:"required"`
-	Date            time.Time `form:"date" json:"date" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
-	Attachment      []byte    `form:"attachment" json:"attachment"`
-	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
-	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
-	CreationDate    time.Time `form:"-" json:"creationDate"`
-	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
+// StudentEventsModel ...
+type StudentEventsModel struct {
+	StakeholderID    string    `form:"-" json:"-"`
+	ID               int       `form:"-" json:"id"`
+	Name             string    `form:"name" json:"name" binding:"required"`
+	Date             time.Time `form:"date" json:"date" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
+	Attachment       []byte    `form:"attachment" json:"attachment"`
+	AttachmentName   string    `form:"attachmentName" json:"attachmentName"`
+	OrganizedBy      string    `form:"organizedBy" json:"organizedBy" binding:"required"`
+	OrganizedByEmail string    `form:"organizedByEmail" json:"organizedByEmail" binding:"required"`
+	OrganizedByPhone string    `form:"organizedByPhone" json:"organizedByPhone"  binding:"required"`
+	EventType        string    `form:"eventType" json:"eventType"  binding:"required"`
+	EventTypeOther   string    `form:"eventTypeOther" json:"eventTypeOther"`
+	EventResult      string    `form:"eventResult" json:"eventResult"`
+	EventResultOther string    `form:"eventResultOther" json:"eventResultOther"`
+	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
+	CreationDate     time.Time `form:"-" json:"creationDate"`
+	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
 }
 
-// StudentAllConfWorkshopModel ...
-type StudentAllConfWorkshopModel struct {
-	StakeholderID string                     `form:"-" json:"-"`
-	ConfWorkshop  []StudentConfWorkshopModel `form:"confWorkshop" json:"confWorkshop" binding:"dive"`
+// StudentAllEventsModel ...
+type StudentAllEventsModel struct {
+	StakeholderID string               `form:"-" json:"-"`
+	Events        []StudentEventsModel `form:"events" json:"events" binding:"dive"`
 }
 
 // StudentExtraCurricularModel ...
@@ -544,17 +551,29 @@ type StudentContactInfoModel struct {
 
 // StudentCompleteProfileDataModel ...
 type StudentCompleteProfileDataModel struct {
-	Profile             StudentMasterDb           `form:"-" json:"profile"`
-	ContactInfo         StudentContactInfoModel   `form:"contactInfo" json:"contactInfo"`
-	Academics           StudentAcademicsModelReq  `form:"academics" json:"academics"`
-	Languages           StudentAllLanguagesModel  `form:"-" json:"-"`
-	Certifications      StudentAllCertsModel      `form:"-" json:"-"`
-	Assessments         StudentAllAssessmentModel `form:"-" json:"-"`
-	Internships         StudentAllInternshipModel `form:"-" json:"-"`
-	LanguagesArray      []StudentLangModel        `form:"languages" json:"languages"`
-	CertificationsArray []StudentCertsModel       `form:"certifications" json:"certifications"`
-	AssessmentsArray    []StudentAssessmentModel  `form:"assessments" json:"assessments"`
-	InternshipsArray    []StudentInternshipModel  `form:"internships" json:"internships"`
+	Profile                  StudentMasterDb                   `form:"-" json:"profile"`
+	ContactInfo              StudentContactInfoModel           `form:"contactInfo" json:"contactInfo"`
+	Academics                StudentAcademicsModelReq          `form:"academics" json:"academics"`
+	Languages                StudentAllLanguagesModel          `form:"-" json:"-"`
+	Certifications           StudentAllCertsModel              `form:"-" json:"-"`
+	Assessments              StudentAllAssessmentModel         `form:"-" json:"-"`
+	Internships              StudentAllInternshipModel         `form:"-" json:"-"`
+	LanguagesArray           []StudentLangModel                `form:"languages" json:"languages"`
+	CertificationsArray      []StudentCertsModel               `form:"certifications" json:"certifications"`
+	AssessmentsArray         []StudentAssessmentModel          `form:"assessments" json:"assessments"`
+	InternshipsArray         []StudentInternshipModel          `form:"internships" json:"internships"`
+	AwardsArray              []StudentAwardsModel              `form:"awards" json:"awards"`
+	EventsArray              []StudentEventsModel              `form:"events" json:"events"`
+	CompetitionsArray        []StudentCompetitionModel         `form:"competitions" json:"competitions"`
+	ExtraCurricularArray     []StudentExtraCurricularModel     `form:"extraCurricular" json:"extraCurricular"`
+	PatentsArray             []StudentPatentsModel             `form:"patents" json:"patents"`
+	ProjectsArray            []StudentProjectsModel            `form:"projects" json:"projects"`
+	PublicationsArray        []StudentPublicationsModel        `form:"publications" json:"publications"`
+	ScholarshipsArray        []StudentScholarshipsModel        `form:"scholarships" json:"scholarships"`
+	SocialAccountArray       []StudentSocialAccountModel       `form:"socialAccount" json:"socialAccount"`
+	TechSkillsArray          []StudentTechSkillsModel          `form:"techSkills" json:"techSkills"`
+	TestScoresArray          []StudentTestScoresModel          `form:"testScores" json:"testScores"`
+	VolunteerExperienceArray []StudentVolunteerExperienceModel `form:"volunteerExperience" json:"volunteerExperience"`
 }
 
 // StudentProfileVerificationDataModel ...
