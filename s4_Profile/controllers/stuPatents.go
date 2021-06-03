@@ -44,6 +44,7 @@ func (saw *studentPatents) AddPatents(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
@@ -70,30 +71,35 @@ func (saw *studentPatents) AddPatents(c *gin.Context) {
 func (saw *studentPatents) GetAllPatents(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get Patents")
 
-	var sa models.StudentAllPatentsModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_PATENTS_GETALL", ID)
+	sa, err := getPatents(ID)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Patents", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
 	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentPatentsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.PatentType, &newSl.PatentNumber, &newSl.PatentStatus, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.Patents = append(sa.Patents, newSl)
-	}
 	c.JSON(http.StatusOK, sa.Patents)
 	c.Abort()
 	return
 
+}
+
+func getPatents(ID string) (models.StudentAllPatentsModel, error) {
+	var sa models.StudentAllPatentsModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_PATENTS_GETALL", ID)
+	if err != nil {
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentPatentsModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.PatentType, &newSl.PatentNumber, &newSl.PatentStatus, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+			return sa, err
+		}
+		sa.Patents = append(sa.Patents, newSl)
+	}
+	return sa, nil
 }
 
 // UpdatePatents ...
@@ -115,6 +121,7 @@ func (saw *studentPatents) UpdatePatents(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +131,7 @@ func (saw *studentPatents) UpdatePatents(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdatePatents()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_PATENTS_UPD", []interface{}{sa.Name, sa.PatentType, sa.PatentNumber, sa.PatentStatus, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_PATENTS_UPD", []interface{}{sa.Name, sa.PatentType, sa.PatentNumber, sa.PatentStatus, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

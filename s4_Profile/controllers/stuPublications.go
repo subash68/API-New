@@ -44,12 +44,13 @@ func (saw *studentPublications) AddPublications(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
 		sa.LastUpdatedDate = currentTime
 		sa.EnabledFlag = true
-		vals := []interface{}{sa.StakeholderID, sa.Name, sa.PublishingAuthority, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
+		vals := []interface{}{sa.StakeholderID, sa.Name, sa.PublishingAuthority, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, sa.AttachmentName, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
 		err := models.StudentInfoService.AddToStudentInfo("STU_PUBLICATIONS_INS", vals)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
@@ -70,30 +71,36 @@ func (saw *studentPublications) AddPublications(c *gin.Context) {
 func (saw *studentPublications) GetAllPublications(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get Publications")
 
-	var sa models.StudentAllPublicationsModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_PUBLICATIONS_GETALL", ID)
+	sa, err := getPublications(ID)
 	if err != nil {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Publications", Err: err, SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
-	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentPublicationsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.PublishingAuthority, &newSl.GuideName, &newSl.GuideEmail, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.Publications = append(sa.Publications, newSl)
 	}
 	c.JSON(http.StatusOK, sa.Publications)
 	c.Abort()
 	return
 
+}
+
+func getPublications(ID string) (models.StudentAllPublicationsModel, error) {
+
+	var sa models.StudentAllPublicationsModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_PUBLICATIONS_GETALL", ID)
+	if err != nil {
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentPublicationsModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.PublishingAuthority, &newSl.GuideName, &newSl.GuideEmail, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+			return sa, err
+		}
+		sa.Publications = append(sa.Publications, newSl)
+	}
+	return sa, nil
 }
 
 // UpdatePublications ...
@@ -115,6 +122,7 @@ func (saw *studentPublications) UpdatePublications(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +132,7 @@ func (saw *studentPublications) UpdatePublications(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdatePublications()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_PUBLICATIONS_UPD", []interface{}{sa.Name, sa.PublishingAuthority, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_PUBLICATIONS_UPD", []interface{}{sa.Name, sa.PublishingAuthority, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

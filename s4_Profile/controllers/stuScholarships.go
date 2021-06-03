@@ -44,12 +44,13 @@ func (saw *studentScholarships) AddScholarships(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
 		sa.LastUpdatedDate = currentTime
 		sa.EnabledFlag = true
-		vals := []interface{}{sa.StakeholderID, sa.Name, sa.ScholarshipIssuedBy, sa.ScholarshipDate, sa.Attachment, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
+		vals := []interface{}{sa.StakeholderID, sa.Name, sa.ScholarshipIssuedBy, sa.ScholarshipDate, sa.Attachment, sa.AttachmentName, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
 		err := models.StudentInfoService.AddToStudentInfo("STU_SCHOLARSHIPS_INS", vals)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
@@ -69,31 +70,38 @@ func (saw *studentScholarships) AddScholarships(c *gin.Context) {
 // GetAllScholarships ...
 func (saw *studentScholarships) GetAllScholarships(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get Scholarships")
-
-	var sa models.StudentAllScholarshipsModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_SCHOLARSHIPS_GETALL", ID)
+	sa, err := getScholarships(ID)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Scholarships", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
 	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentScholarshipsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.ScholarshipIssuedBy, &newSl.ScholarshipDate, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.Scholarships = append(sa.Scholarships, newSl)
-	}
+
 	c.JSON(http.StatusOK, sa.Scholarships)
 	c.Abort()
 	return
 
+}
+
+func getScholarships(ID string) (models.StudentAllScholarshipsModel, error) {
+	var sa models.StudentAllScholarshipsModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_SCHOLARSHIPS_GETALL", ID)
+	if err != nil {
+
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentScholarshipsModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.ScholarshipIssuedBy, &newSl.ScholarshipDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+
+			return sa, err
+		}
+		sa.Scholarships = append(sa.Scholarships, newSl)
+	}
+	return sa, nil
 }
 
 // UpdateScholarships ...
@@ -115,6 +123,7 @@ func (saw *studentScholarships) UpdateScholarships(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +133,7 @@ func (saw *studentScholarships) UpdateScholarships(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdateScholarships()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_SCHOLARSHIPS_UPD", []interface{}{sa.Name, sa.ScholarshipIssuedBy, sa.ScholarshipDate, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_SCHOLARSHIPS_UPD", []interface{}{sa.Name, sa.ScholarshipIssuedBy, sa.ScholarshipDate, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

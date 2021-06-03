@@ -16,7 +16,7 @@ func (si *StudentInternshipModel) InsertInternship() error {
 		return fmt.Errorf("Cannot prepare -- %v  -- insert due to %v", slInsertCmd, err.Error())
 	}
 	currentTime := time.Now()
-	_, err = stmt.Exec(si.StakeholderID, si.Name, si.OrganizationName, si.FieldOfWork, si.OrganizationCity, si.StartDate, si.EndDate, si.Description, si.Attachment, true, currentTime, currentTime)
+	_, err = stmt.Exec(si.StakeholderID, si.Name, si.OrganizationName, si.FieldOfWork, si.OrganizationCity, si.StartDate, si.EndDate, si.Description, si.Attachment, si.AttachmentName, true, currentTime, currentTime)
 	if err != nil {
 		return fmt.Errorf("Failed to insert in database -- %v -- insert due to %v", slInsertCmd, err.Error())
 	}
@@ -37,7 +37,7 @@ func (si *StudentAllInternshipModel) GetAllInternships() error {
 	defer slRows.Close()
 	for slRows.Next() {
 		var newSl StudentInternshipModel
-		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.OrganizationName, &newSl.FieldOfWork, &newSl.OrganizationCity, &newSl.StartDate, &newSl.EndDate, &newSl.Description, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.OrganizationName, &newSl.FieldOfWork, &newSl.OrganizationCity, &newSl.StartDate, &newSl.EndDate, &newSl.Description, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
 		if err != nil {
 			return fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}
@@ -60,7 +60,7 @@ func (si *StudentInternshipModel) UpdateInternship() error {
 		return fmt.Errorf("Cannot prepare -- %v -- insert due to %v", slInsertCmd, err.Error())
 	}
 
-	_, err = stmt.Exec(si.Name, si.OrganizationName, si.FieldOfWork, si.OrganizationCity, si.StartDate, si.EndDate, si.Description, si.Attachment, time.Now(), si.ID, si.StakeholderID)
+	_, err = stmt.Exec(si.Name, si.OrganizationName, si.FieldOfWork, si.OrganizationCity, si.StartDate, si.EndDate, si.Description, si.Attachment, si.AttachmentName, time.Now(), si.ID, si.StakeholderID)
 	if err != nil {
 		return fmt.Errorf("Failed to update in database -- %v  -- insert due to %v", slInsertCmd, err.Error())
 	}

@@ -44,6 +44,7 @@ func (saw *studentCompetitions) AddCompetitions(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
@@ -69,31 +70,36 @@ func (saw *studentCompetitions) AddCompetitions(c *gin.Context) {
 // GetAllCompetitions ...
 func (saw *studentCompetitions) GetAllCompetitions(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get Competitions")
-
-	var sa models.StudentAllCompetitionModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_Competitions_GETALL", ID)
+	sa, err := getCompetitions(ID)
 	if err != nil {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Competitions", Err: err, SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
-		return
-	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentCompetitionModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.Date, &newSl.Rank, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.Competitions = append(sa.Competitions, newSl)
 	}
 	c.JSON(http.StatusOK, sa.Competitions)
 	c.Abort()
 	return
 
+}
+
+func getCompetitions(ID string) (models.StudentAllCompetitionModel, error) {
+	var sa models.StudentAllCompetitionModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_Competitions_GETALL", ID)
+	if err != nil {
+
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentCompetitionModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.Date, &newSl.Rank, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+
+			return sa, err
+		}
+		sa.Competitions = append(sa.Competitions, newSl)
+	}
+	return sa, nil
 }
 
 // UpdateCompetitions ...
@@ -115,6 +121,7 @@ func (saw *studentCompetitions) UpdateCompetitions(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +131,7 @@ func (saw *studentCompetitions) UpdateCompetitions(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdateCompetitions()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_Competitions_UPD", []interface{}{sa.Name, sa.Date, sa.Rank, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_Competitions_UPD", []interface{}{sa.Name, sa.Date, sa.Rank, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

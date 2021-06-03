@@ -33,7 +33,7 @@ func (si *studentInfoService) AddToStudentInfo(query string, vals []interface{})
 func (si *studentInfoService) GetAllStudentInfo(query string, ID string) (*sql.Rows, error) {
 	// Preparing Database insert
 	siGetAllCmd, _ := RetriveSP(query)
-
+	fmt.Println("Query : ", siGetAllCmd)
 	slRows, err := Db.Query(siGetAllCmd, ID)
 	if err != nil && err != sql.ErrNoRows {
 		return slRows, fmt.Errorf("Cannot get the Rows %v", err.Error())

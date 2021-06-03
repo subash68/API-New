@@ -20,6 +20,7 @@ func ConfigPaymentClient() {
 
 // CreateOrder ...
 func CreateOrder(amount float64, notes map[string]interface{}) (string, error) {
+	fmt.Printf("\n========== %v %+v\n", amount, notes)
 	data := map[string]interface{}{
 		"amount":          amount * 100,
 		"currency":        "INR",
@@ -27,10 +28,15 @@ func CreateOrder(amount float64, notes map[string]interface{}) (string, error) {
 		"payment_capture": 1,
 		"notes":           notes,
 	}
-	fmt.Println(data)
+	//fmt.Println(RazorClient)
 	body, err := RazorClient.Order.Create(data, nil)
-	fmt.Println(body)
-	fmt.Println(err)
+	fmt.Println("=====body", body)
+	if err != nil {
+		fmt.Println("Got Error ", err.Error())
+		return "", err
+	}
+
+	//fmt.Println("====Error", err)
 	return body["id"].(string), err
 }
 

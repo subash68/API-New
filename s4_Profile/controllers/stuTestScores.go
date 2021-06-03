@@ -44,12 +44,13 @@ func (saw *studentTestScores) AddTestScores(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
 		sa.LastUpdatedDate = currentTime
 		sa.EnabledFlag = true
-		vals := []interface{}{sa.StakeholderID, sa.Name, sa.TestScoreDate, sa.TestScore, sa.TestScoreTotal, sa.Attachment, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
+		vals := []interface{}{sa.StakeholderID, sa.Name, sa.TestScoreDate, sa.TestScore, sa.TestScoreTotal, sa.Attachment, sa.AttachmentName, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
 		err := models.StudentInfoService.AddToStudentInfo("STU_TEST_SCORES_INS", vals)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
@@ -70,30 +71,36 @@ func (saw *studentTestScores) AddTestScores(c *gin.Context) {
 func (saw *studentTestScores) GetAllTestScores(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get TestScores")
 
-	var sa models.StudentAllTestScoresModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_TEST_SCORES_GETALL", ID)
+	sa, err := getTestScores(ID)
 	if err != nil {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get TestScores", Err: err, SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
-	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentTestScoresModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.TestScoreDate, &newSl.TestScore, &newSl.TestScoreTotal, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.TestScores = append(sa.TestScores, newSl)
 	}
 	c.JSON(http.StatusOK, sa.TestScores)
 	c.Abort()
 	return
 
+}
+
+func getTestScores(ID string) (models.StudentAllTestScoresModel, error) {
+	var sa models.StudentAllTestScoresModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_TEST_SCORES_GETALL", ID)
+	if err != nil {
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentTestScoresModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.TestScoreDate, &newSl.TestScore, &newSl.TestScoreTotal, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+
+			return sa, err
+		}
+		sa.TestScores = append(sa.TestScores, newSl)
+	}
+	return sa, nil
 }
 
 // UpdateTestScores ...
@@ -115,6 +122,7 @@ func (saw *studentTestScores) UpdateTestScores(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +132,7 @@ func (saw *studentTestScores) UpdateTestScores(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdateTestScores()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_TEST_SCORES_UPD", []interface{}{sa.Name, sa.TestScoreDate, sa.TestScore, sa.TestScoreTotal, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_TEST_SCORES_UPD", []interface{}{sa.Name, sa.TestScoreDate, sa.TestScore, sa.TestScoreTotal, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

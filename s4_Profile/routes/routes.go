@@ -156,10 +156,10 @@ func InitialzeRoutes() *gin.Engine {
 	stu.DELETE("/competition/:id", controllers.StudentCompetitions.DeleteCompetitions)
 
 	// Student ConferenceWorkshop
-	stu.POST("/confWorkshop", controllers.StudentConfWorkshop.AddConfWorkshop)
-	stu.GET("/confWorkshop", controllers.StudentConfWorkshop.GetAllConfWorkshop)
-	stu.PATCH("/confWorkshop/:id", controllers.StudentConfWorkshop.UpdateConfWorkshop)
-	stu.DELETE("/confWorkshop/:id", controllers.StudentConfWorkshop.DeleteConfWorkshop)
+	stu.POST("/events", controllers.StudentEvents.AddEvents)
+	stu.GET("/events", controllers.StudentEvents.GetAllEvents)
+	stu.PATCH("/events/:id", controllers.StudentEvents.UpdateEvents)
+	stu.DELETE("/events/:id", controllers.StudentEvents.DeleteEvents)
 
 	// Student ExtraCurricular
 	stu.POST("/extraCurricular", controllers.StudentExtraCurricular.AddExtraCurricular)

@@ -39,7 +39,7 @@ func SeacrhCorporate(corporateName string, industry []string, skills []string, l
 		if err != nil {
 			return crpSearchResults, fmt.Errorf("Invalid cutoff value %v", err.Error())
 		}
-		filter += " AND h.MinimumCutoff>=" + cutOff
+		filter += " AND h.MinimumCutoffCGPA_Grad>=" + cutOff
 
 		//fmt.Println("---->>>> ", qryHC, cutOff)
 	}
@@ -49,7 +49,7 @@ func SeacrhCorporate(corporateName string, industry []string, skills []string, l
 	}
 	if len(skills) > 0 {
 		strSkills := strings.Join(skills, "','")
-		filter += " AND a.SkillName IN ('" + strSkills + "')"
+		filter += " AND sk.SkillName IN ('" + strSkills + "')"
 	}
 	if len(locations) > 0 {
 		strLocations := strings.Join(locations, "','")
@@ -83,6 +83,8 @@ func GetCorpByID(ID string, count int, shID string, userType string) (CorporateB
 		subDbName = dbNames.UnvSubDBName
 	} else if userType == "Student" {
 		subDbName = dbNames.StuSubDBName
+	} else if userType == "Corporate" {
+		subDbName = dbNames.CrpSubDBName
 	}
 	sp, _ := RetriveSP("CORP_GET_PROFILE_BY_ID")
 	sp = strings.ReplaceAll(sp, "//RPLCSUB", subDbName)
@@ -169,6 +171,29 @@ func GetCorpByID(ID string, count int, shID string, userType string) (CorporateB
 	} else {
 		corpDb.JobsAvailable = []map[string]interface{}{}
 	}
+
+	subSP, _ = RetriveSP("CORP_GET_PUB_DATA_FOR_ID")
+	subSP = strings.ReplaceAll(subSP, "//RPLCSUB", subDbName)
+	fmt.Println("========================== CORP_GET_PUB_DATA_FOR_ID==========", subSP)
+	subrow, err = Db.Query(subSP, shID, ID)
+	if err != nil && err != sql.ErrNoRows {
+		return corpDb, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub CorpPushedDataReq
+			err = subrow.Scan(&newsub.PublishID, &newsub.DateOfPublish, &newsub.HiringCriteriaPublished, &newsub.JobsPublished, &newsub.ProfilePublished, &newsub.OtherPublished, &newsub.GeneralNote, &newsub.IsSubscribed)
+			newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
+
+			if err != nil {
+				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			corpDb.PublishedData = append(corpDb.PublishedData, newsub)
+		}
+	}
+
 	corpDb.Jobs = ""
 	return corpDb, nil
 }

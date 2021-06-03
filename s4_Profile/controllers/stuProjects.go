@@ -44,12 +44,13 @@ func (saw *studentProjects) AddProjects(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
 		sa.LastUpdatedDate = currentTime
 		sa.EnabledFlag = true
-		vals := []interface{}{sa.StakeholderID, sa.Name, sa.ProjectAbstract, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
+		vals := []interface{}{sa.StakeholderID, sa.Name, sa.ProjectAbstract, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, sa.AttachmentName, sa.EnabledFlag, sa.CreationDate, sa.LastUpdatedDate}
 		err := models.StudentInfoService.AddToStudentInfo("STU_PROJECTS_INS", vals)
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
@@ -70,30 +71,35 @@ func (saw *studentProjects) AddProjects(c *gin.Context) {
 func (saw *studentProjects) GetAllProjects(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get Projects")
 
-	var sa models.StudentAllProjectsModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_PROJECTS_GETALL", ID)
+	sa, err := getProjects(ID)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Projects", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
 	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentProjectsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.ProjectAbstract, &newSl.GuideName, &newSl.GuideEmail, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.Projects = append(sa.Projects, newSl)
-	}
 	c.JSON(http.StatusOK, sa.Projects)
 	c.Abort()
 	return
 
+}
+
+func getProjects(ID string) (models.StudentAllProjectsModel, error) {
+	var sa models.StudentAllProjectsModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_PROJECTS_GETALL", ID)
+	if err != nil {
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentProjectsModel
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.ProjectAbstract, &newSl.GuideName, &newSl.GuideEmail, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+			return sa, err
+		}
+		sa.Projects = append(sa.Projects, newSl)
+	}
+	return sa, nil
 }
 
 // UpdateProjects ...
@@ -115,6 +121,7 @@ func (saw *studentProjects) UpdateProjects(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -124,7 +131,7 @@ func (saw *studentProjects) UpdateProjects(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdateProjects()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_PROJECTS_UPD", []interface{}{sa.Name, sa.ProjectAbstract, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_PROJECTS_UPD", []interface{}{sa.Name, sa.ProjectAbstract, sa.GuideName, sa.GuideEmail, sa.StartDate, sa.EndDate, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

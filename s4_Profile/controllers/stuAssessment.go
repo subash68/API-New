@@ -36,6 +36,7 @@ func AddAssessment(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		err := sa.InsertAssessment()
 		if err != nil {

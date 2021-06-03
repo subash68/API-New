@@ -57,6 +57,18 @@ type CorporateMasterDB struct {
 	PublishedFlag                       bool      `json:"publishedFlag"`
 }
 
+// CorpPushedDataReq ...
+type CorpPushedDataReq struct {
+	PublishID               string `form:"-" json:"publishID"`
+	DateOfPublish           string `form:"-" json:"dateOfPublish"`
+	HiringCriteriaPublished bool   `form:"hiringCriteriaPublished" json:"hiringCriteriaPublished"`
+	JobsPublished           bool   `form:"jobsPublished" json:"jobsPublished"`
+	ProfilePublished        bool   `form:"profilePublished" json:"profilePublished"`
+	OtherPublished          bool   `form:"otherPublished" json:"otherPublished"`
+	GeneralNote             string `form:"-" json:"generalNote"`
+	IsSubscribed            bool   `form:"isSubscribed" json:"isSubscribed"`
+}
+
 // CorporateByIDResp ....
 type CorporateByIDResp struct {
 	StakeholderID                       string                   `json:"stakeholderID" `
@@ -87,4 +99,5 @@ type CorporateByIDResp struct {
 	Jobs                                string                   `json:"jobs,omitempty" form:"jobs"`
 	JobsAvailable                       []map[string]interface{} `json:"jobsAvailable"`
 	Subscriptions                       []SubscriptionReq        `json:"subscriptions"`
+	PublishedData                       []CorpPushedDataReq      `json:"publishedData"`
 }

@@ -44,6 +44,7 @@ func (saw *studentAwards) AddAwards(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		currentTime := time.Now()
 		sa.CreationDate = currentTime
@@ -68,30 +69,35 @@ func (saw *studentAwards) AddAwards(c *gin.Context) {
 func (saw *studentAwards) GetAllAwards(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Get Awards")
 
-	var sa models.StudentAllAwardsModel
-	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_Awards_GETALL", ID)
+	sa, err := getAwards(ID)
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Get Awards", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
-		return
-	}
-	defer awardRows.Close()
-	for awardRows.Next() {
-		var newSl models.StudentAwardsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.RecognitionName, &newSl.RecognitionDate, &newSl.IssuingAuthority, &newSl.Attachment, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
-		if err != nil {
-			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Read rows", Err: err, SuccessResp: successResp})
-			c.JSON(http.StatusInternalServerError, resp)
-			c.Abort()
-			return
-		}
-		sa.Awards = append(sa.Awards, newSl)
 	}
 	c.JSON(http.StatusOK, sa.Awards)
 	c.Abort()
 	return
 
+}
+
+func getAwards(ID string) (models.StudentAllAwardsModel, error) {
+	var sa models.StudentAllAwardsModel
+	awardRows, err := models.StudentInfoService.GetAllStudentInfo("STU_Awards_GETALL", ID)
+	if err != nil {
+
+		return sa, err
+	}
+	defer awardRows.Close()
+	for awardRows.Next() {
+		var newSl models.StudentAwardsModel
+		err = awardRows.Scan(&newSl.ID, &newSl.RecognitionName, &newSl.RecognitionDate, &newSl.IssuingAuthority, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		if err != nil {
+			return sa, err
+		}
+		sa.Awards = append(sa.Awards, newSl)
+	}
+	return sa, nil
 }
 
 // UpdateAwards ...
@@ -113,6 +119,7 @@ func (saw *studentAwards) UpdateAwards(c *gin.Context) {
 				return
 			}
 			sa.Attachment = byteContainer
+			sa.AttachmentName = file.Filename
 		}
 		sa.ID, err = strconv.Atoi(c.Param("id"))
 		if sa.ID <= 0 || err != nil {
@@ -122,7 +129,7 @@ func (saw *studentAwards) UpdateAwards(c *gin.Context) {
 			return
 		}
 		//err := sa.UpdateAwards()
-		err := models.StudentInfoService.UpdateStudentInfo("STU_Awards_UPD", []interface{}{sa.RecognitionName, sa.RecognitionDate, sa.IssuingAuthority, sa.Attachment, time.Now(), sa.ID, sa.StakeholderID})
+		err := models.StudentInfoService.UpdateStudentInfo("STU_Awards_UPD", []interface{}{sa.RecognitionName, sa.RecognitionDate, sa.IssuingAuthority, sa.Attachment, sa.AttachmentName, time.Now(), sa.ID, sa.StakeholderID})
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 			c.JSON(http.StatusInternalServerError, resp)

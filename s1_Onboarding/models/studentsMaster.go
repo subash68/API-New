@@ -39,7 +39,7 @@ type StudentMasterDb struct {
 	ProgramID                string    `form:"programID" json:"programID"`
 	BranchName               string    `form:"branchName" json:"branchName"`
 	BranchID                 string    `form:"branchID" json:"branchID"`
-	CollegeID                string    `form:"collegeID" json:"collegeID" `
+	CollegeID                string    `form:"collegeRollNumber" json:"collegeRollNumber" `
 	CollegeEmailID           string    `form:"collegeEmailID" json:"collegeEmailID"`
 	Password                 string    `form:"password" json:"password" binding:"required,min=8,max=15" binding:"required"`
 	UniversityApprovedFlag   bool      `form:"-" json:"universityApprovedFlag`
@@ -51,4 +51,7 @@ type StudentMasterDb struct {
 	ProfilePicture           []byte    `form:"-" json:"profilePicture"`
 	Attachment               []byte    `form:"-" json:"Attachment"`
 	AttachmentName           string    `form:"attachmentName,omitempty"`
+	ReferredCode             string    `form:"referredCode" json:"referredCode"`
+	ReferredByID             string    `form:"referredByID" json:"referralByID"`
+	ReferralCode             string    `json:"referralCode"`
 }

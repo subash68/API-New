@@ -16,7 +16,7 @@ func (sc *StudentCertsModel) InsertCert() error {
 		return fmt.Errorf("Cannot prepare -- %v  -- insert due to %v", slInsertCmd, err.Error())
 	}
 	currentTime := time.Now()
-	_, err = stmt.Exec(sc.StakeholderID, sc.Name, sc.IssuingAuthority, sc.StartDate, sc.EndDate, sc.Attachment, sc.Result, sc.Description, true, currentTime, currentTime)
+	_, err = stmt.Exec(sc.StakeholderID, sc.Name, sc.IssuingAuthority, sc.StartDate, sc.EndDate, sc.Attachment, sc.AttachmentName, true, currentTime, currentTime)
 	if err != nil {
 		return fmt.Errorf("Failed to insert in database -- %v -- insert due to %v", slInsertCmd, err.Error())
 	}
@@ -37,7 +37,7 @@ func (sc *StudentAllCertsModel) GetAllCerts() error {
 	defer slRows.Close()
 	for slRows.Next() {
 		var newSl StudentCertsModel
-		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.IssuingAuthority, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.Result, &newSl.Description, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.IssuingAuthority, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
 		if err != nil {
 			return fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}
@@ -60,7 +60,7 @@ func (sc *StudentCertsModel) UpdateCert() error {
 		return fmt.Errorf("Cannot prepare -- %v -- insert due to %v", slInsertCmd, err.Error())
 	}
 
-	_, err = stmt.Exec(sc.Name, sc.IssuingAuthority, sc.StartDate, sc.EndDate, sc.Attachment, sc.Result, sc.Description, time.Now(), sc.ID, sc.StakeholderID)
+	_, err = stmt.Exec(sc.Name, sc.IssuingAuthority, sc.StartDate, sc.EndDate, sc.Attachment, sc.AttachmentName, time.Now(), sc.ID, sc.StakeholderID)
 	if err != nil {
 		return fmt.Errorf("Failed to update in database -- %v  -- insert due to %v", slInsertCmd, err.Error())
 	}
