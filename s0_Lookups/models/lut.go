@@ -231,7 +231,7 @@ type AllLutData struct {
 	AccountStatus                 []LutAccountStatusModel           `json:"accountStatus,omitempty"`
 	BranchCatalog                 []LutBranchCatalogModel           `json:"branchCatalog,omitempty"`
 	CoporateCategory              []LutCorporateCategoryModel       `json:"corporateCategory,omitempty"`
-	CoporateIndustry              []LutCorporateIndustryModel       `json:"coporateIndustry,omitempty"`
+	CoporateIndustry              []LutCorporateIndustryModel       `json:"corporateIndustry,omitempty"`
 	CorporateType                 []LutCorporateTypeModel           `json:"corporateType,omitempty"`
 	JobType                       []LutJobTypeModel                 `json:"jobType,omitempty"`
 	LanguageProficiency           []LutLangProficiencyModel         `json:"languageProficiency,omitempty"`

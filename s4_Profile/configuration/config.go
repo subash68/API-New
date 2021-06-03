@@ -21,14 +21,14 @@ type DbEnv struct {
 	StuMasterDbName         string `json:"STU_MASTER_DB_NAME"`
 	ProfilePicDbName        string `json:"PROFIE_PIC_DB_NAME"`
 	JobHcDbName             string `json:"CRP_JC_DB"`
-	LutCrpTyp               string `json:"LUT_CRP_TYPE"`
-	LutCrpCat               string `json:"LUT_CRP_CAT"`
-	LutCrpInd               string `json:"LUT_CRP_IND"`
-	LutUnvCat               string `json:"LUT_UNV_CAT"`
-	LutSkills               string `json:"LUT_SKILLS"`
-	LutPrograms             string `json:"LUT_PROGRAMS"`
-	LutDepartments          string `json:"LUT_DEPARTMENTS"`
-	LutLangProf             string `json:"LUT_LANG_PROF"`
+	LutCrpTyp               string `json:"LUT_CorporateType"`
+	LutCrpCat               string `json:"LUT_CorporateCategory"`
+	LutCrpInd               string `json:"LUT_CorporateIndustry"`
+	LutUnvCat               string `json:"LUT_UniversityType"`
+	LutSkills               string `json:"LUT_Skills_Master"`
+	LutPrograms             string `json:"LUT_Programcatalog"`
+	LutDepartments          string `json:"LUT_BranchCatalog"`
+	LutLangProf             string `json:"LUT_LanguageProficiency"`
 	StuAcademics            string `json:"STU_ACADEMICS"`
 	StuSemDbName            string `json:"STU_SEM_DB"`
 	StuLangKnown            string `json:"STU_LANG"`
