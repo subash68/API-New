@@ -74,6 +74,7 @@ type StudentTTModel struct {
 	Board                 string `form:"schoolBoard" json:"schoolBoard" binding:"required"`
 	Percentage            string `form:"percentage" json:"percentage" binding:"required"`
 	AttachmentFile        []byte `form:"attachment" json:"attachment"`
+	AttachmentName        string `form:"attachmentName" json:"attachmentName"`
 }
 
 // StudentNullableTTModel ...
@@ -84,6 +85,7 @@ type StudentNullableTTModel struct {
 	Board                 NullString `form:"schoolBoard" json:"schoolBoard"`
 	Percentage            NullString `form:"percentage" json:"percentage"`
 	AttachmentFile        []byte     `form:"attachment" json:"attachment"`
+	AttachmentName        string     `form:"attachmentName" json:"attachmentName"`
 }
 
 // StudentGradModel ...
@@ -132,6 +134,7 @@ type StudentSemesterModel struct {
 	CGPA                    string `form:"cgpa" json:"cgpa"`
 	Percentage              string `form:"percentage" json:"percentage"`
 	AttachFile              string `form:"attachFile" json:"attachFile" binding:"required"`
+	AttachmentName          string `form:"attachFileName" json:"attachFileName" binding:"required"`
 	EnabledFlag             string `form:"enabledFlag" json:"enabledFlag"`
 	CreationDate            string `form:"creationDate" json:"creationDate"`
 	LastUpdatedDate         string `form:"lastUpdatedDate" json:"lastUpdatedDate"`
@@ -202,6 +205,7 @@ type StudentCertsModel struct {
 	Result           string    `form:"result" json:"result"`
 	Description      string    `form:"description" json:"description"`
 	Attachment       []byte    `form:"attachment" json:"attachment"`
+	AttachmentName   string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
 	CreationDate     time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
@@ -223,6 +227,7 @@ type StudentAssessmentModel struct {
 	AssessmentDate   time.Time `form:"assessmentDate" json:"assessmentDate" binding:"required"`
 	Description      string    `form:"description" json:"description"`
 	Attachment       []byte    `form:"attachment" json:"attachment"`
+	AttachmentName   string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
 	CreationDate     time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
@@ -246,6 +251,7 @@ type StudentInternshipModel struct {
 	EndDate          time.Time `form:"endDate" json:"endDate"  binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Description      string    `form:"description" json:"description"`
 	Attachment       []byte    `form:"attachment" json:"attachment"`
+	AttachmentName   string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
 	CreationDate     time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
@@ -265,6 +271,7 @@ type StudentAwardsModel struct {
 	RecognitionDate  time.Time `form:"recognitionDate" json:"recognitionDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	IssuingAuthority string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
 	Attachment       []byte    `form:"attachment" json:"attachment"`
+	AttachmentName   string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag      bool      `form:"-" json:"enabledFlag"`
 	CreationDate     time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate"`
@@ -284,6 +291,7 @@ type StudentCompetitionModel struct {
 	Date            time.Time `form:"date" json:"date" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Rank            string    `form:"rank" json:"rank" binding:"required"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
@@ -302,6 +310,7 @@ type StudentConfWorkshopModel struct {
 	Name            string    `form:"name" json:"name" binding:"required"`
 	Date            time.Time `form:"date" json:"date" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
@@ -319,6 +328,7 @@ type StudentExtraCurricularModel struct {
 	ID              int       `form:"-" json:"id"`
 	Name            string    `form:"name" json:"name" binding:"required"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
@@ -339,6 +349,7 @@ type StudentPatentsModel struct {
 	PatentNumber    string    `form:"patentNumber" json:"patentNumber" binding:"required"`
 	PatentStatus    string    `form:"patentStatus" json:"patentStatus" binding:"required"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
@@ -359,9 +370,9 @@ type StudentProjectsModel struct {
 	GuideName       string    `form:"guideName" json:"guideName"`
 	GuideEmail      string    `form:"guideEmail" json:"guideEmail"`
 	StartDate       time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
-	EndDate         time.Time `form:"endDate" json:"endDate,omitempty
-	" time_format="2006-12-01T21:23:34.409Z"`
+	EndDate         time.Time `form:"endDate" json:"endDate,omitempty" time_format="2006-12-01T21:23:34.409Z"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
@@ -384,6 +395,7 @@ type StudentPublicationsModel struct {
 	StartDate           time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	EndDate             time.Time `form:"endDate" json:"endDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Attachment          []byte    `form:"attachment" json:"attachment"`
+	AttachmentName      string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag         bool      `form:"-" json:"enabledFlag"`
 	CreationDate        time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate     time.Time `form:"-" json:"lastUpdatedDate"`
@@ -403,6 +415,7 @@ type StudentScholarshipsModel struct {
 	ScholarshipIssuedBy string    `form:"scholarshipIssuedBy" json:"publishingAuthority" binding:"required"`
 	ScholarshipDate     time.Time `form:"scholarshipDate" json:"scholarshipDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Attachment          []byte    `form:"attachment" json:"attachment"`
+	AttachmentName      string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag         bool      `form:"-" json:"enabledFlag"`
 	CreationDate        time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate     time.Time `form:"-" json:"lastUpdatedDate"`
@@ -456,6 +469,7 @@ type StudentTestScoresModel struct {
 	TestScore       string    `form:"testScore" json:"testScore" binding:"required"`
 	TestScoreTotal  string    `form:"testScoreTotal" json:"testScoreTotal" binding:"required"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`
@@ -477,6 +491,7 @@ type StudentVolunteerExperienceModel struct {
 	StartDate       time.Time `form:"startDate" json:"startDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	EndDate         time.Time `form:"endDate" json:"endDate" binding:"required" time_format="2006-12-01T21:23:34.409Z"`
 	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
 	EnabledFlag     bool      `form:"-" json:"enabledFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate"`

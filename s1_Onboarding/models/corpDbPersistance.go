@@ -237,6 +237,8 @@ func createCrpSID(crTyp string, crCat string, estYear string) (string, string, D
 	//var crTyp, crCat string
 	err := Db.QueryRow(lutSP, crTyp).Scan(&crTyp, &crpTypeExists)
 
+	fmt.Printf("query -> %s \n exi %v \n crp cat %s", lutSP, crpTypeExists, crTyp)
+
 	lutSP, _ = RetriveSP("LUT_GET_CRP_CAT")
 	err = Db.QueryRow(lutSP, crCat).Scan(&crCat, &crpCatExists)
 
