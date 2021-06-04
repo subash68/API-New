@@ -94,7 +94,7 @@ func getPublications(ID string) (models.StudentAllPublicationsModel, error) {
 	defer awardRows.Close()
 	for awardRows.Next() {
 		var newSl models.StudentPublicationsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.PublishingAuthority, &newSl.GuideName, &newSl.GuideEmail, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.PublishingAuthority, &newSl.GuideName, &newSl.GuideEmail, &newSl.StartDate, &newSl.EndDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate, &newSl.SentforVerification, &newSl.DateSentforVerification, &newSl.Verified, &newSl.DateVerified, &newSl.SentbackforRevalidation, &newSl.DateSentBackForRevalidation, &newSl.ValidatorRemarks, &newSl.VerificationType, &newSl.VerifiedByStakeholderID, &newSl.VerifiedByEmailID)
 		if err != nil {
 			return sa, err
 		}

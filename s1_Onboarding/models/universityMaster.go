@@ -5,7 +5,8 @@ package models
 type UniversityMasterDb struct {
 	StakeholderID                        string `form:"stakeholderID"`
 	UniversityName                       string `form:"universityName" binding:"required"`
-	University                           string `form:"universityCollegeID" binding:"required"`
+	UniversityCollageID                  string `form:"universityCollegeID" binding:"required"`
+	UniversityCollageName                string `form:"universityCollegeName"`
 	UniversityHQAddressLine1             string `form:"universityHQAddressLine1" binding:"required"`
 	UniversityHQAddressLine2             string `form:"universityHQAddressLine2" binding:"required"`
 	UniversityHQAddressLine3             string `form:"universityHQAddressLine3"`

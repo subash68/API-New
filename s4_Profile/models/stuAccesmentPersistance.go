@@ -37,7 +37,7 @@ func (sa *StudentAllAssessmentModel) GetAllAssessment() error {
 	defer slRows.Close()
 	for slRows.Next() {
 		var newSl StudentAssessmentModel
-		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.Score, &newSl.IssuingAuthority, &newSl.AssessmentDate, &newSl.Description, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = slRows.Scan(&newSl.ID, &newSl.Name, &newSl.Score, &newSl.IssuingAuthority, &newSl.AssessmentDate, &newSl.Description, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate, &newSl.SentforVerification, &newSl.DateSentforVerification, &newSl.Verified, &newSl.DateVerified, &newSl.SentbackforRevalidation, &newSl.DateSentBackForRevalidation, &newSl.ValidatorRemarks, &newSl.VerificationType, &newSl.VerifiedByStakeholderID, &newSl.VerifiedByEmailID)
 		if err != nil {
 			return fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}

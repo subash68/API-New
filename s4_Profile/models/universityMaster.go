@@ -8,6 +8,7 @@ type UniversityMasterDb struct {
 	StakeholderID                        string    `form:"stakeholderID" json:"stakeholderID"`
 	UniversityName                       string    `form:"universityName" json:"universityName"`
 	UniversityCollegeID                  string    `form:"universityCollegeID,omitempty" json:"universityCollegeID"`
+	UniversityCollageName                string    `form:"universityCollegeName" json:"universityCollegeName"`
 	UniversityHQAddressLine1             string    `form:"universityHQAddressLine1,omitempty" json:"universityHQAddressLine1"`
 	UniversityHQAddressLine2             string    `form:"universityHQAddressLine2,omitempty" json:"universityHQAddressLine2"`
 	UniversityHQAddressLine3             string    `form:"universityHQAddressLine3,omitempty" json:"universityHQAddressLine3"`

@@ -91,7 +91,7 @@ func getEvents(ID string) (models.StudentAllEventsModel, error) {
 	defer awardRows.Close()
 	for awardRows.Next() {
 		var newSl models.StudentEventsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.Date, &newSl.Attachment, &newSl.AttachmentName, &newSl.OrganizedBy, &newSl.OrganizedByEmail, &newSl.OrganizedByPhone, &newSl.EventType, &newSl.EventTypeOther, &newSl.EventResult, &newSl.EventResultOther, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.Date, &newSl.Attachment, &newSl.AttachmentName, &newSl.OrganizedBy, &newSl.OrganizedByEmail, &newSl.OrganizedByPhone, &newSl.EventType, &newSl.EventTypeOther, &newSl.EventResult, &newSl.EventResultOther, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate, &newSl.SentforVerification, &newSl.DateSentforVerification, &newSl.Verified, &newSl.DateVerified, &newSl.SentbackforRevalidation, &newSl.DateSentBackForRevalidation, &newSl.ValidatorRemarks, &newSl.VerificationType, &newSl.VerifiedByStakeholderID, &newSl.VerifiedByEmailID)
 		if err != nil {
 			return sa, err
 		}
