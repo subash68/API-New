@@ -49,7 +49,7 @@ type AllocatedTokens struct {
 
 // TxTokens ...
 type TxTokens struct {
-	AllocatedTokens []TokenTxAllocationModel `json:"paymentTransactions"`
+	AllocatedTokens []TokenTxAllocationModel `json:"transactionsHistory"`
 }
 
 // TokenTransactions ...

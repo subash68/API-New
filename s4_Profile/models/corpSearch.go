@@ -184,16 +184,55 @@ func GetCorpByID(ID string, count int, shID string, userType string) (CorporateB
 		defer subrow.Close()
 		for subrow.Next() {
 			var newsub CorpPushedDataReq
-			err = subrow.Scan(&newsub.PublishID, &newsub.DateOfPublish, &newsub.HiringCriteriaPublished, &newsub.JobsPublished, &newsub.ProfilePublished, &newsub.OtherPublished, &newsub.GeneralNote, &newsub.IsSubscribed)
-			newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
-
+			err = subrow.Scan(&newsub.PublishID, &newsub.DateOfPublish, &newsub.HiringCriteriaPublished, &newsub.JobsPublished, &newsub.ProfilePublished, &newsub.OtherPublished, &newsub.GeneralNote, &newsub.IsSubscribed, &newsub.PublishedData)
 			if err != nil {
 				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}
+			newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.Info = make(map[string]string)
+			newsub.parseDataInfo()
 			corpDb.PublishedData = append(corpDb.PublishedData, newsub)
 		}
 	}
 
 	corpDb.Jobs = ""
 	return corpDb, nil
+}
+
+func (cpd *CorpPushedDataReq) parseDataInfo() {
+	//fmt.Printf("PublishId : %v \n PublishData %v\nhc: %v\n jp: %v \n,oi: %v \n", cpd.PublishID, cpd.PublishedData, cpd.HiringCriteriaPublished, cpd.JobsPublished, cpd.OtherPublished)
+	if cpd.PublishedData == "" || cpd.PublishedData == "[]" {
+		fmt.Println("======= No data found for id %s =======", cpd.PublishID)
+		return
+
+	}
+	var err error
+	if cpd.HiringCriteriaPublished {
+		hcInfo := HiringCriteriaDB{}
+		err = json.Unmarshal([]byte(cpd.PublishedData), &hcInfo)
+		if err == nil {
+			cpd.Info["programs"] = hcInfo.ProgramsInString
+			return
+		}
+	} else if cpd.JobsPublished {
+		jobInfo := JobHcMappingDB{}
+		err = json.Unmarshal([]byte(cpd.PublishedData), &jobInfo)
+		if err == nil {
+			cpd.Info["hiringCriteriaID"] = jobInfo.HcID
+			cpd.Info["hiringCriteriaName"] = jobInfo.HcName
+			return
+		}
+	} else if cpd.OtherPublished {
+		oiInfo := UnvOtherInformationModel{}
+		err = json.Unmarshal([]byte(cpd.PublishedData), &oiInfo)
+		fmt.Printf("`````````````````other info %v \n  %+v``````````", cpd.PublishedData, oiInfo)
+		if err == nil {
+			cpd.Info["Title"] = oiInfo.Title
+			return
+		}
+	}
+	if err != nil {
+		fmt.Printf("Error while un marshaling data Published data === > %v \n Error: %v\n", cpd.PublishedData, err.Error())
+	}
+	return
 }
