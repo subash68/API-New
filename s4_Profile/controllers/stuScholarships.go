@@ -94,7 +94,7 @@ func getScholarships(ID string) (models.StudentAllScholarshipsModel, error) {
 	defer awardRows.Close()
 	for awardRows.Next() {
 		var newSl models.StudentScholarshipsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.ScholarshipIssuedBy, &newSl.ScholarshipDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = awardRows.Scan(&newSl.ID, &newSl.Name, &newSl.ScholarshipIssuedBy, &newSl.ScholarshipDate, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate, &newSl.SentforVerification, &newSl.DateSentforVerification, &newSl.Verified, &newSl.DateVerified, &newSl.SentbackforRevalidation, &newSl.DateSentBackForRevalidation, &newSl.ValidatorRemarks, &newSl.VerificationType, &newSl.VerifiedByStakeholderID, &newSl.VerifiedByEmailID)
 		if err != nil {
 
 			return sa, err

@@ -91,7 +91,7 @@ func getAwards(ID string) (models.StudentAllAwardsModel, error) {
 	defer awardRows.Close()
 	for awardRows.Next() {
 		var newSl models.StudentAwardsModel
-		err = awardRows.Scan(&newSl.ID, &newSl.RecognitionName, &newSl.RecognitionDate, &newSl.IssuingAuthority, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate)
+		err = awardRows.Scan(&newSl.ID, &newSl.RecognitionName, &newSl.RecognitionDate, &newSl.IssuingAuthority, &newSl.Attachment, &newSl.AttachmentName, &newSl.EnabledFlag, &newSl.CreationDate, &newSl.LastUpdatedDate, &newSl.SentforVerification, &newSl.DateSentforVerification, &newSl.Verified, &newSl.DateVerified, &newSl.SentbackforRevalidation, &newSl.DateSentBackForRevalidation, &newSl.ValidatorRemarks, &newSl.VerificationType, &newSl.VerifiedByStakeholderID, &newSl.VerifiedByEmailID)
 		if err != nil {
 			return sa, err
 		}
