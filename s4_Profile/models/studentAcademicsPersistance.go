@@ -146,6 +146,17 @@ func GetAcademics(ID string) (StudentAcademicsModelReq, error) {
 	sa.Twelfth.VerifiedByStakeholderID = tenN.VerifiedByStakeholderID
 	sa.Twelfth.VerifiedByEmailID = tenN.VerifiedByEmailID
 
+	sa.Tenth.SentforVerification = tenN.SentforVerification
+	sa.Tenth.DateSentforVerification = tenN.DateSentforVerification
+	sa.Tenth.Verified = tenN.Verified
+	sa.Tenth.DateVerified = tenN.DateVerified
+	sa.Tenth.SentbackforRevalidation = tenN.SentbackforRevalidation
+	sa.Tenth.DateSentBackForRevalidation = tenN.DateSentBackForRevalidation
+	sa.Tenth.ValidatorRemarks = tenN.ValidatorRemarks
+	sa.Tenth.VerificationType = tenN.VerificationType
+	sa.Tenth.VerifiedByStakeholderID = tenN.VerifiedByStakeholderID
+	sa.Tenth.VerifiedByEmailID = tenN.VerifiedByEmailID
+
 	sa.Graduation = grad
 	sa.PostGraduation = pg
 	allSems := getAllSemDetails(ID)
