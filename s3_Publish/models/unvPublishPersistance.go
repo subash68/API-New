@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -197,6 +198,46 @@ func (up *UnvPublishDBModel) Publish(ID string) <-chan DbModelError {
 		unvNameCmd, _ := RetriveSP("UNV_GET_Name")
 		_ = Db.QueryRow(unvNameCmd, up.StakeholderID).Scan(&up.UniversityName)
 	}
+	var puberr error
+	fmt.Println(up, "data is updated", up.ProfilePublished)
+	//preapraing publish list
+	if up.AcredPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Accredations")
+	}
+	if up.COEsPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Coes")
+	}
+	if up.BranchesPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Branch")
+	}
+	if up.OtherPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_OI")
+	}
+	if up.ProfilePublished == true {
+		fmt.Println("entered in to the mster")
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_UnvMaster")
+	}
+	if up.ProgramsPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Program")
+	}
+	if up.StudentStrengthPublished == true {
+		//		err := fnUpdatepublishflag(up.StakeholderID, "")
+	}
+	if up.RankingPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Rank")
+	}
+	if up.InfoPublished == true {
+		// err := fnUpdatepublishflag(up.StakeholderID,"")
+	}
+
+	if puberr != nil {
+		customError.ErrTyp = "500"
+		customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+		customError.ErrCode = "S3PJ002"
+		Job <- customError
+		return Job
+	}
+
 	// Preparing Database insert
 	unvPublishCmd, _ := RetriveSP("UNV_PDH_INS_NEW")
 	unvPublishCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -219,6 +260,7 @@ func (up *UnvPublishDBModel) Publish(ID string) <-chan DbModelError {
 		Job <- customError
 		return Job
 	}
+
 	customError.ErrTyp = "000"
 	successResp["publishID"] = fmt.Sprintf("%v", up.PublishID)
 	customError.SuccessResp = successResp
@@ -227,6 +269,63 @@ func (up *UnvPublishDBModel) Publish(ID string) <-chan DbModelError {
 	fmt.Printf("\n --> ins : %+v\n", customError)
 	return Job
 }
+func fnUpdatepublishflag(stakeHolderID string, retrivesp string) error {
+
+	updateSP, _ := RetriveSP(retrivesp)
+	stmtWhere, _ := RetriveSP("UNV_UPDATE_GENWHERE")
+
+	updateSP = updateSP + " PublishFlag=1 " + stmtWhere
+	updateStm, err := Db.Prepare(updateSP)
+	if err != nil {
+		fmt.Println(updateSP)
+		return fmt.Errorf("Cannot prepare database update due to %v", err.Error())
+
+	}
+	fmt.Println("fnupdatecall ", retrivesp, stakeHolderID)
+	_, err = updateStm.Exec(stakeHolderID)
+	if err != nil {
+		return fmt.Errorf("Failed to update the database due to : %v", err.Error())
+	}
+	return nil
+}
+
+// func fnUpdatecoes(stakeHolderID string) error {
+
+// 	updateSP, _ := RetriveSP("UNV_UPDATE_Coes")
+// 	stmtWhere, _ := RetriveSP("UNV_UPDATE_GENWHERE")
+
+// 	updateSP = updateSP + " PublishFlag=1 " + stmtWhere
+// 	updateStm, err := Db.Prepare(updateSP)
+// 	if err != nil {
+// 		fmt.Println(updateSP)
+// 		return fmt.Errorf("Cannot prepare database update due to %v", err.Error())
+
+// 	}
+// 	_, err = updateStm.Exec(stakeHolderID)
+// 	if err != nil {
+// 		return fmt.Errorf("Failed to update the database due to : %v", err.Error())
+// 	}
+// 	return nil
+// }
+
+// func fnUpdateAcc(stakeHolderID string) error {
+
+// 	updateSP, _ := RetriveSP("UNV_UPDATE_Accredations")
+// 	stmtWhere, _ := RetriveSP("UNV_UPDATE_GENWHERE")
+
+// 	updateSP = updateSP + " PublishFlag=1 " + stmtWhere
+// 	updateStm, err := Db.Prepare(updateSP)
+// 	if err != nil {
+// 		fmt.Println(updateSP)
+// 		return fmt.Errorf("Cannot prepare database update due to %v", err.Error())
+
+// 	}
+// 	_, err = updateStm.Exec(stakeHolderID)
+// 	if err != nil {
+// 		return fmt.Errorf("Failed to update the database due to : %v", err.Error())
+// 	}
+// 	return nil
+// }
 
 // GetAllPublishedData ...
 func (up *UnvPublishDBModel) GetAllPublishedData() ([]UnvPublishDBModel, error) {
@@ -302,8 +401,11 @@ func addAccredations(accrs []UnvAccredationsDBModel, ID string, form *multipart.
 				return dbStatements{}, fmt.Errorf("AccredationFile file is not a base64 Encoded string")
 			}
 		}
-		insSP += "(?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, ID, value.AccredationName, value.AccredationType, value.AccredationDescription, value.IssuingAuthority, value.AccredationFile, value.StartDate, value.EndDate, value.EnablingFlag, value.LastUpdatedDate)
+		if len(strings.TrimSpace(value.AccredationFileName)) == 0 {
+			return dbStatements{}, fmt.Errorf("AccredationFileName is required ")
+		}
+		insSP += "(?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, ID, value.AccredationName, value.AccredationType, value.AccredationDescription, value.IssuingAuthority, value.AccredationFile, value.AccredationFileName, value.StartDate, value.EndDate, value.EnablingFlag, value.LastUpdatedDate)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -322,9 +424,12 @@ func addRankings(rankings []UnvYearWiseRanking, ID string, form *multipart.Form)
 			if err != nil {
 				return dbStatements{}, fmt.Errorf("RankingFile file is not a base64 Encoded string")
 			}
+			if len(strings.TrimSpace(value.RankingFileName)) == 0 {
+				return dbStatements{}, fmt.Errorf("RankingfileName is required ")
+			}
 		}
-		insSP += "(?,?,?,?),"
-		vals = append(vals, ID, value.Rank, value.IssuingAuthority, value.RankingFile)
+		insSP += "(?,?,?,?,?),"
+		vals = append(vals, ID, value.Rank, value.IssuingAuthority, value.RankingFile, value.RankingFileName)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -344,8 +449,12 @@ func addSplOfferings(splOff []UnvSpecialOfferingsDBModel, ID string, form *multi
 				return dbStatements{}, fmt.Errorf("SpecialOfferingFile file is not a base64 Encoded string")
 			}
 		}
-		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, ID, value.SpecialOfferingName, value.SpecialOfferingType, value.SpecialOfferingDescription, value.InternallyManagedFlag, value.OutsourcedVendorName, value.OutsourcedVendorContact, value.OutsourcedVendorStakeholderID, value.SpecialOffersCol, value.SpecialOfferingFile, value.StartDate, value.EndDate, value.EnablingFlag)
+		if len(strings.TrimSpace(value.SpecialOfferingFileName)) == 0 {
+			return dbStatements{}, fmt.Errorf("SpecialOfferingFileName is required ")
+		}
+
+		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, ID, value.SpecialOfferingName, value.SpecialOfferingType, value.SpecialOfferingDescription, value.InternallyManagedFlag, value.OutsourcedVendorName, value.OutsourcedVendorPhoneNumber, value.OutsourcedVendorEmailID, value.OutsourcedVendorStakeholderID, value.SpecialOfferingFile, value.SpecialOfferingFileName, value.StartDate, value.EndDate, value.EnablingFlag)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -364,9 +473,13 @@ func addTieUps(tieups []UnvTieupsDBModel, ID string, form *multipart.Form) (dbSt
 			if err != nil {
 				return dbStatements{}, fmt.Errorf("Tieup file is not a base64 Encoded string")
 			}
+			if len(strings.TrimSpace(value.TieupFileName)) == 0 {
+				return dbStatements{}, fmt.Errorf("TieupfileName is required ")
+			}
+
 		}
-		insSP += "(?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, ID, value.TieupName, value.TieupType, value.TieupDescription, value.TieupWithName, value.TieupWithContact, value.TieupWithStakeholderID, value.TieupFile, value.StartDate, value.EndDate, value.EnablingFlag)
+		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, ID, value.TieupName, value.TieupType, value.TieupDescription, value.TieupWithName, value.TieupWithPhoneNumber, value.TieupWithEmail, value.TieupWithStakeholderID, value.TieupFile, value.TieupFileName, value.StartDate, value.EndDate, value.EnablingFlag)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -387,8 +500,11 @@ func addCoes(tieups []UnvCEOsDBModel, ID string, form *multipart.Form) (dbStatem
 				return dbStatements{}, fmt.Errorf("Coes file is not a base64 Encoded string")
 			}
 		}
-		insSP += "(?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, ID, value.CoeName, value.CoeType, value.CoeDescription, value.InternallyManagedFlag, value.OutsourcedVendorName, value.OutsourcedVendorStakeholderID, value.CoeFile, value.StartDate, value.EndDate, value.EnablingFlag)
+		if len(strings.TrimSpace(value.CoeFileName)) == 0 {
+			return dbStatements{}, fmt.Errorf("CoefileName is required ")
+		}
+		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, ID, value.CoeName, value.CoeType, value.CoeDescription, value.InternallyManagedFlag, value.OutsourcedVendorName, value.OutsourcedVendorStakeholderID, value.CoeFile, value.CoeFileName, value.StartDate, value.EndDate, value.EnablingFlag, value.OutsourcedVendorEmailID, value.OutsourcedVendorPhoneNumber)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -445,7 +561,7 @@ func getProfileByID(ID string, up *UniversityProposal) DbModelError {
 		return dbCustomError
 	}
 	row := Db.QueryRow(qrySP, ID)
-	err := row.Scan(&up.Profile.StakeholderID, &up.Profile.UniversityName, &up.Profile.UniversityCollegeID, &up.Profile.UniversityHQAddressLine1, &up.Profile.UniversityHQAddressLine2, &up.Profile.UniversityHQAddressLine3, &up.Profile.UniversityHQAddressCountry, &up.Profile.UniversityHQAddressState, &up.Profile.UniversityHQAddressCity, &up.Profile.UniversityHQAddressDistrict, &up.Profile.UniversityHQAddressZipcode, &up.Profile.UniversityHQAddressPhone, &up.Profile.UniversityHQAddressemail, &up.Profile.UniversityLocalBranchAddressLine1, &up.Profile.UniversityLocalBranchAddressLine2, &up.Profile.UniversityLocalBranchAddressLine3, &up.Profile.UniversityLocalBranchAddressCountry, &up.Profile.UniversityLocalBranchAddressState, &up.Profile.UniversityLocalBranchAddressCity, &up.Profile.UniversityLocalBranchAddressDistrict, &up.Profile.UniversityLocalBranchAddressZipcode, &up.Profile.UniversityLocalBranchAddressPhone, &up.Profile.UniversityLocalBranchAddressemail, &up.Profile.PrimaryContactFirstName, &up.Profile.PrimaryContactMiddleName, &up.Profile.PrimaryContactLastName, &up.Profile.PrimaryContactDesignation, &up.Profile.PrimaryContactPhone, &up.Profile.PrimaryContactEmail, &up.Profile.UniversitySector, &up.Profile.UniversityProfile, &up.Profile.YearOfEstablishment, &up.Profile.Attachment, &up.Profile.DateOfJoining)
+	err := row.Scan(&up.Profile.StakeholderID, &up.Profile.UniversityName, &up.Profile.UniversityCollegeID, &up.Profile.UniversityHQAddressLine1, &up.Profile.UniversityHQAddressLine2, &up.Profile.UniversityHQAddressLine3, &up.Profile.UniversityHQAddressCountry, &up.Profile.UniversityHQAddressState, &up.Profile.UniversityHQAddressCity, &up.Profile.UniversityHQAddressDistrict, &up.Profile.UniversityHQAddressZipcode, &up.Profile.UniversityHQAddressPhone, &up.Profile.UniversityHQAddressemail, &up.Profile.UniversityLocalBranchAddressLine1, &up.Profile.UniversityLocalBranchAddressLine2, &up.Profile.UniversityLocalBranchAddressLine3, &up.Profile.UniversityLocalBranchAddressCountry, &up.Profile.UniversityLocalBranchAddressState, &up.Profile.UniversityLocalBranchAddressCity, &up.Profile.UniversityLocalBranchAddressDistrict, &up.Profile.UniversityLocalBranchAddressZipcode, &up.Profile.UniversityLocalBranchAddressPhone, &up.Profile.UniversityLocalBranchAddressemail, &up.Profile.PrimaryContactFirstName, &up.Profile.PrimaryContactMiddleName, &up.Profile.PrimaryContactLastName, &up.Profile.PrimaryContactDesignation, &up.Profile.PrimaryContactPhone, &up.Profile.PrimaryContactEmail, &up.Profile.UniversitySector, &up.Profile.UniversityProfile, &up.Profile.YearOfEstablishment, &up.Profile.Attachment, &up.Profile.AttachmentName, &up.Profile.PublishedFlag, &up.Profile.DateOfJoining)
 	if err != nil {
 		dbCustomError.ErrTyp = "500"
 		dbCustomError.Err = fmt.Errorf("Cannot Scan Profile %s", err.Error())
@@ -465,7 +581,7 @@ func getPrograms(ID string, up *UniversityProposal) DbModelError {
 	defer programRows.Close()
 	for programRows.Next() {
 		var newProgram UnvProgramsDBModel
-		err := programRows.Scan(&newProgram.ID, &newProgram.ProgramID, &newProgram.ProgramName, &newProgram.ProgramType, &newProgram.StartDate, &newProgram.EndDate, &newProgram.EnablingFlag, &newProgram.CreationDate, &newProgram.LastUpdatedDate)
+		err := programRows.Scan(&newProgram.ID, &newProgram.ProgramID, &newProgram.ProgramName, &newProgram.ProgramType, &newProgram.StartDate, &newProgram.EndDate, &newProgram.EnablingFlag, &newProgram.PublishedFlag, &newProgram.CreationDate, &newProgram.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan programs rows")
@@ -486,7 +602,7 @@ func getAccredations(ID string, up *UniversityProposal) DbModelError {
 	defer accrRows.Close()
 	for accrRows.Next() {
 		var newAccr UnvAccredationsDBModel
-		err := accrRows.Scan(&newAccr.ID, &newAccr.AccredationName, &newAccr.AccredationType, &newAccr.AccredationDescription, &newAccr.IssuingAuthority, &newAccr.AccredationFile, &newAccr.StartDate, &newAccr.EndDate, &newAccr.EnablingFlag, &newAccr.CreationDate, &newAccr.LastUpdatedDate)
+		err := accrRows.Scan(&newAccr.ID, &newAccr.AccredationName, &newAccr.AccredationType, &newAccr.AccredationDescription, &newAccr.IssuingAuthority, &newAccr.AccredationFile, &newAccr.AccredationFileName, &newAccr.StartDate, &newAccr.EndDate, &newAccr.EnablingFlag, &newAccr.PublishedFlag, &newAccr.CreationDate, &newAccr.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Accredations rows")
@@ -507,7 +623,7 @@ func getRankings(ID string, up *UniversityProposal) DbModelError {
 	defer RankingRows.Close()
 	for RankingRows.Next() {
 		var newRanking UnvYearWiseRanking
-		err := RankingRows.Scan(&newRanking.ID, &newRanking.Rank, &newRanking.IssuingAuthority, &newRanking.RankingFile, &newRanking.CreationDate, &newRanking.LastUpdatedDate)
+		err := RankingRows.Scan(&newRanking.ID, &newRanking.Rank, &newRanking.IssuingAuthority, &newRanking.RankingFile, &newRanking.RankingFileName, &newRanking.PublishedFlag, &newRanking.CreationDate, &newRanking.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Accredations rows")
@@ -528,7 +644,7 @@ func getSpclOffering(ID string, up *UniversityProposal) DbModelError {
 	defer sofRows.Close()
 	for sofRows.Next() {
 		var newOffering UnvSpecialOfferingsDBModel
-		err := sofRows.Scan(&newOffering.ID, &newOffering.SpecialOfferingName, &newOffering.SpecialOfferingType, &newOffering.SpecialOfferingDescription, &newOffering.InternallyManagedFlag, &newOffering.OutsourcedVendorName, &newOffering.OutsourcedVendorContact, &newOffering.OutsourcedVendorStakeholderID, &newOffering.SpecialOffersCol, &newOffering.SpecialOfferingFile, &newOffering.StartDate, &newOffering.EndDate, &newOffering.EnablingFlag, &newOffering.CreationDate, &newOffering.LastUpdatedDate)
+		err := sofRows.Scan(&newOffering.ID, &newOffering.SpecialOfferingName, &newOffering.SpecialOfferingType, &newOffering.SpecialOfferingDescription, &newOffering.InternallyManagedFlag, &newOffering.OutsourcedVendorName, &newOffering.OutsourcedVendorPhoneNumber, &newOffering.OutsourcedVendorEmailID, &newOffering.OutsourcedVendorStakeholderID, &newOffering.SpecialOfferingFile, &newOffering.SpecialOfferingFileName, &newOffering.StartDate, &newOffering.EndDate, &newOffering.EnablingFlag, &newOffering.PublishedFlag, &newOffering.CreationDate, &newOffering.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Specialoffering rows")
@@ -549,7 +665,7 @@ func getTieups(ID string, up *UniversityProposal) DbModelError {
 	defer tuRows.Close()
 	for tuRows.Next() {
 		var newTU UnvTieupsDBModel
-		err := tuRows.Scan(&newTU.ID, &newTU.TieupName, &newTU.TieupType, &newTU.TieupDescription, &newTU.TieupWithName, &newTU.TieupWithContact, &newTU.TieupWithStakeholderID, &newTU.TieupFile, &newTU.StartDate, &newTU.EndDate, &newTU.EnablingFlag, &newTU.CreationDate, &newTU.LastUpdatedDate)
+		err := tuRows.Scan(&newTU.ID, &newTU.TieupName, &newTU.TieupType, &newTU.TieupDescription, &newTU.TieupWithName, &newTU.TieupWithPhoneNumber, &newTU.TieupWithEmail, &newTU.TieupWithStakeholderID, &newTU.TieupFile, &newTU.TieupFileName, &newTU.StartDate, &newTU.EndDate, &newTU.EnablingFlag, &newTU.PublishedFlag, &newTU.CreationDate, &newTU.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Tieup rows")
@@ -570,7 +686,7 @@ func getCoes(ID string, up *UniversityProposal) DbModelError {
 	defer coeRows.Close()
 	for coeRows.Next() {
 		var newCoe UnvCEOsDBModel
-		err := coeRows.Scan(&newCoe.ID, &newCoe.CoeName, &newCoe.CoeType, &newCoe.CoeDescription, &newCoe.InternallyManagedFlag, &newCoe.OutsourcedVendorName, &newCoe.OutsourcedVendorStakeholderID, &newCoe.CoeFile, &newCoe.StartDate, &newCoe.EndDate, &newCoe.EnablingFlag, &newCoe.CreationDate, &newCoe.LastUpdatedDate)
+		err := coeRows.Scan(&newCoe.ID, &newCoe.CoeName, &newCoe.CoeType, &newCoe.CoeDescription, &newCoe.InternallyManagedFlag, &newCoe.OutsourcedVendorName, &newCoe.OutsourcedVendorStakeholderID, &newCoe.CoeFile, &newCoe.CoeFileName, &newCoe.StartDate, &newCoe.EndDate, &newCoe.EnablingFlag, &newCoe.PublishedFlag, &newCoe.OutsourcedVendorEmailID, &newCoe.OutsourcedVendorPhoneNumber, &newCoe.CreationDate, &newCoe.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan COE rows %v", err.Error())
@@ -591,7 +707,7 @@ func getBranches(ID string, up *UniversityProposal) DbModelError {
 	defer branchRows.Close()
 	for branchRows.Next() {
 		var newBranch UnvProgramWiseBranchDBModel
-		err := branchRows.Scan(&newBranch.ID, &newBranch.ProgramID, &newBranch.ProgramName, &newBranch.BranchID, &newBranch.BranchName, &newBranch.StartDate, &newBranch.EndDate, &newBranch.EnablingFlag, &newBranch.NoOfPassingStudents, &newBranch.MonthYearOfPassing, &newBranch.CreationDate, &newBranch.LastUpdatedDate)
+		err := branchRows.Scan(&newBranch.ID, &newBranch.ProgramID, &newBranch.ProgramName, &newBranch.BranchID, &newBranch.BranchName, &newBranch.StartDate, &newBranch.EndDate, &newBranch.EnablingFlag, &newBranch.PublishedFlag, &newBranch.NoOfPassingStudents, &newBranch.MonthYearOfPassing, &newBranch.CreationDate, &newBranch.LastUpdatedDate)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Branch rows")
