@@ -114,10 +114,9 @@ type UnvOtherInformationModel struct {
 	StakeholderID   string    `form:"-" json:"-"`
 	Title           string    `form:"title" json:"title" binding:"required"`
 	Information     string    `form:"information" json:"information" binding:"required"`
-	Attachment      []byte    `form:"-" json:"attachment,omitEmpty"`
-	ID              int       `form:"-" json:"id,omitEmpty"`
+	Attachment      string    `form:"-" json:"attachment,omitEmpty"`
+	AttachmentName  string    `form:"-" json:"attachmentName,omitEmpty"`
 	PublishID       string    `form:"-" json:"publishID"`
-	PublishedFlag   string    `form:"-" json:"publishedFlag"`
 	CreationDate    time.Time `form:"-" json:"creationDate,omitEmpty"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate,omitEmpty"`
 }

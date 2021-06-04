@@ -59,14 +59,16 @@ type CorporateMasterDB struct {
 
 // CorpPushedDataReq ...
 type CorpPushedDataReq struct {
-	PublishID               string `form:"-" json:"publishID"`
-	DateOfPublish           string `form:"-" json:"dateOfPublish"`
-	HiringCriteriaPublished bool   `form:"hiringCriteriaPublished" json:"hiringCriteriaPublished"`
-	JobsPublished           bool   `form:"jobsPublished" json:"jobsPublished"`
-	ProfilePublished        bool   `form:"profilePublished" json:"profilePublished"`
-	OtherPublished          bool   `form:"otherPublished" json:"otherPublished"`
-	GeneralNote             string `form:"-" json:"generalNote"`
-	IsSubscribed            bool   `form:"isSubscribed" json:"isSubscribed"`
+	PublishID               string            `form:"-" json:"publishID"`
+	DateOfPublish           string            `form:"-" json:"dateOfPublish"`
+	HiringCriteriaPublished bool              `form:"hiringCriteriaPublished" json:"hiringCriteriaPublished"`
+	JobsPublished           bool              `form:"jobsPublished" json:"jobsPublished"`
+	ProfilePublished        bool              `form:"profilePublished" json:"profilePublished"`
+	OtherPublished          bool              `form:"otherPublished" json:"otherPublished"`
+	GeneralNote             string            `form:"-" json:"generalNote"`
+	IsSubscribed            bool              `form:"isSubscribed" json:"isSubscribed"`
+	PublishedData           string            `form:"-" json:"-"`
+	Info                    map[string]string `form:"info" json:"info"`
 }
 
 // CorporateByIDResp ....
@@ -100,4 +102,73 @@ type CorporateByIDResp struct {
 	JobsAvailable                       []map[string]interface{} `json:"jobsAvailable"`
 	Subscriptions                       []SubscriptionReq        `json:"subscriptions"`
 	PublishedData                       []CorpPushedDataReq      `json:"publishedData"`
+}
+
+// HiringCriteriaDB ...
+type HiringCriteriaDB struct {
+	HiringCriteriaID            string    `form:"-" json:"hiringCriteriaID"`
+	HiringCriteriaName          string    `form:"hiringCriteriaName" json:"hiringCriteriaName"`
+	MinimumCutoffPercentage10th float64   `form:"minimumCutoffPercentage10th" json:"minimumCutoffPercentage10th"`
+	MinimumCutoffPercentage12th float64   `form:"minimumCutoffPercentage12th" json:"minimumCutoffPercentage12th"`
+	MinimumCutoffCGPAGrad       float64   `form:"minimumCutoffCGPAGrad" json:"minimumCutoffCGPAGrad"`
+	MinimumCutoffPercentageGrad float64   `form:"minimumCutoffPercentageGrad" json:"minimumCutoffPercentageGrad"`
+	EduGapsSchoolAllowed        bool      `form:"eduGapsSchoolAllowed" json:"eduGapsSchoolAllowed"`
+	EduGaps11N12Allowed         bool      `form:"eduGaps11N12Allowed" json:"eduGaps11N12Allowed"`
+	EduGaps12NGradAllowed       bool      `form:"eduGaps12NGradAllowed" json:"eduGaps12NGradAllowed"`
+	EduGapsGradAllowed          bool      `form:"eduGapsGradAllowed" json:"eduGapsGradAllowed"`
+	EduGapsGradNPGAllowed       bool      `form:"eduGapsGradNPGAllowed" json:"eduGapsGradNPGAllowed"`
+	EduGapsSchool               int       `form:"eduGapsSchool" json:"eduGapsSchool"`
+	EduGaps11N12                int       `form:"eduGaps11N12" json:"eduGaps11N12"`
+	EduGaps12NGrad              int       `form:"eduGaps12NGrad" json:"eduGaps12NGrad"`
+	EduGapsGrad                 int       `form:"eduGapsGrad" json:"eduGapsGrad"`
+	EduGapsGradNPG              int       `form:"eduGapsGradNPG" json:"eduGapsGradNPG"`
+	AllowActiveBacklogs         bool      `form:"allowActiveBacklogs" json:"allowActiveBacklogs"`
+	NumberOfAllowedBacklogs     int       `form:"numberOfAllowedBacklogs" json:"numberOfAllowedBacklogs"`
+	YearOfPassing               int       `form:"yearOfPassing" json:"yearOfPassing"`
+	Remarks                     string    `form:"remarks" json:"remarks"`
+	CreationDate                time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	ProgramsInString            string    `json:"hcProgramsInString"`
+}
+
+// HcProgramsModel ...
+type HcProgramsModel struct {
+	ProgramName string `json:"programName"`
+	ProgramID   string `json:"programID"`
+	BranchName  string `json:"branchName"`
+	BranchID    string `json:"branchID"`
+}
+
+// JobHcMappingDB ...
+type JobHcMappingDB struct {
+	StakeholderID   string    `form:"-" json:"stakeholderID,omitempty"`
+	JobID           string    `form:"jobID" json:"jobID"`
+	JobName         string    `form:"jobName" json:"jobName"`
+	HcID            string    `form:"hiringCriteriaID" json:"hiringCriteriaID"`
+	HcName          string    `form:"hiringCriteriaName" json:"hiringCriteriaName"`
+	JobType         string    `form:"jobType" json:"jobType"`
+	NoOfPositions   int       `form:"noOfPositions" json:"noOfPositions"`
+	Location        string    `form:"location" json:"location"`
+	SalaryMaxRange  string    `form:"salaryMaxRange" json:"salaryMaxRange"`
+	SalaryMinRange  string    `form:"salaryMinRange" json:"salaryMinRange"`
+	MonthOfHiring   time.Time `form:"monthOfHiring" json:"monthOfHiring" time_format="2006-12-01T21:23:34.409Z"`
+	Remarks         string    `form:"remarks" json:"remarks"`
+	Attachment      []byte    `form:"attachment" json:"attachment"`
+	AttachmentName  string    `form:"attachmentName" json:"attachmentName"`
+	Status          string    `form:"status" json:"status"`
+	CreationDate    time.Time `form:"-" json:"creationDate" time_format="2006-12-01T21:23:34.409Z"`
+	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate" time_format="2006-12-01T21:23:34.409Z"`
+	PublishedFlag   bool      `form:"-" json:"publishedFlag"`
+	PublishID       string    `form:"-" json:"publishID"`
+	SkillsInString  string    `form:"-" json:"skillsInString"`
+}
+
+// JobSkillsMapping ...
+type JobSkillsMapping struct {
+	ID            int       `form:"id" json:"id"`
+	JobID         string    `form:"jobID" json:"jobID"`
+	JobName       string    `form:"jobName" json:"jobName"`
+	StakeholderID string    `form:"-" json:"stakeholder,omitempty"`
+	SkillID       string    `form:"skillID" json:"skillID"`
+	Skill         string    `form:"skill" json:"skill"`
+	CreationDate  time.Time `form:"_" json:"creationDate"`
 }

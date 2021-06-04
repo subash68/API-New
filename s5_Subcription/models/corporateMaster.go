@@ -80,6 +80,7 @@ type CDSubscriptionReq struct {
 	CampusDriveID        string    `form:"-" json:"campusDriveID"`
 	CampusDriveRequested bool      `form:"-" json:"campusDriveRequested"`
 	RequestedDate        time.Time `form:"-" json:"requestedDate" time_format="2006-12-01T21:23:34.409Z"`
+	ResponseDate         string    `form:"responseDate,omitempty" json:"responseDate,omitempty" time_format="2006-12-01T21:23:34.409Z"`
 	CampusDriveStatus    string    `form:"-" json:"campusDriveStatus"`
 	NftID                string    `form:"-" json:"nftID"`
 	TokensUsed           float64   `form:"-" json:"tokensUsed,omitempty"`

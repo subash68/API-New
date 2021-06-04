@@ -80,6 +80,6 @@ func GetPaymentTxOfID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
-	c.JSON(http.StatusOK, tokenAllocs.AllocatedTokens)
+	c.JSON(http.StatusOK, tokenAllocs)
 	return
 }

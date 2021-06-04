@@ -61,6 +61,7 @@ func ProfilePublish(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
+
 	reqBody := map[string]string{"senderID": pubData.StakeholderID, "senderUserRole": "Corporate", "notificationType": CPNotificationType, "content": "Profile Information has been published", "publishFlag": "true", "publishID": insertJob.SuccessResp["publishID"], "isGeneric": "true", "notificationTypeID": CPNotificationTypeID}
 	resp, err := makeTokenServiceCall("/nft/addNotification", reqBody)
 	if err != nil {
