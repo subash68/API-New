@@ -15,6 +15,7 @@ type UnvProgramWiseBranchDBModel struct {
 	EndDate             string    `form:"endDate" json:"endDate"`
 	EnablingFlag        string    `form:"enablingFlag" json:"enablingFlag" binding:"required"`
 	NoOfPassingStudents int64     `form:"noOfPassingStudents" json:"noOfPassingStudents" binding:"required"`
+	PublishedFlag       bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	MonthYearOfPassing  string    `form:"monthYearOfPassing" json:"monthYearOfPassing" binding:"required"`
 	CreationDate        time.Time `form:"-" json:"creationDate,omitempty" `
 	LastUpdatedDate     time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
@@ -27,6 +28,8 @@ type UnvYearWiseRanking struct {
 	Rank             string    `form:"rank" json:"rank" binding:"required"`
 	IssuingAuthority string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
 	RankingFile      string    `form:"-" json:"rankingFile"`
+	RankingFileName  string    `form:"-" json:"rankingFileName"`
+	PublishedFlag    bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	CreationDate     time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
 }
@@ -40,8 +43,10 @@ type UnvAccredationsDBModel struct {
 	AccredationDescription string    `form:"accredationDescription" json:"accredationDescription"`
 	IssuingAuthority       string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
 	AccredationFile        string    `form:"accredationFile" json:"accredationfile"`
+	AccredationFileName    string    `form:"accredationFileName" json:"accredationfileName"`
 	StartDate              string    `form:"startDate" json:"startDate" binding:"required"`
 	EndDate                string    `form:"endDate" json:"endDate" `
+	PublishedFlag          bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	EnablingFlag           string    `form:"enablingFlag" json:"enablingFlag"`
 	CreationDate           time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate        time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
@@ -55,11 +60,14 @@ type UnvTieupsDBModel struct {
 	TieupName              string    `form:"tieupName" json:"tieupName" binding:"required"`
 	TieupDescription       string    `form:"tieupDescription" json:"tieupDescription" binding:"required"`
 	TieupWithName          string    `form:"tieupWithName" json:"tieupWithName"`
-	TieupWithContact       string    `form:"tieupWithContact" json:"tieupWithContact"`
+	TieupWithPhoneNumber   string    `form:"tieupWithPhoneNumber" json:"tieupWithPhoneNumber"`
+	TieupWithEmail         string    `form:"tieupWithEmail" json:"tieupWithEmail"`
 	TieupWithStakeholderID string    `form:"tieupWithStakeholderID" json:"tieupWithStakeholderID"`
 	TieupFile              string    `form:"-" json:"tieupfile"`
+	TieupFileName          string    `form:"-" json:"tieupfileName"`
 	StartDate              string    `form:"startDate" json:"startDate" binding:"required"`
 	EndDate                string    `form:"endDate" json:"endDate"`
+	PublishedFlag          bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	EnablingFlag           string    `form:"enablingFlag" json:"enablingFlag"`
 	CreationDate           time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate        time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
@@ -74,13 +82,15 @@ type UnvSpecialOfferingsDBModel struct {
 	SpecialOfferingDescription    string    `form:"specialOfferingDescription" json:"specialOfferingDescription" binding:"required"`
 	InternallyManagedFlag         string    `form:"internallyManagedFlag" json:"internallyManagedFlag"`
 	OutsourcedVendorName          string    `form:"outsourcedVendorName" json:"outsourcedVendorName"`
-	OutsourcedVendorContact       string    `form:"outsourcedVendorContact" json:"outsourcedVendorContact"`
+	OutsourcedVendorPhoneNumber   string    `form:"outsourcedVendorPhoneNumber" json:"outsourcedVendorPhoneNumber"`
+	OutsourcedVendorEmailID       string    `form:"outsourcedVendorEmailID" json:"outsourcedVendorEmailID"`
 	OutsourcedVendorStakeholderID string    `form:"outsourcedVendorStakeholderID" json:"outsourcedVendorStakeholderID"`
-	SpecialOffersCol              string    `form:"specialOffersCol" json:"specialOffersCol"`
 	SpecialOfferingFile           string    `form:"specialOfferingFile" json:"specialOfferingFile"`
+	SpecialOfferingFileName       string    `form:"specialOfferingFileName" json:"specialOfferingFileName"`
 	StartDate                     string    `form:"startDate" json:"startDate"`
 	EndDate                       string    `form:"endDate" json:"endDate"`
 	EnablingFlag                  string    `form:"enablingFlag" json:"enablingFlag"`
+	PublishedFlag                 bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	CreationDate                  time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate               time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
 }
@@ -94,12 +104,15 @@ type UnvCEOsDBModel struct {
 	CoeDescription                string    `form:"coeDescription" json:"coeDescription" binding:"required"`
 	InternallyManagedFlag         string    `form:"internallyManagedFlag" json:"internallyManagedFlag" binding:"required"`
 	OutsourcedVendorName          string    `form:"outsourcedVendorName" json:"outsourcedVendorName"`
-	OutsourcedVendorContact       string    `form:"outsourcedVendorContact" json:"outsourcedVendorContact"`
+	OutsourcedVendorPhoneNumber   string    `form:"outsourcedVendorPhoneNumber" json:"outsourcedVendorPhoneNumber"`
+	OutsourcedVendorEmailID       string    `form:"outsourcedVendorEmailID" json:"outsourcedVendorEmailID"`
 	OutsourcedVendorStakeholderID string    `form:"outsourcedVendorStakeholderID" json:"outsourcedVendorStakeholderID"`
 	CoeFile                       string    `form:"coeFile" json:"coeFile"`
+	CoeFileName                   string    `form:"coeFileName" json:"coeFileName"`
 	StartDate                     string    `form:"startDate" json:"startDate" binding:"required"`
 	EndDate                       string    `form:"endDate" json:"endDate" binding:"required"`
 	EnablingFlag                  string    `form:"enablingFlag" json:"enablingFlag" binding:"required"`
+	PublishedFlag                 bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	CreationDate                  time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate               time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
 }
@@ -114,6 +127,7 @@ type UnvProgramsDBModel struct {
 	StartDate       string    `form:"startDate" json:"startDate"`
 	EndDate         string    `form:"endDate" json:"endDate"`
 	EnablingFlag    string    `form:"enablingFlag" json:"enablingFlag"`
+	PublishedFlag   bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	CreationDate    time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate,omitempty"`
 }
@@ -159,7 +173,7 @@ type UnvOtherInformationModel struct {
 	Attachment      []byte    `form:"-" json:"attachment,omitEmpty"`
 	ID              int       `form:"-" json:"id,omitEmpty"`
 	PublishID       string    `form:"-" json:"publishID"`
-	PublishedFlag   string    `form:"-" json:"publishedFlag"`
+	PublishedFlag   bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	CreationDate    time.Time `form:"-" json:"creationDate,omitEmpty"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate,omitEmpty"`
 }
@@ -237,5 +251,7 @@ type UniversityProposalMasterDb struct {
 	YearOfEstablishment                  int64     `json:"yearOfEstablishment"`
 	UniversityProfile                    string    `json:"universityProfile,omitempty"`
 	Attachment                           []byte    `json:"attachment,omitempty"`
+	AttachmentName                       string    `json:"AttachmentName,omitempty"`
+	PublishedFlag                        bool      `json:"publishedFlag"`
 	DateOfJoining                        time.Time `json:"dateOfJoining,omitempty"`
 }

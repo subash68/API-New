@@ -16,6 +16,7 @@ import (
 func AddNewProposal(c *gin.Context) {
 	successResp = map[string]string{}
 	//var jc models.FullJobDb
+
 	jobdb := make(chan models.DbModelError, 1)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -24,16 +25,16 @@ func AddNewProposal(c *gin.Context) {
 	defer cancel()
 	defer close(jobdb)
 	var up models.UniversityProposal
-	var err error
 	reqContentType := strings.Split(c.GetHeader("Content-Type"), ";")[0]
 	if reqContentType != "application/json" || reqContentType == "" {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: fmt.Errorf("Cannot able to find the valid headers"), SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		c.Abort()
 		return
 	}
 	binding.Validator = &defaultValidator{}
 
+	var err error
 	err = c.ShouldBindWith(&up, binding.Default("POST", strings.Split(c.GetHeader("Content-Type"), ";")[0]))
 
 	if err == nil {

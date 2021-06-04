@@ -41,7 +41,7 @@ services:
       target: dev
     volumes:
       - ../s2_Auth:/cr-auth
-      - ../s2_Auth/auth
+   #   - ../s2_Auth/auth
       - ../config.json:/cr-auth/configuration/config.json
     command: "CompileDaemon -build='go build -o auth' -command=./auth"
     depends_on:
@@ -57,7 +57,7 @@ services:
       target: dev
     volumes:
       - ../s3_Publish:/cr-publish
-      - ../s3_Publish/publish
+  #    - ../s3_Publish/publish
       - ../config.json:/cr-publish/configuration/config.json
     command: "CompileDaemon -build='go build -o publish' -command=./publish"
     depends_on:
@@ -75,7 +75,7 @@ services:
       target: dev
     volumes:
       - ../s4_Profile:/cr-profile
-      - ../s4_Profile/profile
+    #  - ../s4_Profile/profile
       - ../config.json:/cr-profile/configuration/config.json
     command: "CompileDaemon -build='go build -o profile' -command=./profile"
     # ports:
@@ -93,7 +93,7 @@ services:
       target: dev
     volumes:
       - ../s1_Onboarding:/Onboarding
-      - ../s1_Onboardingonboarding
+  #    - ../s1_Onboardingonboarding
       - ../config.json:/Onboarding/configuration/config.json
     command: "CompileDaemon -build='go build -o onboarding' -command=./onboarding"
     depends_on:
@@ -109,7 +109,7 @@ services:
       target: dev
     volumes:
       - ../s5_Subcription:/ch-subscription
-      - ../s5_Subcription/subscription
+   #   - ../s5_Subcription/subscription
       - ../config.json:/ch-subscription/configuration/config.json
     command: "CompileDaemon -build='go build -o subscription' -command=./subscription"
 
@@ -122,7 +122,7 @@ services:
       target: dev
     volumes:
       - ../s6_Token:/ch-token
-      - ../s6_Token/token
+  #    - ../s6_Token/token
       - ../config.json:/ch-token/configuration/config.json
     command: "CompileDaemon -build='go build -o token' -command=./token"
 
@@ -135,7 +135,7 @@ services:
       target: dev
     volumes:
       - ../s7_PaymentGateway:/ch-paymentgateway
-      - ../s7_PaymentGateway/paymentgateway
+   #   - ../s7_PaymentGateway/paymentgateway
       - ../config.json:/ch-paymentgateway/configuration/config.json
     command: "CompileDaemon -build='go build -o paymentgateway' -command=./paymentgateway"
 
@@ -148,7 +148,7 @@ services:
       target: dev
     volumes:
       - ../s8_Notifications:/notifications
-      - ../s8_Notifications/notifications
+  #    - ../s8_Notifications/notifications
       - ../config.json:/notifications/configuration/config.json
     command: "CompileDaemon -build='go build -o notifications' -command=./notifications"
 
@@ -161,7 +161,7 @@ services:
       target: dev
     volumes:
       - ../s0_Lookups:/lut
-      - ../s0_Lookups/lut
+   #   - ../s0_Lookups/lut
       - ../config.json:/lut/configuration/config.json
     command: "CompileDaemon -build='go build -o lut' -command=./lut"
 
