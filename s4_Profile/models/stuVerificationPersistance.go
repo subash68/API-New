@@ -168,19 +168,168 @@ func GetAllStudentProfileMetadata(ID string, verificationStatus bool) (sap []Stu
 }
 
 // ValidateStudentProfile ...
-func (sm *StudentMasterDb) ValidateStudentProfile(status bool, ID string) error {
-	sp, _ := RetriveSP("STU_VALIDATE_PROFILE")
-	stmt, err := Db.Prepare(sp)
+func (sm *StuVrfDataModel) ValidateStudentProfile(ID string) error {
+	var unvData UnvVrfData
+	unvEmailSp, _ := RetriveSP("UNV_GET_EMAIL_BY_ID")
+	err := Db.QueryRow(unvEmailSp, ID).Scan(&unvData.Email)
 	if err != nil {
 		return err
 	}
-	pvs := PvcRevalidate
-	if status {
-		pvs = PvcVerified
+	unvData.ID = ID
+	unvData.currentTime = time.Now().Format(time.RFC3339)
+	unvData.VrfType = "U"
+	dbConfig := configuration.DbConfig()
+	queries := []string{}
+	if sm.Account.Verified == true || sm.Account.Remarks != "" {
+		table := dbConfig.DbDatabaseName + "." + dbConfig.StuMasterDbName
+		query := ""
+		if sm.Account.Verified {
+			query = "UPDATE " + table + " SET VerificationStatus_SentforVerification=false,VerificationStatus_Verified=true,Date_Verified='" + unvData.currentTime + "',VerificationType='" + unvData.VrfType + "',VerifiedBy_Stakeholder_ID='" + unvData.ID + "',VerifiedBy_Email_ID='" + unvData.Email + "' WHERE VerificationStatus_SentforVerification=true AND Stakeholder_ID='" + sm.StudentID + "' "
+		} else {
+			query = "UPDATE " + table + " SET VerificationStatus_SentforVerification=false,VerificationStatus_SentbackforRevalidation=true,Date_SentbackforRevalidation='" + unvData.currentTime + "',Validator_Remarks='" + sm.Account.Remarks + "' WHERE VerificationStatus_SentforVerification=true AND Stakeholder_ID='" + sm.StudentID + "'"
+		}
+		queries = append(queries, query)
 	}
-	_, err = stmt.Exec(pvs, status, sm.StakeholderID, ID)
+
+	if sm.BelowGrad.Verified == true || sm.BelowGrad.Remarks != "" {
+		table := dbConfig.DbDatabaseName + "." + dbConfig.StuAcademics
+		query := ""
+		if sm.BelowGrad.Verified {
+			query = "UPDATE " + table + " SET VerificationStatus_SentforVerification=false,VerificationStatus_Verified=true,Date_Verified='" + unvData.currentTime + "',VerificationType='" + unvData.VrfType + "',VerifiedBy_Stakeholder_ID='" + unvData.ID + "',VerifiedBy_Email_ID='" + unvData.Email + "' WHERE VerificationStatus_SentforVerification=true AND Stakeholder_ID='" + sm.StudentID + "' "
+		} else {
+			query = "UPDATE " + table + " SET VerificationStatus_SentforVerification=false,VerificationStatus_SentbackforRevalidation=true,Date_SentbackforRevalidation='" + unvData.currentTime + "',Validator_Remarks='" + sm.Account.Remarks + "' WHERE VerificationStatus_SentforVerification=true AND Stakeholder_ID='" + sm.StudentID + "' "
+		}
+		queries = append(queries, query)
+	}
+	for _, v := range sm.Semister {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuSemDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+
+	for _, v := range sm.Certifications {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuCertsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+
+	for _, v := range sm.Assessments {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuAssessmentDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+
+	for _, v := range sm.Internships {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuIntershipsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+
+	for _, v := range sm.Awards {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuAwardsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.Events {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuEventsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.ExtraCurricular {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuExtraCurDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.Patents {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuPatentsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.Projects {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuProjectsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.Publications {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuPublicationsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.Scholarships {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuScholarshipsDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.TestScores {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuTestScoresDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	for _, v := range sm.VolunteerExperience {
+		if v.Verified == true || v.Remarks != "" {
+			table := dbConfig.DbDatabaseName + "." + dbConfig.StuVolunteerExpDbName
+			query := ConstructVrfUpdQry(table, unvData, v, sm.StudentID)
+			queries = append(queries, query)
+		}
+	}
+	err = execVrfUpdQueries(queries)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ConstructVrfUpdQry ...
+func ConstructVrfUpdQry(table string, unvData UnvVrfData, vd VrfDataModel, stuID string) string {
+	var query string
+	if vd.Verified {
+		query = "UPDATE " + table + " SET VerificationStatus_SentforVerification=false,VerificationStatus_Verified=true,Date_Verified='" + unvData.currentTime + "',VerificationType='" + unvData.VrfType + "',VerifiedBy_Stakeholder_ID='" + unvData.ID + "',VerifiedBy_Email_ID='" + unvData.Email + "' WHERE VerificationStatus_SentforVerification=true AND Stakeholder_ID='" + stuID + "' AND id=" + vd.ID + " "
+	} else {
+		query = "UPDATE " + table + " SET VerificationStatus_SentforVerification=false,VerificationStatus_SentbackforRevalidation=true,Date_SentbackforRevalidation='" + unvData.currentTime + "',Validator_Remarks='" + vd.Remarks + "' WHERE VerificationStatus_SentforVerification=true AND Stakeholder_ID='" + stuID + "' AND id=" + vd.ID + " "
+	}
+	return query
+}
+
+func execVrfUpdQueries(queries []string) error {
+	for _, v := range queries {
+		if v != "" {
+			fmt.Printf("\nPreparing %v , %s, %s\n")
+			stmt, err := Db.Prepare(v)
+			if err != nil {
+				fmt.Printf("\nFailed Preparing %v\n", v)
+				return err
+			}
+			_, err = stmt.Exec()
+			if err != nil {
+				fmt.Printf("\nFailed Executing %v\n", v)
+				return err
+			}
+		}
 	}
 	return nil
 }

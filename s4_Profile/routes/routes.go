@@ -220,7 +220,8 @@ func InitialzeRoutes() *gin.Engine {
 	stu.POST("/requestVerification", middleware.RestrictUserType("Student"), controllers.StudentProfileVerification.RequestVerification)
 	stu.GET("/verifiedProfiles", controllers.StudentProfileVerification.GetAllVerifiedStudentProfile)
 	stu.GET("/vrfPendingProfiles", controllers.StudentProfileVerification.GetAllStudentProfileValidationRequests)
-	stu.GET("/stuProfile/:studentID", controllers.StudentProfileVerification.GetUnvStudentProfile)
+	stu.GET("/stuProfile/vrfPending/:studentID", controllers.StudentProfileVerification.GetUnvStudentSVProfile)
+	stu.GET("/stuProfile/verified/:studentID", controllers.StudentProfileVerification.GetUnvStudentVerifiedProfile)
 	stu.POST("/verifyProfile", middleware.RestrictUserType("University"), controllers.StudentProfileVerification.ProcessRequestVerification)
 
 	return router

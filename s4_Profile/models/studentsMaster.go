@@ -774,3 +774,30 @@ type StudentAllProfiles struct {
 	BranchName        string `json:"branch"`
 	Year              string `json:"year"`
 }
+
+// VrfDataModel ...
+type VrfDataModel struct {
+	ID       string `json:"id,omitempty"`
+	Verified bool   `json:"isVerified"`
+	Remarks  string `json:"remarks,omitempty"`
+}
+
+// StuVrfDataModel ...
+type StuVrfDataModel struct {
+	StudentID           string         `json:"studentID" binding:"required"`
+	Account             VrfDataModel   `json:"account,omitempty"`
+	BelowGrad           VrfDataModel   `json:"belowGrad,omitempty"`
+	Semister            []VrfDataModel `json:"semester,omitempty"`
+	Certifications      []VrfDataModel `json:"certifications,omitempty"`
+	Assessments         []VrfDataModel `json:"assessments,omitempty"`
+	Internships         []VrfDataModel `json:"internships,omitempty"`
+	Awards              []VrfDataModel `json:"awards,omitempty"`
+	Events              []VrfDataModel `json:"events,omitempty"`
+	ExtraCurricular     []VrfDataModel `json:"extraCurricular,omitempty"`
+	Patents             []VrfDataModel `json:"patents,omitempty"`
+	Projects            []VrfDataModel `json:"projects,omitempty"`
+	Publications        []VrfDataModel `json:"publications,omitempty"`
+	Scholarships        []VrfDataModel `json:"scholarships,omitempty"`
+	TestScores          []VrfDataModel `json:"testScores,omitempty"`
+	VolunteerExperience []VrfDataModel `json:"volunteerExperience,omitempty"`
+}
