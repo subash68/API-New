@@ -766,7 +766,9 @@ type StudentProfileVerificationDataModel struct {
 // StudentAllProfiles ...
 type StudentAllProfiles struct {
 	StudentPlatformID string `json:"studentPlatformID"`
-	StudentName       string `json:"studentName"`
+	StudentFirstName  string `json:"studentFirstName"`
+	StudentMiddleName string `json:"studentMiddleName"`
+	StudentLastName   string `json:"studentLastName"`
 	UniversityID      string `json:"UniversityID`
 	Program           string `json:"program"`
 	BranchName        string `json:"branch"`

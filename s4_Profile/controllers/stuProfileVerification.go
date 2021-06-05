@@ -52,7 +52,7 @@ func (spv *studentProfileVerification) RequestVerification(c *gin.Context) {
 // GetRequestedStudentInformation ...
 func (spv *studentProfileVerification) GetAllStudentProfileValidationRequests(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Validating Student Profiles")
-	studentsList, customErr := models.GetAllStudentProfileMetadata(ID, models.PvcPending)
+	studentsList, customErr := models.GetAllStudentProfileMetadata(ID, false)
 	if customErr.ErrTyp != "000" {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: customErr.Err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
@@ -67,7 +67,7 @@ func (spv *studentProfileVerification) GetAllStudentProfileValidationRequests(c 
 // GetAllVerifiedStudentProfile ...
 func (spv *studentProfileVerification) GetAllVerifiedStudentProfile(c *gin.Context) {
 	ctx, ID, _, successResp := getFuncReq(c, "Students Profile")
-	studentsList, customErr := models.GetAllStudentProfileMetadata(ID, models.PvcVerified)
+	studentsList, customErr := models.GetAllStudentProfileMetadata(ID, true)
 	if customErr.ErrTyp != "000" {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: customErr.Err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
@@ -81,17 +81,16 @@ func (spv *studentProfileVerification) GetAllVerifiedStudentProfile(c *gin.Conte
 
 // GetUnvStudentProfile ...
 func (spv *studentProfileVerification) GetUnvStudentProfile(c *gin.Context) {
-	ctx, _, _, successResp := getFuncReq(c, "Student Profile")
+	ctx, _, _, successResp := getFuncReq(c, "Verifying Student Profile")
 	studentID := c.Param("studentID")
 	if studentID == "" {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot find  studentID in Params"), SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)
 		return
 	}
-	var sa models.StudentProfileVerificationDataModel
-	customErr := sa.GetVrfProfileData(studentID)
-	if customErr.ErrTyp != "000" {
-		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: customErr.Err, SuccessResp: successResp})
+	sa, err := GetStudentVRFProfile(studentID, "SV")
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Failed to Process request", Err: err, SuccessResp: successResp})
 		c.JSON(http.StatusInternalServerError, resp)
 		c.Abort()
 		return
@@ -147,4 +146,161 @@ func (spv *studentProfileVerification) ProcessRequestVerification(c *gin.Context
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)
 	return
+}
+
+// GetStudentVRFProfile ...
+func GetStudentVRFProfile(ID string, VrfStatusReq string) (models.StudentCompleteProfileDataModel, error) {
+	stuData, err := returnCompleteStuData(ID)
+	if err != nil {
+		return stuData, err
+	}
+	var vrfStuData models.StudentCompleteProfileDataModel
+
+	if VrfStatusReq == "SV" {
+		vrfStuData.Profile = stuData.Profile
+		vrfStuData.ContactInfo = stuData.ContactInfo
+		if stuData.Academics.Tenth.SentforVerification {
+			vrfStuData.Academics.Tenth = stuData.Academics.Tenth
+			vrfStuData.Academics.Twelfth = stuData.Academics.Twelfth
+		}
+		semAdded := false
+		for _, v := range stuData.Academics.Graduation.Semesters {
+			if v.SentforVerification {
+				vrfStuData.Academics.Graduation.Semesters = append(vrfStuData.Academics.Graduation.Semesters, v)
+				semAdded = true
+			}
+		}
+		if semAdded {
+			vrfStuData.Academics.Graduation = parseGrad(stuData.Academics.Graduation, vrfStuData.Academics.Graduation.Semesters)
+		}
+
+		semAdded = false
+		for _, v := range stuData.Academics.PostGraduation.Semesters {
+			if v.SentforVerification {
+				vrfStuData.Academics.PostGraduation.Semesters = append(vrfStuData.Academics.PostGraduation.Semesters, v)
+				semAdded = true
+			}
+		}
+		if semAdded {
+			vrfStuData.Academics.PostGraduation = parsePG(stuData.Academics.PostGraduation, vrfStuData.Academics.PostGraduation.Semesters)
+		}
+
+		// certificates ...
+		for _, v := range stuData.CertificationsArray {
+			if v.SentforVerification {
+				vrfStuData.CertificationsArray = append(vrfStuData.CertificationsArray, v)
+			}
+		}
+
+		// certificates ...
+		for _, v := range stuData.AssessmentsArray {
+			if v.SentforVerification {
+				vrfStuData.AssessmentsArray = append(vrfStuData.AssessmentsArray, v)
+			}
+		}
+
+		// InternshipsArray ...
+		for _, v := range stuData.InternshipsArray {
+			if v.SentforVerification {
+				vrfStuData.InternshipsArray = append(vrfStuData.InternshipsArray, v)
+			}
+		}
+
+		// AwardsArray ...
+		for _, v := range stuData.AwardsArray {
+			if v.SentforVerification {
+				vrfStuData.AwardsArray = append(vrfStuData.AwardsArray, v)
+			}
+		}
+
+		// ExtraCurricularArray ...
+		for _, v := range stuData.ExtraCurricularArray {
+			if v.SentforVerification {
+				vrfStuData.ExtraCurricularArray = append(vrfStuData.ExtraCurricularArray, v)
+			}
+		}
+
+		// PatentsArray ...
+		for _, v := range stuData.PatentsArray {
+			if v.SentforVerification {
+				vrfStuData.PatentsArray = append(vrfStuData.PatentsArray, v)
+			}
+		}
+
+		// ProjectsArray ...
+		for _, v := range stuData.ProjectsArray {
+			if v.SentforVerification {
+				vrfStuData.ProjectsArray = append(vrfStuData.ProjectsArray, v)
+			}
+		}
+
+		// PatentsArray ...
+		for _, v := range stuData.PublicationsArray {
+			if v.SentforVerification {
+				vrfStuData.PublicationsArray = append(vrfStuData.PublicationsArray, v)
+			}
+		}
+
+		// ScholarshipsArray ...
+		for _, v := range stuData.ScholarshipsArray {
+			if v.SentforVerification {
+				vrfStuData.ScholarshipsArray = append(vrfStuData.ScholarshipsArray, v)
+			}
+		}
+
+		// TestScoresArray ...
+		for _, v := range stuData.TestScoresArray {
+			if v.SentforVerification {
+				vrfStuData.TestScoresArray = append(vrfStuData.TestScoresArray, v)
+			}
+		}
+
+		// VolunteerExperienceArray ...
+		for _, v := range stuData.VolunteerExperienceArray {
+			if v.SentforVerification {
+				vrfStuData.VolunteerExperienceArray = append(vrfStuData.VolunteerExperienceArray, v)
+			}
+		}
+
+		// EventsArray ...
+		for _, v := range stuData.EventsArray {
+			if v.SentforVerification {
+				vrfStuData.EventsArray = append(vrfStuData.EventsArray, v)
+			}
+		}
+
+	}
+	return vrfStuData, nil
+}
+
+func parseGrad(stuGrad models.StudentGradModel, sems []models.StudentSemesterModel) models.StudentGradModel {
+	var vrfGrad models.StudentGradModel
+	vrfGrad.UniversityStakeholderIDUniv = stuGrad.UniversityStakeholderIDUniv
+	vrfGrad.CollegeRollNumber = stuGrad.CollegeRollNumber
+	vrfGrad.ExpectedYearOfPassing = stuGrad.ExpectedYearOfPassing
+	vrfGrad.ProgramID = stuGrad.ProgramID
+	vrfGrad.ProgramName = stuGrad.ProgramName
+	vrfGrad.BranchID = stuGrad.BranchID
+	vrfGrad.BranchName = stuGrad.BranchName
+	vrfGrad.FinalCGPA = stuGrad.FinalCGPA
+	vrfGrad.FinalPercentage = stuGrad.FinalPercentage
+	vrfGrad.ActiveBacklogsNumber = stuGrad.ActiveBacklogsNumber
+	vrfGrad.TotalNumberOfBacklogs = stuGrad.TotalNumberOfBacklogs
+	vrfGrad.Semesters = sems
+	return vrfGrad
+}
+
+func parsePG(stuGrad models.StudentPGModel, sems []models.StudentSemesterModel) models.StudentPGModel {
+	var vrfGrad models.StudentPGModel
+	vrfGrad.UniversityStakeholderIDUniv = stuGrad.UniversityStakeholderIDUniv
+	vrfGrad.CollegeRollNumber = stuGrad.CollegeRollNumber
+	vrfGrad.ExpectedYearOfPassing = stuGrad.ExpectedYearOfPassing
+	vrfGrad.ProgramID = stuGrad.ProgramID
+	vrfGrad.ProgramName = stuGrad.ProgramName
+	vrfGrad.BranchID = stuGrad.BranchID
+	vrfGrad.BranchName = stuGrad.BranchName
+	vrfGrad.FinalCGPA = stuGrad.FinalCGPA
+	vrfGrad.FinalPercentage = stuGrad.FinalPercentage
+	vrfGrad.Semesters = sems
+	return vrfGrad
 }

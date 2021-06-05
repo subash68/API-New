@@ -118,16 +118,31 @@ func (spv *StudentProfileVerificationDataModel) GetVrfProfileData(ID string) DbM
 }
 
 // GetAllStudentProfileMetadata ...
-func GetAllStudentProfileMetadata(ID string, verificationStatus string) (sap []StudentAllProfiles, dbError DbModelError) {
-	sp, _ := RetriveSP("STU_GET_ALL_PROFILES")
+func GetAllStudentProfileMetadata(ID string, verificationStatus bool) (sap []StudentAllProfiles, dbError DbModelError) {
+	sp, _ := RetriveSP("STU_SRH_VRF_DYNAMIC")
+	if verificationStatus {
+		sp = strings.ReplaceAll(sp, "//REPLACE_VRF_STATUS", "VerificationStatus_Verified IS TRUE ")
+	} else {
+		sp = strings.ReplaceAll(sp, "//REPLACE_VRF_STATUS", "VerificationStatus_SentforVerification IS TRUE ")
+	}
+	// TODO STUDENT FILTERS
+	filters := ""
+
+	sp = strings.ReplaceAll(sp, "//REPLACE_FILTER", filters)
+
 	fmt.Println(sp, ID, verificationStatus)
-	rows, err := Db.Query(sp, ID, verificationStatus)
+	rows, err := Db.Query(sp, ID)
 	fmt.Println("===== rows", rows, err)
+	if err != nil {
+		dbError.ErrTyp = "500"
+		dbError.Err = err
+		return sap, dbError
+	}
 	defer rows.Close()
 	for rows.Next() {
 		var newSl StudentAllProfiles
 		var gradProgram, gradBranch, gradYear, pgProgram, pgBranch, pgYear string
-		err = rows.Scan(&newSl.StudentPlatformID, &newSl.StudentName, &newSl.UniversityID, &gradProgram, &gradBranch, &gradYear, &pgProgram, &pgBranch, &pgYear)
+		err = rows.Scan(&newSl.StudentPlatformID, &newSl.StudentFirstName, &newSl.StudentMiddleName, &newSl.StudentLastName, &newSl.UniversityID, &gradProgram, &gradBranch, &gradYear, &pgProgram, &pgBranch, &pgYear)
 		if err != nil {
 			dbError.ErrTyp = "500"
 			dbError.Err = err
@@ -191,5 +206,9 @@ func switchToText(id string, isPg bool) string {
 		return "Final"
 		break
 	}
+	return ""
+}
+
+func dynamicSearchStuProfile() string {
 	return ""
 }
