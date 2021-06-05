@@ -1,6 +1,12 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/jaswanth-gorripati/PGK/s4_Profile/configuration"
+)
 
 // PvcPending
 const (
@@ -11,7 +17,6 @@ const (
 
 // RequestProfileVerification ...
 func (sm *StudentMasterDb) RequestProfileVerification() (string, error) {
-	sp, _ := RetriveSP("STU_REQ_PROFILE_VRF")
 	var spv StudentProfileVerificationDataModel
 	dbError := spv.GetVrfProfileData(sm.StakeholderID)
 	if dbError.Err != nil {
@@ -26,15 +31,63 @@ func (sm *StudentMasterDb) RequestProfileVerification() (string, error) {
 	if spv.Academics.Tenth.Percentage == "" && spv.Academics.Twelfth.Percentage == "" {
 		return "", fmt.Errorf("Academics cannot be empty")
 	}
-	stmt, err := Db.Prepare(sp)
-	if err != nil {
-		return "", err
-	}
-	_, err = stmt.Exec(sm.StakeholderID)
+	dbConfig := configuration.DbConfig()
+	tbName := dbConfig.DbDatabaseName
+	dbNames := tbName + "." + dbConfig.StuMasterDbName + "," +
+		tbName + "." + dbConfig.StuAcademics + "," +
+		tbName + "." + dbConfig.StuSemDbName + "," +
+		tbName + "." + dbConfig.StuCertsDbName + "," +
+		tbName + "." + dbConfig.StuAssessmentDbName + "," +
+		tbName + "." + dbConfig.StuIntershipsDbName + "," +
+		tbName + "." + dbConfig.StuAwardsDbName + "," +
+		tbName + "." + dbConfig.StuEventsDbName + "," +
+		tbName + "." + dbConfig.StuExtraCurDbName + "," +
+		tbName + "." + dbConfig.StuPatentsDbName + "," +
+		tbName + "." + dbConfig.StuProjectsDbName + "," +
+		tbName + "." + dbConfig.StuPublicationsDbName + "," +
+		tbName + "." + dbConfig.StuScholarshipsDbName + "," +
+		tbName + "." + dbConfig.StuTestScoresDbName + "," +
+		tbName + "." + dbConfig.StuVolunteerExpDbName
+	stmts := addUpdateVrfStmt(dbNames)
+	fmt.Printf("=======> Sending verification query %v ", stmts)
+	err := execUpdateVrfStmt(stmts, sm.StakeholderID)
 	if err != nil {
 		return "", err
 	}
 	return spv.ContactInfo.UniversityID, nil
+}
+
+func addUpdateVrfStmt(dbNames string) []string {
+	stmt := []string{}
+	sp, _ := RetriveSP("STU_SEND_FOR_VRF")
+	allDbName := strings.Split(dbNames, ",")
+	for _, v := range allDbName {
+		if v != "" {
+			newSp := strings.ReplaceAll(sp, "//UPDATE_DB_NAMES", v)
+			stmt = append(stmt, newSp)
+		}
+	}
+	return stmt
+}
+
+func execUpdateVrfStmt(stmt []string, sh string) error {
+	currentTime := time.Now().Format(time.RFC3339)
+	for _, v := range stmt {
+		if v != "" {
+			fmt.Printf("\nPreparing %v , %s, %s\n", v, currentTime, sh)
+			stmt, err := Db.Prepare(v)
+			if err != nil {
+				fmt.Printf("\nFailed Preparing %v\n", v)
+				return err
+			}
+			_, err = stmt.Exec(currentTime, sh)
+			if err != nil {
+				fmt.Printf("\nFailed Executing %v\n", v)
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // GetVrfProfileData ...
@@ -46,7 +99,7 @@ func (spv *StudentProfileVerificationDataModel) GetVrfProfileData(ID string) DbM
 	}
 
 	stuDb := StudentMasterDb{}
-	err := info.Scan(&stuDb.StakeholderID, &stuDb.FirstName, &stuDb.MiddleName, &stuDb.LastName, &stuDb.PersonalEmail, &stuDb.CollegeEmail, &stuDb.PhoneNumber, &stuDb.AlternatePhoneNumber, &stuDb.CollegeID, &stuDb.Gender, &stuDb.DateOfBirth, &stuDb.AadharNumber, &stuDb.PermanentAddressLine1, &stuDb.PermanentAddressLine2, &stuDb.PermanentAddressLine3, &stuDb.PermanentAddressCountry, &stuDb.PermanentAddressState, &stuDb.PermanentAddressCity, &stuDb.PermanentAddressDistrict, &stuDb.PermanentAddressZipcode, &stuDb.PermanentAddressPhone, &stuDb.PresentAddressLine1, &stuDb.PresentAddressLine2, &stuDb.PresentAddressLine3, &stuDb.PresentAddressCountry, &stuDb.PresentAddressState, &stuDb.PresentAddressCity, &stuDb.PresentAddressDistrict, &stuDb.PresentAddressZipcode, &stuDb.PresentAddressPhone, &stuDb.FathersGuardianFullName, &stuDb.FathersGuardianOccupation, &stuDb.FathersGuardianCompany, &stuDb.FathersGuardianPhoneNumber, &stuDb.FathersGuardianEmailID, &stuDb.MothersGuardianFullName, &stuDb.MothersGuardianOccupation, &stuDb.MothersGuardianCompany, &stuDb.MothersGuardianDesignation, &stuDb.MothersGuardianPhoneNumber, &stuDb.MothersGuardianEmailID, &stuDb.DateOfJoining, &stuDb.PrimaryEmailVerified, &stuDb.PrimaryPhoneVerified, &stuDb.AccountStatus, &stuDb.ProfilePicture, &stuDb.AccountExpiryDate, &stuDb.UniversityName, &stuDb.UniversityID, &stuDb.DateOfJoining)
+	err := info.Scan(&stuDb.StakeholderID, &stuDb.FirstName, &stuDb.MiddleName, &stuDb.LastName, &stuDb.PersonalEmail, &stuDb.CollegeEmail, &stuDb.PhoneNumber, &stuDb.AlternatePhoneNumber, &stuDb.CollegeID, &stuDb.Gender, &stuDb.DateOfBirth, &stuDb.AadharNumber, &stuDb.PermanentAddressLine1, &stuDb.PermanentAddressLine2, &stuDb.PermanentAddressLine3, &stuDb.PermanentAddressCountry, &stuDb.PermanentAddressState, &stuDb.PermanentAddressCity, &stuDb.PermanentAddressDistrict, &stuDb.PermanentAddressZipcode, &stuDb.PermanentAddressPhone, &stuDb.PresentAddressLine1, &stuDb.PresentAddressLine2, &stuDb.PresentAddressLine3, &stuDb.PresentAddressCountry, &stuDb.PresentAddressState, &stuDb.PresentAddressCity, &stuDb.PresentAddressDistrict, &stuDb.PresentAddressZipcode, &stuDb.PresentAddressPhone, &stuDb.FathersGuardianFullName, &stuDb.FathersGuardianOccupation, &stuDb.FathersGuardianCompany, &stuDb.FathersGuardianPhoneNumber, &stuDb.FathersGuardianEmailID, &stuDb.MothersGuardianFullName, &stuDb.MothersGuardianOccupation, &stuDb.MothersGuardianCompany, &stuDb.MothersGuardianDesignation, &stuDb.MothersGuardianPhoneNumber, &stuDb.MothersGuardianEmailID, &stuDb.DateOfJoining, &stuDb.PrimaryEmailVerified, &stuDb.PrimaryPhoneVerified, &stuDb.AccountStatus, &stuDb.ProfilePicture, &stuDb.AccountExpiryDate, &stuDb.UniversityName, &stuDb.UniversityID, &stuDb.Attachment, &stuDb.AttachmentName, &stuDb.DateOfJoining, &stuDb.SentforVerification, &stuDb.DateSentforVerification, &stuDb.Verified, &stuDb.DateVerified, &stuDb.SentbackforRevalidation, &stuDb.DateSentBackForRevalidation, &stuDb.ValidatorRemarks, &stuDb.VerificationType, &stuDb.VerifiedByStakeholderID, &stuDb.VerifiedByEmailID)
 	if err != nil {
 		dbError.ErrTyp = "500"
 		dbError.Err = err
