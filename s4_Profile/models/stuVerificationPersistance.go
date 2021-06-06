@@ -121,9 +121,9 @@ func (spv *StudentProfileVerificationDataModel) GetVrfProfileData(ID string) DbM
 func GetAllStudentProfileMetadata(ID string, verificationStatus bool) (sap []StudentAllProfiles, dbError DbModelError) {
 	sp, _ := RetriveSP("STU_SRH_VRF_DYNAMIC")
 	if verificationStatus {
-		sp = strings.ReplaceAll(sp, "//REPLACE_VRF_STATUS", "VerificationStatus_Verified IS TRUE ")
+		sp = strings.ReplaceAll(sp, "//REPLACE_VRF_CHECKING", "VerificationStatus_Verified=1 ")
 	} else {
-		sp = strings.ReplaceAll(sp, "//REPLACE_VRF_STATUS", "VerificationStatus_SentforVerification IS TRUE ")
+		sp = strings.ReplaceAll(sp, "//REPLACE_VRF_CHECKING", "VerificationStatus_SentforVerification=1 ")
 	}
 	// TODO STUDENT FILTERS
 	filters := ""
