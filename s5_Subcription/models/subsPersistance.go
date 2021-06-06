@@ -104,15 +104,19 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 	Job := make(chan DbModelError, 1)
 	successResp := map[string]string{}
 	var customError DbModelError
+	publisherType := ""
 	switch stakeholder {
 	case "Corporate":
 		rsp = "CRP"
+		publisherType = "UNIV"
 		break
 	case "University":
 		rsp = "UNV"
+		publisherType = "CORP"
 		break
 	case "Student":
 		rsp = "STU"
+		publisherType = "CORP"
 		break
 	default:
 		customError = DbModelError{ErrCode: "S1AUT", ErrTyp: "Invalid Stakeholder type", Err: fmt.Errorf("" + stakeholder + " is invaild,  Expecting Corporate,University or Student"), SuccessResp: successResp}
@@ -139,6 +143,8 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 		var newsub SubscriptionModel
 		err = rows.Scan(&newsub.Publisher, &newsub.DateOfSubscription, &newsub.PublishID, &newsub.TransactionID, &newsub.CorporateName, &newsub.GeneralNote)
 		newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
+		newsub.PublisherType = publisherType
+		newsub.SubscriptionType = parseSubscriptionType(publisherType[:1] + newsub.GeneralNote)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.ErrCode = "S3PJ002"
@@ -166,6 +172,8 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation, &newsub.SearchCriteria)
 			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
 			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
+			newsub.PublisherType = "UNIV"
+			newsub.SubscriptionType = parseSubscriptionType(newsub.GeneralNote)
 			if err != nil {
 				customError.ErrTyp = "500"
 				customError.ErrCode = "S3PJ002"
@@ -196,6 +204,8 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "University Information"
 			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
+			newsub.PublisherType = "UNIV"
+			newsub.SubscriptionType = parseSubscriptionType(newsub.GeneralNote)
 			if err != nil {
 				customError.ErrTyp = "500"
 				customError.ErrCode = "S3PJ002"
@@ -224,6 +234,8 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "Hiring Insights"
 			newsub.PublisherLocation = newsub.PublisherLocation[:len(newsub.PublisherLocation)-2]
+			newsub.PublisherType = "CORP"
+			newsub.SubscriptionType = parseSubscriptionType(newsub.GeneralNote)
 			if err != nil {
 				customError.ErrTyp = "500"
 				customError.ErrCode = "S3PJ002"
@@ -254,6 +266,8 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			var reqNftID, arNftID string
 			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.PublisherType = "CORP"
+			newsub.SubscriptionType = parseSubscriptionType(newsub.GeneralNote)
 			if err != nil {
 				customError.ErrTyp = "500"
 				customError.ErrCode = "S3PJ002"
@@ -298,6 +312,8 @@ func (subs *AllSubscriptionsModel) GetAllSubscriptions(ID string, stakeholder st
 			var reqNftID, arNftID string
 			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID, &newsub.CorporateName, &newsub.PublisherLocation)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.PublisherType = "UNIV"
+			newsub.SubscriptionType = parseSubscriptionType(newsub.GeneralNote)
 			if err != nil {
 				customError.ErrTyp = "500"
 				customError.ErrCode = "S3PJ002"

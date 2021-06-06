@@ -89,12 +89,16 @@ func SearchUniversities(unvName string, hcID string, skills []string, locations 
 func GetUnvByID(ID string, subID string, subUserType string) (UniversityGetByIDModel, error) {
 	dbNames := configuration.DbConfig()
 	var subDbName string
+	// subDbType := ""
 	if subUserType == "University" {
 		subDbName = dbNames.UnvSubDBName
+		// subDbType = "UNIV"
 	} else if subUserType == "Student" {
 		subDbName = dbNames.StuSubDBName
+		// subDbName = "STUD"
 	} else if subUserType == "Corporate" {
 		subDbName = dbNames.CrpSubDBName
+		// subDbName = "CORP"
 	}
 	sp, _ := RetriveSP("UNV_GET_PROFILE_BY_ID")
 	fmt.Println("========================== UNV_GET_PROFILE_BY_ID==========", sp)
@@ -122,6 +126,8 @@ func GetUnvByID(ID string, subID string, subUserType string) (UniversityGetByIDM
 			var newsub SubscriptionReq
 			err = subrow.Scan(&newsub.Publisher, &newsub.DateOfSubscription, &newsub.PublishID, &newsub.TransactionID, &newsub.GeneralNote)
 			newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.SubscriptionType = parseSubscriptionType("U" + newsub.GeneralNote)
+			newsub.PublisherType = "UNIV"
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}
@@ -141,6 +147,8 @@ func GetUnvByID(ID string, subID string, subUserType string) (UniversityGetByIDM
 			var newsub SubscriptionReq
 			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription, &newsub.SearchCriteria)
 			newsub.GeneralNote = "Student Database" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.SubscriptionType = parseSubscriptionType("Student Database")
+			newsub.PublisherType = "UNIV"
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}
@@ -161,6 +169,8 @@ func GetUnvByID(ID string, subID string, subUserType string) (UniversityGetByIDM
 			var newsub SubscriptionReq
 			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription)
 			newsub.GeneralNote = "University Information" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.SubscriptionType = parseSubscriptionType("University Information")
+			newsub.PublisherType = "UNIV"
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}
@@ -183,6 +193,8 @@ func GetUnvByID(ID string, subID string, subUserType string) (UniversityGetByIDM
 			var reqNftID, arNftID string
 			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.SubscriptionType = parseSubscriptionType("Campus Hiring")
+			newsub.PublisherType = "UNIV"
 			if err != nil {
 				return unvDB, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}

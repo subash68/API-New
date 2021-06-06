@@ -78,6 +78,8 @@ type UniversityGetByIDModel struct {
 type SubscriptionReq struct {
 	Subscriber         string    `form:"-" json:"subscriber,omitempty"`
 	Publisher          string    `form:"-" json:"publisher,omitempty"`
+	PublisherType      string    `form:"-" json:"publisherType,omitempty"`
+	SubscriptionType   string    `form:"-" json:"subscriptionType,omitempty"`
 	DateOfSubscription time.Time `form:"-" json:"dateOfSubscription"`
 	PublishID          string    `form:"publishId" json:"publishId"`
 	TokensUsed         float64   `form:"tokensUsed" json:"tokensUsed,omitempty"`

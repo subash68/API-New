@@ -104,9 +104,30 @@ func GetCorpByID(ID string, count int, shID string, userType string) (CorporateB
 	if corpDb.StakeholderID == "" {
 		return corpDb, fmt.Errorf("User details not found for ID %s", ID)
 	}
-	subSP, _ := RetriveSP("CORP_HCI_GET_ALL_SUB")
+	subSP, _ := RetriveSP("CRP_SUB_DATA_IN_SRH")
+	subSP = strings.ReplaceAll(subSP, "//REPLCESUBDB", subDbName)
+	fmt.Println("========================== CRP_SUB_DATA_IN_SRH==========", subSP, shID, ID)
+	subrow, err := Db.Query(subSP, shID, ID)
+	if err != nil && err != sql.ErrNoRows {
+		return corpDb, fmt.Errorf("Cannot get the Rows %v", err.Error())
+	} else if err == sql.ErrNoRows {
+	} else {
+		defer subrow.Close()
+		for subrow.Next() {
+			var newsub SubscriptionReq
+			err = subrow.Scan(&newsub.Publisher, &newsub.DateOfSubscription, &newsub.PublishID, &newsub.TransactionID, &newsub.GeneralNote)
+			newsub.GeneralNote = strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.SubscriptionType = parseSubscriptionType("C" + newsub.GeneralNote)
+			newsub.PublisherType = "CORP"
+			if err != nil {
+				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
+			}
+			corpDb.Subscriptions = append(corpDb.Subscriptions, newsub)
+		}
+	}
+	subSP, _ = RetriveSP("CORP_HCI_GET_ALL_SUB")
 	fmt.Println("========================== CORP_HCI_GET_ALL_SUB==========", subSP)
-	subrow, err := Db.Query(subSP, ID, shID)
+	subrow, err = Db.Query(subSP, ID, shID)
 	if err != nil && err != sql.ErrNoRows {
 		return corpDb, fmt.Errorf("Cannot get the Rows %v", err.Error())
 	} else if err == sql.ErrNoRows {
@@ -117,6 +138,8 @@ func GetCorpByID(ID string, count int, shID string, userType string) (CorporateB
 			var newsub SubscriptionReq
 			err = subrow.Scan(&newsub.SubscriptionID, &newsub.Publisher, &newsub.Subscriber, &newsub.DateOfSubscription)
 			newsub.GeneralNote = "Hiring Insights" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.PublisherType = "CORP"
+			newsub.SubscriptionType = parseSubscriptionType("Hiring Insights")
 			if err != nil {
 				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}
@@ -139,6 +162,8 @@ func GetCorpByID(ID string, count int, shID string, userType string) (CorporateB
 			var reqNftID, arNftID string
 			err = subrow.Scan(&newsub.Subscriber, &newsub.Publisher, &newsub.CampusDriveID, &cdReq, &rqDate, &reqNftID, &cdAr, &arDate, &arNftID)
 			newsub.GeneralNote = "Campus Hiring" // strings.Split(newsub.GeneralNote, " has been published")[0]
+			newsub.PublisherType = "CORP"
+			newsub.SubscriptionType = parseSubscriptionType("Campus Hiring")
 			if err != nil {
 				return corpDb, fmt.Errorf("Cannot read the Rows %v", err.Error())
 			}

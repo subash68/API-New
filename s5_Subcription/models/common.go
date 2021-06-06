@@ -191,3 +191,41 @@ func GetCorpDetailsByID(ID string) CorpCDDataModel {
 	fmt.Printf("\n\n Got UD --> %v", ud)
 	return ud
 }
+
+func parseSubscriptionType(ct string) string {
+	switch ct {
+	case "CProfile", "CProfile details":
+		return "CP"
+		break
+	case "UProfile", "UProfile details":
+		return "UP"
+		break
+	case "UOther Information", "Uother Information":
+		return "UO"
+		break
+	case "COther Information", "Cother Information":
+		return "CO"
+		break
+	case "Student Database":
+		return "SD"
+		break
+	case "University Information":
+		return "UI"
+		break
+	case "Campus Hiring":
+		return "CR"
+		break
+	case "Hiring Insights":
+		return "HI"
+		break
+	case "CNew Job":
+		return "CJ"
+		break
+	case "CHiring Criteria":
+		return "CHC"
+		break
+	default:
+		return "O"
+	}
+	return "O"
+}
