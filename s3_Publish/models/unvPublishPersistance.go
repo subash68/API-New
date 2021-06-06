@@ -400,10 +400,11 @@ func addAccredations(accrs []UnvAccredationsDBModel, ID string, form *multipart.
 			if err != nil {
 				return dbStatements{}, fmt.Errorf("AccredationFile file is not a base64 Encoded string")
 			}
+			if len(strings.TrimSpace(value.AccredationFileName)) == 0 {
+				return dbStatements{}, fmt.Errorf("AccredationFileName is required ")
+			}
 		}
-		if len(strings.TrimSpace(value.AccredationFileName)) == 0 {
-			return dbStatements{}, fmt.Errorf("AccredationFileName is required ")
-		}
+
 		insSP += "(?,?,?,?,?,?,?,?,?,?,?),"
 		vals = append(vals, ID, value.AccredationName, value.AccredationType, value.AccredationDescription, value.IssuingAuthority, value.AccredationFile, value.AccredationFileName, value.StartDate, value.EndDate, value.EnablingFlag, value.LastUpdatedDate)
 	}
@@ -448,9 +449,9 @@ func addSplOfferings(splOff []UnvSpecialOfferingsDBModel, ID string, form *multi
 			if err != nil {
 				return dbStatements{}, fmt.Errorf("SpecialOfferingFile file is not a base64 Encoded string")
 			}
-		}
-		if len(strings.TrimSpace(value.SpecialOfferingFileName)) == 0 {
-			return dbStatements{}, fmt.Errorf("SpecialOfferingFileName is required ")
+			if len(strings.TrimSpace(value.SpecialOfferingFileName)) == 0 {
+				return dbStatements{}, fmt.Errorf("SpecialOfferingFileName is required ")
+			}
 		}
 
 		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
@@ -499,10 +500,11 @@ func addCoes(tieups []UnvCEOsDBModel, ID string, form *multipart.Form) (dbStatem
 			if err != nil {
 				return dbStatements{}, fmt.Errorf("Coes file is not a base64 Encoded string")
 			}
+			if len(strings.TrimSpace(value.CoeFileName)) == 0 {
+				return dbStatements{}, fmt.Errorf("CoefileName is required ")
+			}
 		}
-		if len(strings.TrimSpace(value.CoeFileName)) == 0 {
-			return dbStatements{}, fmt.Errorf("CoefileName is required ")
-		}
+
 		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?),"
 		vals = append(vals, ID, value.CoeName, value.CoeType, value.CoeDescription, value.InternallyManagedFlag, value.OutsourcedVendorName, value.OutsourcedVendorStakeholderID, value.CoeFile, value.CoeFileName, value.StartDate, value.EndDate, value.EnablingFlag, value.OutsourcedVendorEmailID, value.OutsourcedVendorPhoneNumber)
 	}

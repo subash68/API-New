@@ -121,3 +121,11 @@ type UnvOtherInformationModel struct {
 	CreationDate    time.Time `form:"-" json:"creationDate,omitEmpty"`
 	LastUpdatedDate time.Time `form:"-" json:"lastUpdatedDate,omitEmpty"`
 }
+
+// UnvVrfData ...
+type UnvVrfData struct {
+	ID          string
+	Email       string
+	currentTime string
+	VrfType     string
+}

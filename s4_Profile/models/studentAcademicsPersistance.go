@@ -169,6 +169,58 @@ func GetAcademics(ID string) (StudentAcademicsModelReq, error) {
 	return sa, nil
 }
 
+// GetVRFAcademics ...
+func GetVRFAcademics(ID string) (StudentAcademicsModelReq, error) {
+	var sa StudentAcademicsModelReq
+	var tenN StudentNullableTTModel
+	var twelfthN StudentNullableTTModel
+	var grad StudentGradModel
+	var pg StudentPGModel
+	getByIDSP, _ := RetriveSP("STU_GET_ACADEMICS")
+	err := Db.QueryRow(getByIDSP, ID).Scan(&tenN.Name, &tenN.Location, &tenN.MonthAndYearOfPassing, &tenN.Board, &tenN.Percentage, &tenN.AttachmentFile, &tenN.AttachmentName, &twelfthN.Name, &twelfthN.Location, &twelfthN.MonthAndYearOfPassing, &twelfthN.Board, &twelfthN.Percentage, &twelfthN.AttachmentFile, &twelfthN.AttachmentName, &grad.UniversityStakeholderIDUniv, &grad.CollegeRollNumber, &grad.ExpectedYearOfPassing, &grad.ProgramID, &grad.ProgramName, &grad.BranchID, &grad.BranchName, &grad.FinalCGPA, &grad.FinalPercentage, &grad.ActiveBacklogsNumber, &grad.TotalNumberOfBacklogs, &pg.UniversityStakeholderIDUniv, &pg.CollegeRollNumber, &pg.ExpectedYearOfPassing, &pg.ProgramID, &pg.ProgramName, &pg.BranchID, &pg.BranchName, &pg.FinalCGPA, &pg.FinalPercentage, &tenN.SentforVerification, &tenN.DateSentforVerification, &tenN.Verified, &tenN.DateVerified, &tenN.SentbackforRevalidation, &tenN.DateSentBackForRevalidation, &tenN.ValidatorRemarks, &tenN.VerificationType, &tenN.VerifiedByStakeholderID, &tenN.VerifiedByEmailID)
+	if err != nil && err != sql.ErrNoRows {
+		return sa, fmt.Errorf("Failed to retrieving Academics : %v", err.Error())
+	}
+	if err != nil && err == sql.ErrNoRows {
+		return sa, nil
+	}
+	sa.Tenth = tenN.ConvertToJSONStruct()
+	sa.Twelfth = twelfthN.ConvertToJSONStruct()
+
+	sa.Twelfth.SentforVerification = tenN.SentforVerification
+	sa.Twelfth.DateSentforVerification = tenN.DateSentforVerification
+	sa.Twelfth.Verified = tenN.Verified
+	sa.Twelfth.DateVerified = tenN.DateVerified
+	sa.Twelfth.SentbackforRevalidation = tenN.SentbackforRevalidation
+	sa.Twelfth.DateSentBackForRevalidation = tenN.DateSentBackForRevalidation
+	sa.Twelfth.ValidatorRemarks = tenN.ValidatorRemarks
+	sa.Twelfth.VerificationType = tenN.VerificationType
+	sa.Twelfth.VerifiedByStakeholderID = tenN.VerifiedByStakeholderID
+	sa.Twelfth.VerifiedByEmailID = tenN.VerifiedByEmailID
+
+	sa.Tenth.SentforVerification = tenN.SentforVerification
+	sa.Tenth.DateSentforVerification = tenN.DateSentforVerification
+	sa.Tenth.Verified = tenN.Verified
+	sa.Tenth.DateVerified = tenN.DateVerified
+	sa.Tenth.SentbackforRevalidation = tenN.SentbackforRevalidation
+	sa.Tenth.DateSentBackForRevalidation = tenN.DateSentBackForRevalidation
+	sa.Tenth.ValidatorRemarks = tenN.ValidatorRemarks
+	sa.Tenth.VerificationType = tenN.VerificationType
+	sa.Tenth.VerifiedByStakeholderID = tenN.VerifiedByStakeholderID
+	sa.Tenth.VerifiedByEmailID = tenN.VerifiedByEmailID
+
+	sa.Graduation = grad
+	sa.PostGraduation = pg
+	allSems := getAllSemDetails(ID)
+	if sa.Graduation.UniversityStakeholderIDUniv != "" {
+		sa.Graduation.ParseSem(allSems)
+	}
+	if sa.PostGraduation.UniversityStakeholderIDUniv != "" {
+		sa.PostGraduation.ParseSem(allSems)
+	}
+	return sa, nil
+}
+
 func getAllSemDetails(ID string) []StudentSemesterModel {
 	var allSems []StudentSemesterModel
 	getAllSemSP, _ := RetriveSP("STU_SEM_GET_ALL")
