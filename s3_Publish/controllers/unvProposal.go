@@ -188,3 +188,8 @@ func DeleteTieupsByID(c *gin.Context) {
 func DeleteSpecialOfferingsByID(c *gin.Context) {
 	DeleteUnvProposalByID(c, "SpecialOfferings")
 }
+
+// DeleteOtherInfoByID ...
+func DeleteOtherInfoByID(c *gin.Context) {
+	DeleteUnvProposalByID(c, "OtherInfo")
+}
