@@ -56,7 +56,7 @@ type UnvAccredationsDBModel struct {
 type UnvTieupsDBModel struct {
 	ID                     int       `form:"-" json:"id"`
 	StakeholderID          string    `form:"-" json:"stakeholder,omitempty"`
-	TieupType              string    `form:"typeupType" json:"typeupType" binding:"required"`
+	TieupType              string    `form:"tieupType" json:"tieupType" binding:"required"`
 	TieupName              string    `form:"tieupName" json:"tieupName" binding:"required"`
 	TieupDescription       string    `form:"tieupDescription" json:"tieupDescription" binding:"required"`
 	TieupWithName          string    `form:"tieupWithName" json:"tieupWithName"`

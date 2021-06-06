@@ -469,6 +469,7 @@ func addTieUps(tieups []UnvTieupsDBModel, ID string, form *multipart.Form) (dbSt
 	}
 	vals := []interface{}{}
 	for _, value := range tieups {
+		fmt.Println(value.TieupFile, "filename")
 		if value.TieupFile != "" {
 			_, err := base64.StdEncoding.DecodeString(string(value.TieupFile))
 			if err != nil {
@@ -479,11 +480,15 @@ func addTieUps(tieups []UnvTieupsDBModel, ID string, form *multipart.Form) (dbSt
 			}
 
 		}
-		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?,?),"
-		vals = append(vals, ID, value.TieupName, value.TieupType, value.TieupDescription, value.TieupWithName, value.TieupWithPhoneNumber, value.TieupWithEmail, value.TieupWithStakeholderID, value.TieupFile, value.TieupFileName, value.StartDate, value.EndDate, value.EnablingFlag)
+
+		insSP += "(?,?,?,?,?,?,?,?,?,?,?,?),"
+		vals = append(vals, ID, value.TieupName, value.TieupType, value.TieupDescription,
+			value.TieupWithName, value.TieupWithPhoneNumber,
+			value.TieupWithEmail,
+			value.TieupFile, value.TieupFileName, value.StartDate,
+			value.EndDate, value.EnablingFlag)
 	}
 	insSP = insSP[0 : len(insSP)-1]
-
 	return dbStatements{insSP, vals}, nil
 }
 
@@ -496,7 +501,7 @@ func addCoes(tieups []UnvCEOsDBModel, ID string, form *multipart.Form) (dbStatem
 	vals := []interface{}{}
 	for _, value := range tieups {
 		if value.CoeFile != "" {
-			_, err := base64.StdEncoding.DecodeString(value.CoeFile)
+			_, err := base64.StdEncoding.DecodeString(string(value.CoeFile))
 			if err != nil {
 				return dbStatements{}, fmt.Errorf("Coes file is not a base64 Encoded string")
 			}
