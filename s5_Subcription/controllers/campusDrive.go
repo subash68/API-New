@@ -66,7 +66,7 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		fmt.Println("==================== token resp ======", resp)
+		fmt.Println("==================== token res ======", resp)
 		var cdm models.CampusDriveDataModel
 		cdm.InitiatorID = ID
 		cdm.ReceiverID = usr.ReceiverID
