@@ -106,8 +106,8 @@ func GetStudentsList(query string, unvID string) ([]StuInfoFromUnvDatabaseModel,
 		}
 		nsd.AvgCgpa = nsd.AvgPercentage
 		stuData = append(stuData, nsd)
-		stuData = append(stuData, nsd)
-		stuData = append(stuData, nsd)
+		// stuData = append(stuData, nsd)
+		// stuData = append(stuData, nsd)
 	}
 
 	return stuData, nil

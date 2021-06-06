@@ -18,6 +18,8 @@ type SubscriptionModel struct {
 	CampusDriveStatus  string    `form:"-" json:"campusDriveStatus,omitempty"`
 	NftID              string    `form:"-" json:"nftID,omitempty"`
 	SearchCriteria     string    `form:"-" json:"searchCriteria,omitempty"`
+	PublisherType      string    `form:"-" json:"publisherType,omitempty"`
+	SubscriptionType   string    `form:"-" json:"subscriptionType,omitempty"`
 }
 
 // SubscriptionReq ...
