@@ -213,6 +213,7 @@ type UniversityMasterDb struct {
 	YearOfEstablishment                  int64     `json:"yearOfEstablishment" binding:"required"`
 	UniversityProfile                    string    `json:"universityProfile,omitempty"`
 	Attachment                           []byte    `json:"attachment,omitempty"`
+	AttachmentName                       string    `json:"attachmentName,omitempty"`
 	DateOfJoining                        time.Time `json:"dateOfJoining,omitempty"`
 }
 
@@ -251,7 +252,7 @@ type UniversityProposalMasterDb struct {
 	YearOfEstablishment                  int64     `json:"yearOfEstablishment"`
 	UniversityProfile                    string    `json:"universityProfile,omitempty"`
 	Attachment                           []byte    `json:"attachment,omitempty"`
-	AttachmentName                       string    `json:"AttachmentName,omitempty"`
+	AttachmentName                       string    `json:"attachmentName,omitempty"`
 	PublishedFlag                        bool      `json:"publishedFlag"`
 	DateOfJoining                        time.Time `json:"dateOfJoining,omitempty"`
 }
