@@ -31,7 +31,7 @@ func (oi *UnvOtherInformationModel) Insert() <-chan DbModelError {
 		return Job
 	}
 	currentTime := time.Now()
-	_, err = oiStmt.Exec(oi.StakeholderID, oi.Title, oi.Information, oi.Attachment, currentTime, currentTime)
+	_, err = oiStmt.Exec(oi.StakeholderID, oi.Title, oi.Information, oi.Attachment, oi.AttachmentName, currentTime, currentTime)
 	if err != nil {
 		customError.ErrTyp = "500"
 		customError.Err = fmt.Errorf("Failed to insert  Published History in database due to : %v", err.Error())
@@ -105,7 +105,7 @@ func (oi *UnvOtherInformationModel) PublishOI() <-chan DbModelError {
 		Job <- customError
 		return Job
 	}
-	_, err = oiStmt.Exec(oi.StakeholderID, oi.Title, oi.Information, oi.Attachment, true, pdhIDs, currentTime, currentTime)
+	_, err = oiStmt.Exec(oi.StakeholderID, oi.Title, oi.Information, oi.Attachment, oi.AttachmentName, true, pdhIDs, currentTime, currentTime)
 	if err != nil {
 		customError.ErrTyp = "500"
 		customError.Err = fmt.Errorf("Failed to insert  Published History in database due to : %v", err.Error())
@@ -139,7 +139,7 @@ func (oi *UnvOtherInformationModel) GetAllOI(query string) (oiArray []OtherInfor
 	defer hcRows.Close()
 	for hcRows.Next() {
 		var newOI OtherInformationModel
-		err = hcRows.Scan(&newOI.ID, &newOI.Title, &newOI.Information, &newOI.PublishID, &newOI.Attachment, &newOI.CreationDate, &newOI.LastUpdatedDate, &newOI.PublishedFlag)
+		err = hcRows.Scan(&newOI.ID, &newOI.Title, &newOI.Information, &newOI.PublishID, &newOI.Attachment, &newOI.AttachmentName, &newOI.CreationDate, &newOI.LastUpdatedDate, &newOI.PublishedFlag)
 		if err != nil {
 			return oiArray, fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}

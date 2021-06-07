@@ -171,6 +171,7 @@ type UnvOtherInformationModel struct {
 	Title           string    `form:"title" json:"title" binding:"required"`
 	Information     string    `form:"information" json:"information" binding:"required"`
 	Attachment      []byte    `form:"-" json:"attachment,omitEmpty"`
+	AttachmentName  string    `form:"-" json:"attachmentName",omitEmpty"`
 	ID              int       `form:"-" json:"id,omitEmpty"`
 	PublishID       string    `form:"-" json:"publishID"`
 	PublishedFlag   bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`

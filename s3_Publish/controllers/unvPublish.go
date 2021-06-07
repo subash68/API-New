@@ -108,6 +108,7 @@ func PublishUnvOI(c *gin.Context) {
 				return
 			}
 			up.Attachment = byteContainer
+			up.AttachmentName = file.Filename
 		}
 		ID, ok := c.Get("userID")
 		fmt.Println("-----> Got ID", ID.(string))

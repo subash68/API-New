@@ -158,7 +158,7 @@ func InitialzeRoutes() *gin.Engine {
 	proposal.DELETE("/ranking/:rankingID", controllers.DeleteRankingByID)
 	proposal.DELETE("/tieups/:tieupsID", controllers.DeleteTieupsByID)
 	proposal.DELETE("/specialOfferings/:specialOfferingsID", controllers.DeleteSpecialOfferingsByID)
-	proposal.DELETE("/OtherInfo/:OtherInfoID", controllers.DeleteOtherInfoByID)
+	proposal.DELETE("/otherInfo/:otherInfoID", controllers.DeleteOtherInfoByID)
 	unvPublish.POST("/profile", controllers.PublishProfile)
 	unvPublish.POST("/oi", controllers.PublishUnvOI)
 	unvPublish.GET("/oi", controllers.GetPublishedUnvOI)
