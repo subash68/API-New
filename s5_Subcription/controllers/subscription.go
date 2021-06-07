@@ -68,7 +68,14 @@ func Subscribe(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
-		reqBody := map[string]string{"stakeholderID": ID.(string), "transactionID": newSubscriptions.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", newSubscriptions.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", newSubscriptions.PaidTokensUsed)}
+		publisherCode := ""
+		if newSubscriptions.PublisherType == "Corporate" {
+			publisherCode = " CORP"
+		} else {
+			publisherCode = "UNIV"
+		}
+		publisherID, subType := models.GetSubTypeFromPublishID(newSubscriptions.PublishID, newSubscriptions.PublisherType)
+		reqBody := map[string]string{"stakeholderID": ID.(string), "transactionID": newSubscriptions.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", newSubscriptions.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", newSubscriptions.PaidTokensUsed), "publisherType": publisherCode, "publisherID": publisherID, "subscriptionID": newSubscriptions.PublishID, "subscriptionType": subType}
 		resp, err := makeTokenServiceCall("/t/addTx", reqBody)
 
 		if err != nil {

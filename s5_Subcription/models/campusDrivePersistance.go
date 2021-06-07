@@ -27,24 +27,24 @@ const (
 )
 
 // SubscribeToInviteForCD ...
-func (cdm *CampusDriveDataModel) SubscribeToInviteForCD(userType string) error {
-	var lastQueryCmd, code, insCmd string
-	//var initiatorEmail,receiverEmail string
-	switch userType {
-	case Corporate:
-		lastQueryCmd, code, insCmd = LastCrpID, CrpCode, CrpInsCmd
-		break
-	case University:
-		lastQueryCmd, code, insCmd = LastUnvID, UnvCode, UnvInsCmd
-		break
-	default:
-		return fmt.Errorf("Invalid user type %s", userType)
-	}
-	var err error
-	cdm.CampusDriveID, err = createSudID(cdm.InitiatorID, lastQueryCmd, code)
-	if err != nil {
-		return err
-	}
+func (cdm *CampusDriveDataModel) SubscribeToInviteForCD(lastQueryCmd string, code string, insCmd string) error {
+	// var lastQueryCmd, code, insCmd string
+	// //var initiatorEmail,receiverEmail string
+	// switch userType {
+	// case Corporate:
+	// 	lastQueryCmd, code, insCmd = LastCrpID, CrpCode, CrpInsCmd
+	// 	break
+	// case University:
+	// 	lastQueryCmd, code, insCmd = LastUnvID, UnvCode, UnvInsCmd
+	// 	break
+	// default:
+	// 	return fmt.Errorf("Invalid user type %s", userType)
+	// }
+	// var err error
+	// cdm.CampusDriveID, err = CreateSudID(cdm.InitiatorID, lastQueryCmd, code)
+	// if err != nil {
+	// 	return err
+	// }
 	currentTime := time.Now().Format(time.RFC3339)
 	newUISubIns, _ := RetriveSP(insCmd)
 	subInsStmt, err := Db.Prepare(newUISubIns)

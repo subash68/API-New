@@ -203,44 +203,105 @@ func (up *UnvPublishDBModel) Publish(ID string) <-chan DbModelError {
 	//preapraing publish list
 	if up.AcredPublished == true {
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Accredations")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.COEsPublished == true {
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Coes")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.BranchesPublished == true {
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Branch")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.OtherPublished == true {
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_OI")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.ProfilePublished == true {
 		fmt.Println("entered in to the mster")
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_UnvMaster")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.ProgramsPublished == true {
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Program")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.StudentStrengthPublished == true {
 		//		err := fnUpdatepublishflag(up.StakeholderID, "")
 	}
 	if up.RankingPublished == true {
 		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Rank")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 	if up.InfoPublished == true {
 		// err := fnUpdatepublishflag(up.StakeholderID,"")
 	}
-
-	if puberr != nil {
-		customError.ErrTyp = "500"
-		customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
-		customError.ErrCode = "S3PJ002"
-		Job <- customError
-		return Job
+	if up.TieupPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_Tieups")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
+	}
+	if up.SpecialOfferingPublished == true {
+		puberr = fnUpdatepublishflag(up.StakeholderID, "UNV_UPDATE_SpecialOfferings")
+		if puberr != nil {
+			customError.ErrTyp = "500"
+			customError.Err = fmt.Errorf("Cannot prepare -- %v , -- update due to %v", puberr.Error())
+			customError.ErrCode = "S3PJ002"
+			Job <- customError
+			return Job
+		}
 	}
 
 	// Preparing Database insert
 	unvPublishCmd, _ := RetriveSP("UNV_PDH_INS_NEW")
-	unvPublishCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	unvPublishCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 	stmt, err := Db.Prepare(unvPublishCmd)
 	if err != nil {
@@ -252,7 +313,7 @@ func (up *UnvPublishDBModel) Publish(ID string) <-chan DbModelError {
 	}
 	currentTime := time.Now()
 	fmt.Printf("\n==============>  %+v <=====================\n", up)
-	_, err = stmt.Exec(up.StakeholderID, up.PublishID, up.UniversityName, up.DateOfPublish, up.ProgramsPublished, up.BranchesPublished, up.StudentStrengthPublished, up.AcredPublished, up.COEsPublished, up.RankingPublished, up.OtherPublished, up.ProfilePublished, up.InfoPublished, "Profile has been published", currentTime, currentTime, up.PublishedData)
+	_, err = stmt.Exec(up.StakeholderID, up.PublishID, up.UniversityName, up.DateOfPublish, up.ProgramsPublished, up.BranchesPublished, up.StudentStrengthPublished, up.AcredPublished, up.COEsPublished, up.RankingPublished, up.OtherPublished, up.ProfilePublished, up.InfoPublished, up.TieupPublished, up.SpecialOfferingPublished, "Profile has been published", currentTime, currentTime, up.PublishedData)
 	if err != nil {
 		customError.ErrTyp = "500"
 		customError.Err = fmt.Errorf("Failed to insert in database -- %v , -- insert due to %v", unvPublishCmd, err.Error())
@@ -274,7 +335,13 @@ func fnUpdatepublishflag(stakeHolderID string, retrivesp string) error {
 	updateSP, _ := RetriveSP(retrivesp)
 	stmtWhere, _ := RetriveSP("UNV_UPDATE_GENWHERE")
 
-	updateSP = updateSP + " PublishFlag=1 " + stmtWhere
+	if retrivesp == "UNV_UPDATE_UnvMaster" {
+
+		updateSP = updateSP + " PublishedFlag=1 " + stmtWhere
+	} else {
+		updateSP = updateSP + " PublishFlag=1 " + stmtWhere
+	}
+
 	updateStm, err := Db.Prepare(updateSP)
 	if err != nil {
 		fmt.Println(updateSP)
@@ -337,7 +404,7 @@ func (up *UnvPublishDBModel) GetAllPublishedData() ([]UnvPublishDBModel, error) 
 	defer programRows.Close()
 	for programRows.Next() {
 		var newPD UnvPublishDBModel
-		err := programRows.Scan(&newPD.StakeholderID, &newPD.PublishID, &newPD.DateOfPublish, &newPD.ProgramsPublished, &newPD.BranchesPublished, &newPD.StudentStrengthPublished, &newPD.AcredPublished, &newPD.COEsPublished, &newPD.RankingPublished, &newPD.OtherPublished, &newPD.ProfilePublished, &newPD.InfoPublished, &newPD.GeneralNote, &newPD.CreationDate, &newPD.LastUpdatedDate, &newPD.PublishedData)
+		err := programRows.Scan(&newPD.StakeholderID, &newPD.PublishID, &newPD.DateOfPublish, &newPD.ProgramsPublished, &newPD.BranchesPublished, &newPD.StudentStrengthPublished, &newPD.AcredPublished, &newPD.COEsPublished, &newPD.RankingPublished, &newPD.OtherPublished, &newPD.ProfilePublished, &newPD.InfoPublished, &newPD.TieupPublished, &newPD.SpecialOfferingPublished, &newPD.GeneralNote, &newPD.CreationDate, &newPD.LastUpdatedDate, &newPD.PublishedData)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Published data rows %v", err)

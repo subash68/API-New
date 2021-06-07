@@ -26,6 +26,14 @@ func (usdc *unvStuDataController) SubscribeToStuData(c *gin.Context) {
 	err := c.ShouldBindWith(&usr, binding.Form)
 	if err == nil {
 		usd.SubscribedStakeholderID = ID
+		usd.SubscriptionID, err = models.CreateSudID(usd.SubscribedStakeholderID, "UNV_STU_DB_Get_Last_ID", "SUBUSD")
+		if err != nil {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6PJ", ErrTyp: "Error while Creating Subscription ID", Err: err, SuccessResp: successResp})
+			c.JSON(http.StatusUnprocessableEntity, resp)
+			c.Abort()
+			return
+		}
+
 		if usr.TransactionID == "" {
 			usr.TransactionID = "TX" + GetRandomID(15)
 		}
@@ -40,7 +48,7 @@ func (usdc *unvStuDataController) SubscribeToStuData(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
-		reqBody := map[string]string{"stakeholderID": ID, "transactionID": usr.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", usr.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", usr.PaidTokensUsed)}
+		reqBody := map[string]string{"stakeholderID": ID, "transactionID": usr.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", usr.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", usr.PaidTokensUsed), "publisherType": "UNIV", "publisherID": usr.SubscriberStakeholderID, "subscriptionID": usd.SubscriptionID, "subscriptionType": "SD"}
 		resp, err := makeTokenServiceCall("/t/addTx", reqBody)
 
 		if err != nil {

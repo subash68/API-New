@@ -6,6 +6,9 @@ import (
 	"net/url"
 	"reflect"
 	"strconv"
+	"strings"
+
+	"github.com/jaswanth-gorripati/PGK/s5_Subcription/configuration"
 )
 
 // CompleteDB ...
@@ -135,8 +138,8 @@ func GetProfilePic(stakeholderID string, sp string) ([]byte, DbModelError) {
 	return ppic, customError
 }
 
-// createSudID ... UNV_INSIGHTS_Get_Last_ID, SUBUI
-func createSudID(ID string, query string, code string) (string, error) {
+// CreateSudID ... UNV_INSIGHTS_Get_Last_ID, SUBUI
+func CreateSudID(ID string, query string, code string) (string, error) {
 	rowSP, _ := RetriveSP(query)
 	lastID := ""
 	err := Db.QueryRow(rowSP, ID).Scan(&lastID)
@@ -228,4 +231,27 @@ func parseSubscriptionType(ct string) string {
 		return "O"
 	}
 	return "O"
+}
+
+// GetSubTypeFromPublishID ...
+func GetSubTypeFromPublishID(publishID string, userType string) (string, string) {
+	dbName := ""
+	dbConfig := configuration.DbConfig()
+	switch userType {
+	case "Corporate":
+		dbName = dbConfig.DbDatabaseName + "." + dbConfig.CrpPubDBName
+		break
+	case "University":
+		dbName = dbConfig.DbDatabaseName + "." + dbConfig.UnvPubDBName
+		break
+	}
+	sp, _ := RetriveSP("GET_PUB_SUB_TYPE")
+	sp = strings.ReplaceAll(sp, "//REPLACE_DB_NAME", dbName)
+	var gn, sh string
+	err := Db.QueryRow(sp, publishID).Scan(&sh, &gn)
+	if err != nil {
+		return "", "O"
+	}
+	gn = strings.Split(gn, " has been published")[0]
+	return sh, parseSubscriptionType(userType[:1] + gn)
 }

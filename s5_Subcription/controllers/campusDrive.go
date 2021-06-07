@@ -20,6 +20,26 @@ var (
 	CDRNotificationID                string                           = "CHR"
 )
 
+// Corporate ...
+const (
+	Corporate       string = "Corporate"
+	University      string = "University"
+	LastCrpID       string = "CORP_CD_Get_Last_ID"
+	LastUnvID       string = "UNV_CD_Get_Last_ID"
+	CrpCode         string = "CCDI"
+	UnvCode         string = "UCPI"
+	CrpInsCmd       string = "CORP_CD_INIT"
+	UnvInsCmd       string = "UNV_CD_INIT"
+	CrpInviteCmd    string = "CORP_CD_SUB_UPDATE"
+	UnvInviteCmd    string = "UNV_CD_SUB_UPDATE"
+	CrpRespondCmd   string = "CORP_CD_UNV_RESP"
+	UnvRespondCmd   string = "UNV_CD_UNV_RESP"
+	CrpGetByIDCmd   string = "CORP_CD_GET_BY_ID"
+	UnvGetByIDCmd   string = "UNV_CD_GET_BY_ID"
+	CrpGetIRByIDCmd string = "CORP_CD_GET_INITIATOR_FR_CD"
+	UnvGetIRByIDCmd string = "UNV_CD_GET_INITIATOR_FR_CD"
+)
+
 type campusDriveInvitationsController struct{}
 
 type cdRespModel struct {
@@ -42,6 +62,29 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 	binding.Validator = &defaultValidator{}
 	err := c.ShouldBindWith(&usr, binding.Form)
 	if err == nil {
+		var lastQueryCmd, code, insCmd, pubUserType string
+		//var initiatorEmail,receiverEmail string
+		switch userType {
+		case Corporate:
+			lastQueryCmd, code, insCmd, pubUserType = LastCrpID, CrpCode, CrpInsCmd, "UNIV"
+			break
+		case University:
+			lastQueryCmd, code, insCmd, pubUserType = LastUnvID, UnvCode, UnvInsCmd, "CORP"
+			break
+		default:
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Internal Server Error", Err: fmt.Errorf("Invalid user type %s", userType), SuccessResp: successResp})
+			c.JSON(http.StatusInternalServerError, resp)
+			return
+		}
+		var err error
+		var cdm models.CampusDriveDataModel
+		cdm.CampusDriveID, err = models.CreateSudID(cdm.InitiatorID, lastQueryCmd, code)
+
+		if err != nil {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Internal Server Error", Err: err, SuccessResp: successResp})
+			c.JSON(http.StatusInternalServerError, resp)
+			return
+		}
 
 		if usr.TransactionID == "" {
 			usr.TransactionID = "TX" + GetRandomID(15)
@@ -57,7 +100,7 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
-		reqBody := map[string]string{"stakeholderID": ID, "transactionID": usr.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", usr.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", usr.PaidTokensUsed)}
+		reqBody := map[string]string{"stakeholderID": ID, "transactionID": usr.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", usr.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", usr.PaidTokensUsed), "publisherType": pubUserType, "publisherID": usr.ReceiverID, "subscriptionID": cdm.CampusDriveID, "subscriptionType": "CR"}
 		resp, err := makeTokenServiceCall("/t/addTx", reqBody)
 
 		if err != nil {
@@ -67,10 +110,10 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 			return
 		}
 		fmt.Println("==================== token res ======", resp)
-		var cdm models.CampusDriveDataModel
+
 		cdm.InitiatorID = ID
 		cdm.ReceiverID = usr.ReceiverID
-		err = cdm.SubscribeToInviteForCD(userType)
+		err = cdm.SubscribeToInviteForCD(lastQueryCmd, code, insCmd)
 
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Internal Server Error", Err: err, SuccessResp: successResp})

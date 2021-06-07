@@ -86,6 +86,7 @@ func CreateSP() {
 		"CORP_HCI_GET_ALL_SUB":        "SELECT a.Subscription_ID,a.Subscriber_Stakeholder_ID,a.Subscribed_Stakeholder_ID,a.SubscribedDate,b.Corporate_Name,CONCAT(b.CorporateHQAddress_City,',',b.CorporateLocal_BranchAddress_City,',') FROM " + dbConfig.DbDatabaseName + "." + dbConfig.CorpHcInsightsDbName + " as a," + dbConfig.DbDatabaseName + "." + dbConfig.CorpMasterDbName + " as b Where Subscribed_Stakeholder_ID=? AND b.Stakeholder_ID=a.Subscriber_Stakeholder_ID Order by SubscribedDate DESC",
 		"NFT_GET_BY_ID":               "SELECT Notification_Content FROM " + dbConfig.DbDatabaseName + ".Notification_Master WHERE Notification_ID = ? AND  Receiver_Stakeholder_ID=? ",
 		"GET_CI_EMAILS":               "SELECT c.PrimaryContact_Email,u.PrimaryContact_Email FROM " + dbConfig.DbDatabaseName + "." + dbConfig.CorpMasterDbName + " as c," + dbConfig.DbDatabaseName + "." + dbConfig.UnvMasterDbName + " as u WHERE c.Stakeholder_ID=? And u.Stakeholder_ID=?",
+		"GET_PUB_SUB_TYPE":            "SELECT Stakeholder_ID,GeneralNote FROM //REPLACE_DB_NAME WHERE Publish_ID=?",
 	}
 }
 

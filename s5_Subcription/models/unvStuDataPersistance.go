@@ -14,10 +14,10 @@ func (usd *UnvStuDataModel) Subscribe() (*UnvStuDataModel, error) {
 	ct, _ := time.Parse(time.RFC3339, currentTime)
 
 	usd.SubscribedDate, usd.CreationDate, usd.LastUpdatedDate = ct, ct, ct
-	usd.SubscriptionID, err = createSudID(usd.SubscribedStakeholderID, "UNV_STU_DB_Get_Last_ID", "SUBUSD")
-	if err != nil {
-		return usd, err
-	}
+	// usd.SubscriptionID, err = CreateSudID(usd.SubscribedStakeholderID, "UNV_STU_DB_Get_Last_ID", "SUBUSD")
+	// if err != nil {
+	// 	return usd, err
+	// }
 	newUISubIns, _ := RetriveSP("UNV_STU_DB_SUB_INIT")
 	newUISubIns += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	subInsStmt, err := Db.Prepare(newUISubIns)

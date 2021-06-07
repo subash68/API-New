@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -204,7 +205,7 @@ func (tkn *TokenTransactionsModel) TokenTransactionsToID() <-chan DbModelError {
 	defer tbStmt.Close()
 	currentTime := time.Now()
 
-	stmt.Exec(tkn.StakeholderID, tkn.BonusTokensTransacted, tkn.PaidTokensTransacted, tkn.TransactionID, currentTime)
+	stmt.Exec(tkn.StakeholderID, tkn.BonusTokensTransacted, tkn.PaidTokensTransacted, tkn.TransactionID, currentTime, tkn.PublisherID, tkn.SubscriptionID, tkn.SubscriptionType, tkn.PublisherType)
 
 	if err != nil {
 
@@ -236,7 +237,9 @@ func (tkn *TokenTransactionsModel) TokenTransactionsToID() <-chan DbModelError {
 func (tkn *TokenTransactions) GetTokenTransactionsForID(ID string) error {
 
 	sp, _ := RetriveSP("GET_Token_TX_BY_ID")
+	fmt.Println(sp)
 	rows, err := Db.Query(sp, ID)
+
 	if err != nil && err != sql.ErrNoRows {
 
 		fmt.Println("error while Fetching token Transactions " + err.Error())
@@ -251,11 +254,37 @@ func (tkn *TokenTransactions) GetTokenTransactionsForID(ID string) error {
 
 		for rows.Next() {
 			var newTx TokenTransactionsModel
-			err = rows.Scan(&newTx.BonusTokensTransacted, &newTx.PaidTokensTransacted, &newTx.TransactionID, &newTx.TransactionDate, &newTx.LastUpdatedDate)
+			var cpd, upd string
+			err = rows.Scan(&newTx.BonusTokensTransacted, &newTx.PaidTokensTransacted, &newTx.TransactionID, &newTx.TransactionDate, &newTx.LastUpdatedDate, &newTx.PublisherID, &newTx.SubscriptionID, &newTx.SubscriptionType, &newTx.PublisherType, &cpd, &upd)
 			if err != nil {
 				return fmt.Errorf("Cannot read the Transactions  Rows %v", err.Error())
 			}
-			tkn.Transactions = append(tkn.Transactions, newTx)
+			if newTx.PublisherID != "" {
+				pubTypeData := PublisherTypeModel{}
+				err := json.Unmarshal([]byte(cpd), &pubTypeData)
+				if err != nil {
+					return fmt.Errorf("Failed to get the Publisher details %v", err)
+				}
+				fmt.Printf("\nCPD ====> %+v,\n \n", pubTypeData)
+				if pubTypeData.Exists > 0 {
+					newTx.PublisherName = pubTypeData.Name
+					newTx.PublisherLocation = pubTypeData.Location
+				} else {
+					err := json.Unmarshal([]byte(upd), &pubTypeData)
+					if err != nil {
+						return fmt.Errorf("Failed to get the Publisher details %v", err)
+					}
+					fmt.Printf("\nUPD ====> %+v,\n \n", pubTypeData)
+					if pubTypeData.Exists > 0 {
+						newTx.PublisherName = pubTypeData.Name
+						newTx.PublisherLocation = pubTypeData.Location
+					} else {
+						//return fmt.Errorf("Failed to get the Publisher details")
+					}
+				}
+
+				tkn.Transactions = append(tkn.Transactions, newTx)
+			}
 		}
 	}
 
@@ -303,6 +332,13 @@ func (tkn *TxTokens) GetTransactionsOfTokensOfID(ID string, userType string) err
 		}
 		tkn.AllocatedTokens = append(tkn.AllocatedTokens, newAlloc)
 	}
+	var tempTx TokenTransactions
+	err = tempTx.GetTokenTransactionsForID(ID)
+	if err != nil {
+		return fmt.Errorf("Cannot read the Subscription  Rows %v", err.Error())
+	}
+	fmt.Println(tempTx.Transactions)
+	tkn.TransationTokens = tempTx.Transactions
 
 	return nil
 }
