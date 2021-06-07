@@ -23,10 +23,10 @@ func (chi *CrpHiringInsightsModel) Insert() (*CrpHiringInsightsModel, error) {
 
 	chi.SubscribedDate, chi.CreationDate, chi.LastUpdatedDate = ct, ct, ct
 	var err error
-	chi.SubscriptionID, err = createSudID(chi.SubscribedStakeholderID, "CORP_HCI_Get_Last_ID", "SUBCHI")
-	if err != nil {
-		return chi, err
-	}
+	// chi.SubscriptionID, err = CreateSudID(chi.SubscribedStakeholderID, "CORP_HCI_Get_Last_ID", "SUBCHI")
+	// if err != nil {
+	// 	return chi, err
+	// }
 
 	newCHISubIns, _ := RetriveSP("CORP_HCI_INS")
 	subInsStmt, err := Db.Prepare(newCHISubIns)

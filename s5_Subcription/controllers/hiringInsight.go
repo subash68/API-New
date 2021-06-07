@@ -28,6 +28,16 @@ func (hcc *hiringCriteriaController) Subscribe(c *gin.Context) {
 		if usr.TransactionID == "" {
 			usr.TransactionID = "TX" + GetRandomID(15)
 		}
+		uim.SubscriberStakeholderID = usr.SubscriberStakeholderID
+
+		uim.SubscriptionID, err = models.CreateSudID(uim.SubscribedStakeholderID, "CORP_HCI_Get_Last_ID", "SUBCHI")
+		if err != nil {
+			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6PJ", ErrTyp: "Error while Creating Subscription ID", Err: err, SuccessResp: successResp})
+			c.JSON(http.StatusUnprocessableEntity, resp)
+			c.Abort()
+			return
+		}
+
 		tknReq, bonusPercent := getSubPayment(usr.SubscriberStakeholderID)
 		if tknReq != (usr.BonusTokensUsed + usr.PaidTokensUsed) {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S5SUB", ErrTyp: "Token Amount error", Err: fmt.Errorf("Required Tokens are not equal to TokensUsed in parameters"), SuccessResp: successResp})
@@ -39,7 +49,7 @@ func (hcc *hiringCriteriaController) Subscribe(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
-		reqBody := map[string]string{"stakeholderID": ID, "transactionID": usr.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", usr.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", usr.PaidTokensUsed)}
+		reqBody := map[string]string{"stakeholderID": ID, "transactionID": usr.TransactionID, "bonusTokensTransacted": fmt.Sprintf("%.2f", usr.BonusTokensUsed), "paidTokensTransacted": fmt.Sprintf("%.2f", usr.PaidTokensUsed), "publisherType": "CORP", "publisherID": usr.SubscriberStakeholderID, "subscriptionID": uim.SubscriptionID, "subscriptionType": "HI"}
 		resp, err := makeTokenServiceCall("/t/addTx", reqBody)
 
 		if err != nil {
@@ -49,7 +59,7 @@ func (hcc *hiringCriteriaController) Subscribe(c *gin.Context) {
 			return
 		}
 		fmt.Println("==================== token resp ======", resp)
-		uim.SubscriberStakeholderID = usr.SubscriberStakeholderID
+
 		respUIM, err := uim.Insert()
 		if err != nil {
 			resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Internal Server Error", Err: err, SuccessResp: successResp})

@@ -26,10 +26,10 @@ func (uim *UnvInsightsModel) Insert() (*UnvInsightsModel, error) {
 
 	uim.SubscribedDate, uim.CreationDate, uim.LastUpdatedDate = ct, ct, ct
 	var err error
-	uim.SubscriptionID, err = createSudID(uim.SubscribedStakeholderID, "UNV_INSIGHTS_Get_Last_ID", "SUBUI")
-	if err != nil {
-		return uim, err
-	}
+	// uim.SubscriptionID, err = CreateSudID(uim.SubscribedStakeholderID, "UNV_INSIGHTS_Get_Last_ID", "SUBUI")
+	// if err != nil {
+	// 	return uim, err
+	// }
 
 	newUISubIns, _ := RetriveSP("UNV_INSIGHTS_INS")
 	subInsStmt, err := Db.Prepare(newUISubIns)
