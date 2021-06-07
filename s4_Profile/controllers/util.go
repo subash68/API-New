@@ -102,7 +102,7 @@ func getInterfaceValues(s ...interface{}) (val []interface{}) {
 	v := reflect.ValueOf(s[0])
 	typeOfS := v.Type()
 	for i := 0; i < v.NumField(); i++ {
-		if typeOfS.Field(i).Name != "ID" {
+		if typeOfS.Field(i).Name != "ID" && typeOfS.Field(i).Name != "SentforVerification" && typeOfS.Field(i).Name != "DateSentforVerification" && typeOfS.Field(i).Name != "Verified" && typeOfS.Field(i).Name != "DateVerified" && typeOfS.Field(i).Name != "SentbackforRevalidation" && typeOfS.Field(i).Name != "DateSentBackForRevalidation" && typeOfS.Field(i).Name != "ValidatorRemarks" && typeOfS.Field(i).Name != "VerificationType" && typeOfS.Field(i).Name != "VerifiedByStakeholderID" && typeOfS.Field(i).Name != "VerifiedByEmailID" {
 			val = append(val, v.Field(i).Interface())
 		}
 	}
