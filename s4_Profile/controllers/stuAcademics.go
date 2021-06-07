@@ -30,6 +30,8 @@ func AddTenth(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, models.MessageResp{"Academics Saved"})
+		c.Abort()
+		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found in Add academics", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)
@@ -56,6 +58,8 @@ func AddTwelfth(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, models.MessageResp{"Academics Saved"})
+		c.Abort()
+		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found in Add academics", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)
@@ -95,6 +99,8 @@ func AddGraduation(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, models.MessageResp{"Academics Saved"})
+		c.Abort()
+		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found in Add academics", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)
@@ -134,6 +140,8 @@ func AddPostGraduation(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, models.MessageResp{"Academics Saved"})
+		c.Abort()
+		return
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Required information not found in Add academics", Err: err, SuccessResp: successResp})
 	c.JSON(http.StatusUnprocessableEntity, resp)

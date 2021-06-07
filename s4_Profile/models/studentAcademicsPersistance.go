@@ -89,7 +89,7 @@ func (sa *StudentAcademicsModelReq) InsertAcademics(form *multipart.Form) error 
 	saSP += "" + insFields + ") VALUES(?," + ques + ") ON DUPLICATE KEY UPDATE " + updSP
 	saSP = saSP[0 : len(saSP)-1]
 	fmt.Println("======================== " + saSP + " -----++++++++++++++++++++++++")
-	fmt.Printf("\n%+v\n", val)
+	//fmt.Printf("\n%+v\n", val)
 	insStmt, err := Db.Prepare(saSP)
 	if err != nil {
 		return fmt.Errorf("Failed Prepare Insert/Update Student Academics. Error:%v", err.Error())
@@ -113,7 +113,7 @@ func (sa *StudentAcademicsModelReq) InsertAcademics(form *multipart.Form) error 
 		}
 	}
 
-	fmt.Println(val, ques)
+	fmt.Println(val[0], val[1], val[2], val[3], val[4], val[5], val[7], val[8], val[9], val[10], val[11], val[12], ques)
 	return nil
 }
 
@@ -135,6 +135,7 @@ func GetAcademics(ID string) (StudentAcademicsModelReq, error) {
 	sa.Tenth = tenN.ConvertToJSONStruct()
 	sa.Twelfth = twelfthN.ConvertToJSONStruct()
 
+	sa.Twelfth.AttachmentName = twelfthN.AttachmentName
 	sa.Twelfth.SentforVerification = tenN.SentforVerification
 	sa.Twelfth.DateSentforVerification = tenN.DateSentforVerification
 	sa.Twelfth.Verified = tenN.Verified
@@ -146,6 +147,7 @@ func GetAcademics(ID string) (StudentAcademicsModelReq, error) {
 	sa.Twelfth.VerifiedByStakeholderID = tenN.VerifiedByStakeholderID
 	sa.Twelfth.VerifiedByEmailID = tenN.VerifiedByEmailID
 
+	sa.Tenth.AttachmentName = tenN.AttachmentName
 	sa.Tenth.SentforVerification = tenN.SentforVerification
 	sa.Tenth.DateSentforVerification = tenN.DateSentforVerification
 	sa.Tenth.Verified = tenN.Verified
@@ -304,6 +306,7 @@ func constructTTReq(st StudentTTModel, form *multipart.Form, fileName string) []
 		}
 		st.AttachmentName = file.Filename
 	}
+	fmt.Println(st.AttachmentName)
 	vals = append(vals, st.Name, st.Location, st.MonthAndYearOfPassing, st.Board, st.Percentage, st.AttachmentFile, st.AttachmentName)
 	return vals
 }
