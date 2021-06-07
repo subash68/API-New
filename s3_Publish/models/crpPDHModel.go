@@ -43,10 +43,11 @@ type HcPdhModel struct {
 
 // OtherInformationSubModel ...
 type OtherInformationSubModel struct {
-	Title       string `json:"title"`
-	Information string `json:"information"`
-	tempAttach  NullString
-	Attachment  []byte `json:"attachment,omitempty"`
+	Title          string `json:"title"`
+	Information    string `json:"information"`
+	tempAttach     NullString
+	Attachment     []byte `json:"attachment,omitempty"`
+	AttachmentName string `json:"attachmentName,omitempty"`
 }
 
 // CorpPushedDataModel ...

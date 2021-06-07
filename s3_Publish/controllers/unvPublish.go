@@ -108,6 +108,7 @@ func PublishUnvOI(c *gin.Context) {
 				return
 			}
 			up.Attachment = byteContainer
+			up.AttachmentName = file.Filename
 		}
 		ID, ok := c.Get("userID")
 		fmt.Println("-----> Got ID", ID.(string))
@@ -169,6 +170,39 @@ func GetPublishedUnvOI(c *gin.Context) {
 	}
 	oi.StakeholderID = ID.(string)
 	oiArray, err := oi.GetAllOI("UNV_OI_GET_ALL_PUB")
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Cannot get Hiring Criteria", Err: fmt.Errorf("Cannot find Hiring criteria : %v", err.Error()), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
+
+	fmt.Printf("\n oi : %+v\n", oiArray)
+
+	c.JSON(http.StatusOK, oiArray)
+	return
+}
+
+// GetUnvOI ...
+func GetUnvOI(c *gin.Context) {
+	successResp = map[string]string{}
+	var oi models.UnvOtherInformationModel
+	jobdb := make(chan models.DbModelError, 1)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	ctxkey = ctxFunc("Target")
+	ctx = context.WithValue(ctx, ctxkey, "Get All Other information published")
+
+	defer cancel()
+	defer close(jobdb)
+
+	ID, ok := c.Get("userID")
+	if !ok {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot decode User ID from the request"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
+	oi.StakeholderID = ID.(string)
+	oiArray, err := oi.GetAllOI("UNV_OI_GET_ALL")
 	if err != nil {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Cannot get Hiring Criteria", Err: fmt.Errorf("Cannot find Hiring criteria : %v", err.Error()), SuccessResp: successResp})
 		c.JSON(http.StatusUnprocessableEntity, resp)

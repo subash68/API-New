@@ -151,6 +151,7 @@ func InitialzeRoutes() *gin.Engine {
 	// University publish
 	proposal.POST("/", controllers.AddNewProposal)
 	proposal.GET("/", controllers.GetUnvProposal)
+	proposal.GET("/oi", controllers.GetUnvOI)
 	proposal.DELETE("/program/:programID", controllers.DeleteProgramByID)
 	proposal.DELETE("/branch/:branchID", controllers.DeleteBranchByID)
 	proposal.DELETE("/accredations/:accredationsID", controllers.DeleteAccredationsByID)
@@ -158,7 +159,7 @@ func InitialzeRoutes() *gin.Engine {
 	proposal.DELETE("/ranking/:rankingID", controllers.DeleteRankingByID)
 	proposal.DELETE("/tieups/:tieupsID", controllers.DeleteTieupsByID)
 	proposal.DELETE("/specialOfferings/:specialOfferingsID", controllers.DeleteSpecialOfferingsByID)
-	proposal.DELETE("/OtherInfo/:OtherInfoID", controllers.DeleteOtherInfoByID)
+	proposal.DELETE("/otherInfo/:otherInfoID", controllers.DeleteOtherInfoByID)
 	unvPublish.POST("/profile", controllers.PublishProfile)
 	unvPublish.POST("/oi", controllers.PublishUnvOI)
 	unvPublish.GET("/oi", controllers.GetPublishedUnvOI)
