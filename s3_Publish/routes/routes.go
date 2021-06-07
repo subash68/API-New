@@ -151,6 +151,7 @@ func InitialzeRoutes() *gin.Engine {
 	// University publish
 	proposal.POST("/", controllers.AddNewProposal)
 	proposal.GET("/", controllers.GetUnvProposal)
+	proposal.GET("/oi", controllers.GetUnvOI)
 	proposal.DELETE("/program/:programID", controllers.DeleteProgramByID)
 	proposal.DELETE("/branch/:branchID", controllers.DeleteBranchByID)
 	proposal.DELETE("/accredations/:accredationsID", controllers.DeleteAccredationsByID)

@@ -1,8 +1,8 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
-	"strings"
 )
 
 // GetUnvPublishedData ...
@@ -45,14 +45,15 @@ func GetUnvPublishedData(publishID string, isOwner bool, subscriber string, subT
 		fmt.Printf("\n============== %s =================== \n", resp["Jobs"])
 		return customError, resp, "Profile"
 	} else if op {
-		var jpdh OtherInformationSubModel
-		getByPID, _ := RetriveSP("UNV_GET_OI_BY_PID")
-		getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
-		err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.Title, &jpdh.Information, &jpdh.Attachment)
+		jpdh := OtherInformationSubModel{}
+		// getByPID, _ := RetriveSP("UNV_GET_OI_BY_PID")
+		// getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
+		// err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.Title, &jpdh.Information, &jpdh.Attachment)
+		err := json.Unmarshal([]byte(pd), &jpdh)
 		if err != nil {
 			customError.ErrTyp = "S3PJ003"
 			customError.ErrCode = "500"
-			customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
+			customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v ", err.Error())
 			return customError, resp, ""
 		}
 		//jpdh.Attachment = []byte(fmt.Sprintf("%s", jpdh.tempAttach))
