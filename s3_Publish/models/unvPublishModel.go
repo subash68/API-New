@@ -145,6 +145,8 @@ type UnvPublishDBModel struct {
 	COEsPublished            bool      `form:"coesPublished" json:"coesPublished"`
 	RankingPublished         bool      `form:"rankingPublished" json:"rankingPublished"`
 	OtherPublished           bool      `form:"otherPublished" json:"otherPublished"`
+	TieupPublished           bool      `form:"tieupPublished" json:"tieupPublished"`
+	SpecialOfferingPublished bool      `form:"specialofferingPublished" json:"specialofferingPublished"`
 	ProfilePublished         bool      `form:"profilePublished" json:"profilePublished"`
 	InfoPublished            bool      `form:"infoPublished" json:"infoPublished"`
 	GeneralNote              string    `form:"-" json:"generalNote"`
