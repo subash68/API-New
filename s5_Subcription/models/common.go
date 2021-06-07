@@ -148,11 +148,11 @@ func CreateSudID(ID string, query string, code string) (string, error) {
 		return "", err
 	}
 	if err == sql.ErrNoRows {
-		lastID = "0000000000000"
+		lastID = "000000000000000"
 	}
+	fmt.Println("--------------------> ", lastID, "-----", ID)
 	corporateNum, _ := strconv.Atoi(ID[7:])
 	countNum, _ := strconv.Atoi(lastID[len(lastID)-7:])
-	fmt.Println("--------------------> ", lastID, countNum)
 
 	return (code + strconv.Itoa(corporateNum) + (fmt.Sprintf("%07d", (countNum + 1)))), nil
 }

@@ -78,6 +78,7 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 		}
 		var err error
 		var cdm models.CampusDriveDataModel
+		cdm.InitiatorID = ID
 		cdm.CampusDriveID, err = models.CreateSudID(cdm.InitiatorID, lastQueryCmd, code)
 
 		if err != nil {
@@ -111,7 +112,6 @@ func (cdi *campusDriveInvitationsController) Subscribe(c *gin.Context) {
 		}
 		fmt.Println("==================== token res ======", resp)
 
-		cdm.InitiatorID = ID
 		cdm.ReceiverID = usr.ReceiverID
 		err = cdm.SubscribeToInviteForCD(lastQueryCmd, code, insCmd)
 
