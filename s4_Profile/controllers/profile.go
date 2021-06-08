@@ -221,3 +221,16 @@ func PlatformStats(c *gin.Context) {
 	return
 
 }
+
+// PlatformHomeStats ...
+func PlatformHomeStats(c *gin.Context) {
+	stats := models.GetRegisteredCounts()
+	stats.StudentsRegInLastWeek = 656
+	stats.CandidatesHiredInLastWeek = 453
+	stats.CandidatesHiredSoFar = 1785
+	stats.JobsPostedInLastWeek = 648
+	stats.JobsPostedTillDate = 3345
+	c.JSON(http.StatusOK, stats)
+	return
+
+}

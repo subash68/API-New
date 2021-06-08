@@ -78,6 +78,7 @@ func InitialzeRoutes() *gin.Engine {
 	})
 
 	user := router.Group("/u")
+	user.GET("/homeStats", controllers.PlatformHomeStats)
 	// user.Use(middleware.AuthorizeRequest())
 
 	profile := user.Group("/profile")

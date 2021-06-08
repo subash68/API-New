@@ -189,6 +189,11 @@ type RegCount struct {
 	JobOpenings                   int `json:"jobOpenings,omitempty"`
 	StudentsPlaced                int `json:"studentsPlaced,omitempty"`
 	StudentsAwaitingJobs          int `json:"studentsAwaitingJobs,omitempty"`
+	StudentsRegInLastWeek         int `json:"studentsRegisteredInLastWeek,omitempty"`
+	CandidatesHiredInLastWeek     int `json:"candidatesHiredInLastWeek,omitempty"`
+	CandidatesHiredSoFar          int `json:candidatesHiredSoFar,omitempty"`
+	JobsPostedInLastWeek          int `json:"jobsPostedInLastWeek,omitempty"`
+	JobsPostedTillDate            int `json:"jobsPostedTillDate,omitempty"`
 }
 
 // GetRegisteredCounts ...
