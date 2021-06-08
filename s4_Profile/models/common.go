@@ -174,18 +174,21 @@ func GetProfilePic(stakeholderID string, userType string, sp string) ([]byte, Db
 
 // RegCount ...
 type RegCount struct {
-	CorpCount            int `json:"corporatesRegistered,omitempty"`
-	StuCount             int `json:"studentsRegistered,omitempty"`
-	UnvCount             int `json:"universitiesRegistered,omitempty"`
-	JobsPublished        int `json:"jobsPublished,omitempty"`
-	ApplicationsReceived int `json:"applicationsReceived,omitempty"`
-	JobOffersMade        int `json:"jobOffersMade,omitempty"`
-	CurrentlyOnline      int `json:"currentlyOnline,omitempty"`
-	JoinedLastWeek       int `json:"joinedLastWeek,omitempty"`
-	GotPlaced            int `json:"gotPlaced,omitempty"`
-	JobOpenings          int `json:"jobOpenings,omitempty"`
-	StudentsPlaced       int `json:"studentsPlaced,omitempty"`
-	StudentsAwaitingJobs int `json:"studentsAwaitingJobs,omitempty"`
+	CorpCount                     int `json:"corporatesRegistered,omitempty"`
+	StuCount                      int `json:"studentsRegistered,omitempty"`
+	UnvCount                      int `json:"universitiesRegistered,omitempty"`
+	JobsPublished                 int `json:"jobsPublished,omitempty"`
+	JobsPublishedInMonth          int `json:"jobsPublishedInMonth,omitempty"`
+	ApplicationsReceived          int `json:"applicationsReceived,omitempty"`
+	ApplicationsReceivedInTwoDays int `json:"applicationsReceivedInTwoDays,omitempty"`
+	JobOffersMade                 int `json:"jobOffersMade,omitempty"`
+	JobOffersMadeInLastMonth      int `json:"jobOffersMadeInLastMonth,omitempty"`
+	CurrentlyOnline               int `json:"currentlyOnline,omitempty"`
+	JoinedLastWeek                int `json:"joinedLastWeek,omitempty"`
+	GotPlaced                     int `json:"gotPlaced,omitempty"`
+	JobOpenings                   int `json:"jobOpenings,omitempty"`
+	StudentsPlaced                int `json:"studentsPlaced,omitempty"`
+	StudentsAwaitingJobs          int `json:"studentsAwaitingJobs,omitempty"`
 }
 
 // GetRegisteredCounts ...
@@ -196,6 +199,9 @@ func GetRegisteredCounts() RegCount {
 	rc.CurrentlyOnline = 1571
 	rc.JoinedLastWeek = 82
 	rc.GotPlaced = 25152
+	rc.JobOffersMadeInLastMonth = 94
+	rc.ApplicationsReceivedInTwoDays = 49
+	rc.JobOffersMadeInLastMonth = 58
 	return rc
 }
 
