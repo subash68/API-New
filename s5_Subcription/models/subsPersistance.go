@@ -444,11 +444,13 @@ func (subs *AllCdInvites) GetCDForSH(ID string, stakeholder string) DbModelError
 				newsub.NftID = arNftID
 				newsub.RequestedDate = rqDate
 				newsub.CampusDriveRequested = true
+				newsub.ResponseDate = arDate.Format(time.RFC3339)
 			} else if cdReq == true && cdAr == false && arNftID != "" {
 				newsub.CampusDriveStatus = "Rejected"
 				newsub.NftID = arNftID
 				newsub.RequestedDate = rqDate
 				newsub.CampusDriveRequested = true
+				newsub.ResponseDate = arDate.Format(time.RFC3339)
 			} else if cdReq == true && cdAr == false && arNftID == "" {
 				newsub.CampusDriveStatus = "Pending"
 				newsub.NftID = reqNftID
