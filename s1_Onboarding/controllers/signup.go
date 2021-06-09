@@ -216,7 +216,7 @@ func serializeCorporateData(ctx context.Context, c *gin.Context, encodedPass str
 	if err == nil {
 		corporateData.Password = encodedPass
 		corporateData.AccountStatus = "1"
-		corporateData.Attachment, corporateData.AttachmentName = attachFile(c)
+		corporateData.Attachment, corporateData.AttachmentName, corporateData.ProfilePicture = attachFile(c)
 		return corporateData
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
@@ -232,7 +232,7 @@ func serializeUniversityData(ctx context.Context, c *gin.Context, encodedPass st
 	if err == nil {
 		universityData.Password = encodedPass
 		universityData.AccountStatus = "1"
-		universityData.Attachment, universityData.AttachmentName = attachFile(c)
+		universityData.Attachment, universityData.AttachmentName, universityData.ProfilePicture = attachFile(c)
 		return universityData
 	}
 	resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1AUT", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
@@ -248,7 +248,7 @@ func serializeStudentData(ctx context.Context, c *gin.Context, encodedPass strin
 	if err == nil {
 		studentData.Password = encodedPass
 		studentData.AccountStatus = "1"
-		studentData.Attachment, studentData.AttachmentName = attachFile(c)
+		studentData.Attachment, studentData.AttachmentName, studentData.ProfilePicture = attachFile(c)
 		return studentData
 	}
 	fmt.Println(studentData)
@@ -259,20 +259,34 @@ func serializeStudentData(ctx context.Context, c *gin.Context, encodedPass strin
 
 }
 
-func attachFile(c *gin.Context) ([]byte, string) {
+func attachFile(c *gin.Context) ([]byte, string, []byte) {
 	form, _ := c.MultipartForm()
 	files := form.File["attachment"]
+	var err error
+	var attchFile, prfPic []byte
+	var attName string
 	for _, file := range files {
 		fileContent, _ := file.Open()
-		byteContainer, err := ioutil.ReadAll(fileContent)
+		attchFile, err = ioutil.ReadAll(fileContent)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, err.Error())
 			c.Abort()
-			return nil, ""
+			return nil, "", nil
 		}
-		return byteContainer, file.Filename
+		attName = file.Filename
+
 	}
-	return nil, ""
+	pfiles := form.File["profilePicture"]
+	for _, file := range pfiles {
+		fileContent, _ := file.Open()
+		prfPic, err = ioutil.ReadAll(fileContent)
+		if err != nil {
+			c.JSON(http.StatusUnprocessableEntity, err.Error())
+			c.Abort()
+			return nil, "", nil
+		}
+	}
+	return attchFile, attName, prfPic
 }
 
 func raiseBonusTokenReq(ID string) (float64, error) {
