@@ -6,6 +6,7 @@ import "time"
 // UniversityMasterDb ...
 type UniversityMasterDb struct {
 	StakeholderID                        string    `form:"stakeholderID" json:"stakeholderID"`
+	UniversityID                         string    `form:"universityID" json:"universityID"`
 	UniversityName                       string    `form:"universityName" json:"universityName"`
 	UniversityCollegeID                  string    `form:"universityCollegeID,omitempty" json:"universityCollegeID"`
 	UniversityCollageName                string    `form:"universityCollegeName" json:"universityCollegeName"`
