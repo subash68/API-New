@@ -69,6 +69,8 @@ func InitialzeRoutes() *gin.Engine {
 	// Catching if any errors happens in the api call
 	router.Use(gin.Recovery())
 
+	router.MaxMultipartMemory = 10 << 20 // Max 2mb files
+
 	// Test Route URL
 
 	onboard := router.Group("/o")

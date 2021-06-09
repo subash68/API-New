@@ -69,7 +69,7 @@ func InitialzeRoutes() *gin.Engine {
 	// Catching if any errors happens in the api call
 	router.Use(gin.Recovery())
 	//
-	router.MaxMultipartMemory = 1 << 20 // Max 2mb files
+	router.MaxMultipartMemory = 2 << 20 // Max 2mb files
 
 	// Test Route URL
 	router.GET("/", func(c *gin.Context) {
