@@ -73,10 +73,10 @@ func (oi *UnvOtherInformationModel) PublishOI() <-chan DbModelError {
 
 	currentTime := time.Now()
 
-	pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	pdhInsertCmd += "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	reqAsBytes, _ := json.Marshal(oi)
 
-	pdhVals = append(pdhVals, oi.StakeholderID, pdhIDs, uName, currentTime, false, false, false, false, false, false, true, false, false, "Other Information has been published", currentTime, currentTime, string(reqAsBytes))
+	pdhVals = append(pdhVals, oi.StakeholderID, pdhIDs, uName, currentTime, false, false, false, false, false, false, true, false, false, false, false, "Other Information has been published", currentTime, currentTime, string(reqAsBytes))
 
 	pdhStmt, err := Db.Prepare(pdhInsertCmd)
 	if err != nil {
