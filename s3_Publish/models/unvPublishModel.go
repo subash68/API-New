@@ -29,6 +29,7 @@ type UnvYearWiseRanking struct {
 	IssuingAuthority string    `form:"issuingAuthority" json:"issuingAuthority" binding:"required"`
 	RankingFile      string    `form:"-" json:"rankingFile"`
 	RankingFileName  string    `form:"-" json:"rankingFileName"`
+	Year             int       `form:"-" json:"year"`
 	PublishedFlag    bool      `form:"publishedFlag" json:"publishedFlag" default:"false"`
 	CreationDate     time.Time `form:"-" json:"creationDate,omitempty"`
 	LastUpdatedDate  time.Time `form:"-" json:"lastUpdatedDate,omitempty"`

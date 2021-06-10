@@ -275,7 +275,28 @@ func (cdi *campusDriveInvitationsController) Respond(c *gin.Context) {
 }
 
 // GetAllCD ...
-func (cdi *campusDriveInvitationsController) GetAllCD(c *gin.Context) {
-	//ctx, ID, userType, successResp := getFuncReq(c, "Responding Campus Drive")
+func (cdi *campusDriveInvitationsController) GetAllCDEmails(c *gin.Context) {
+	ctx, ID, userType, successResp := getFuncReq(c, "Campus Drive Emails")
+	campusDriveID := c.Param("campusDriveID")
+	if campusDriveID == "" {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S3PJ", ErrTyp: "Invalid information", Err: fmt.Errorf("Cannot find campusDriveID"), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		return
+	}
+	fe, te, err := models.GetEmailsForCD(ID, userType, campusDriveID)
+	if err != nil {
+		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S6PJ", ErrTyp: "Unauthorized", Err: fmt.Errorf("Unauthorized or Invalid CampusDriveID " + campusDriveID), SuccessResp: successResp})
+		c.JSON(http.StatusUnprocessableEntity, resp)
+		c.Abort()
+		return
+	}
+	respData := struct {
+		EmailFrom     string `json:"emailFrom"`
+		EmailTo       string `json:"emailTo"`
+		CampusDriveID string `json:"campusDriveID"`
+	}{
+		fe, te, campusDriveID,
+	}
+	c.JSON(http.StatusOK, respData)
 	return
 }

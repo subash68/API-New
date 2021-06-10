@@ -87,6 +87,8 @@ func CreateSP() {
 		"NFT_GET_BY_ID":               "SELECT Notification_Content FROM " + dbConfig.DbDatabaseName + ".Notification_Master WHERE Notification_ID = ? AND  Receiver_Stakeholder_ID=? ",
 		"GET_CI_EMAILS":               "SELECT c.PrimaryContact_Email,u.PrimaryContact_Email FROM " + dbConfig.DbDatabaseName + "." + dbConfig.CorpMasterDbName + " as c," + dbConfig.DbDatabaseName + "." + dbConfig.UnvMasterDbName + " as u WHERE c.Stakeholder_ID=? And u.Stakeholder_ID=?",
 		"GET_PUB_SUB_TYPE":            "SELECT Stakeholder_ID,GeneralNote FROM //REPLACE_DB_NAME WHERE Publish_ID=?",
+		"CORP_CD_EMAILS":              "SELECT c.PrimaryContact_Email,u.PrimaryContact_Email FROM " + dbConfig.DbDatabaseName + "." + dbConfig.CorpMasterDbName + " as c," + dbConfig.DbDatabaseName + "." + dbConfig.UnvMasterDbName + " as u," + dbConfig.DbDatabaseName + "." + dbConfig.CorpCDDbName + " as cd WHERE c.Stakeholder_ID=cd.Initiator_Stakeholder_ID And u.Stakeholder_ID=cd.Receiver_Stakeholder_ID AND cd.Initiator_Stakeholder_ID=? AND cd.CampusDrive_ID=?",
+		"UNV_CD_EMAILS":               "SELECT u.PrimaryContact_Email,c.PrimaryContact_Email FROM " + dbConfig.DbDatabaseName + "." + dbConfig.CorpMasterDbName + " as c," + dbConfig.DbDatabaseName + "." + dbConfig.UnvMasterDbName + " as u," + dbConfig.DbDatabaseName + "." + dbConfig.UnvCPDbName + " as cd WHERE c.Stakeholder_ID=cd.Receiver_Stakeholder_ID And u.Stakeholder_ID=cd.Initiator_Stakeholder_ID AND cd.Initiator_Stakeholder_ID=? AND cd.CampusDrive_ID=?",
 	}
 }
 
