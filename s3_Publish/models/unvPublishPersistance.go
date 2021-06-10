@@ -496,8 +496,8 @@ func addRankings(rankings []UnvYearWiseRanking, ID string, form *multipart.Form)
 				return dbStatements{}, fmt.Errorf("RankingfileName is required ")
 			}
 		}
-		insSP += "(?,?,?,?,?),"
-		vals = append(vals, ID, value.Rank, value.IssuingAuthority, value.RankingFile, value.RankingFileName)
+		insSP += "(?,?,?,?,?,?),"
+		vals = append(vals, ID, value.Rank, value.IssuingAuthority, value.RankingFile, value.RankingFileName, value.Year)
 	}
 	insSP = insSP[0 : len(insSP)-1]
 
@@ -697,7 +697,7 @@ func getRankings(ID string, up *UniversityProposal) DbModelError {
 	defer RankingRows.Close()
 	for RankingRows.Next() {
 		var newRanking UnvYearWiseRanking
-		err := RankingRows.Scan(&newRanking.ID, &newRanking.Rank, &newRanking.IssuingAuthority, &newRanking.RankingFile, &newRanking.RankingFileName, &newRanking.PublishedFlag, &newRanking.CreationDate, &newRanking.LastUpdatedDate)
+		err := RankingRows.Scan(&newRanking.ID, &newRanking.Rank, &newRanking.IssuingAuthority, &newRanking.RankingFile, &newRanking.RankingFileName, &newRanking.PublishedFlag, &newRanking.CreationDate, &newRanking.LastUpdatedDate, &newRanking.Year)
 		if err != nil {
 			customError.ErrTyp = "500"
 			customError.Err = fmt.Errorf("Cannot Scan Accredations rows")
