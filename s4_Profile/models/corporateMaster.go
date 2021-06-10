@@ -75,6 +75,7 @@ type CorpPushedDataReq struct {
 type CorporateByIDResp struct {
 	StakeholderID                       string                   `json:"stakeholderID" `
 	CorporateName                       string                   `json:"corporateName"`
+	CorporateEmailID                    string                   `json:"corporateEmailID"`
 	CIN                                 string                   `json:"CIN" `
 	CorporateHQAddressLine1             string                   `json:"corporateHQAddressLine1,omitempty" `
 	CorporateHQAddressLine2             string                   `json:"corporateHQAddressLine2,omitempty"`
