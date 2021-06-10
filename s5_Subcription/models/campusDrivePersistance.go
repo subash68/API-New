@@ -175,3 +175,23 @@ func GetContentByNftID(nftID string, ID string) (string, error) {
 	}
 	return content, nil
 }
+
+// GetEmailsForCD for CD
+func GetEmailsForCD(ID string, userType string, campusDriveID string) (string, string, error) {
+	qryName := ""
+	if userType == "Corporate" {
+		qryName = "CORP_CD_EMAILS"
+	} else if userType == "University" {
+		qryName = "UNV_CD_EMAILS"
+	} else {
+		return "", "", fmt.Errorf("Invalid / unauthorized User")
+	}
+	sp, _ := RetriveSP(qryName)
+	var fromEmail, toEmail string
+	err := Db.QueryRow(sp, ID, campusDriveID).Scan(&fromEmail, &toEmail)
+	fmt.Println(fromEmail, toEmail, sp, err)
+	if err != nil {
+		return "", "", err
+	}
+	return fromEmail, toEmail, nil
+}

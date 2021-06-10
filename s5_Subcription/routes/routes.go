@@ -100,6 +100,7 @@ func InitialzeRoutes() *gin.Engine {
 	subscription.POST("/subscribe/campusDrive", controllers.CampusDriveInvitationsController.Subscribe)
 	subscription.POST("/subscribe/campusDrive/invite", controllers.CampusDriveInvitationsController.Invite)
 	subscription.POST("/subscribe/campusDrive/respond", controllers.CampusDriveInvitationsController.Respond)
+	subscription.GET("/subscribe/campusDrive/emails/:campusDriveID", controllers.CampusDriveInvitationsController.GetAllCDEmails)
 	//subscription.GET("/subscribe/campusDrive/:subID", controllers.CampusDriveInvitationsController.FetchSubscribedStuData)
 
 	return router
