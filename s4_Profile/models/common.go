@@ -191,9 +191,12 @@ type RegCount struct {
 	StudentsAwaitingJobs          int `json:"studentsAwaitingJobs,omitempty"`
 	StudentsRegInLastWeek         int `json:"studentsRegisteredInLastWeek,omitempty"`
 	CandidatesHiredInLastWeek     int `json:"candidatesHiredInLastWeek,omitempty"`
-	CandidatesHiredSoFar          int `json:candidatesHiredSoFar,omitempty"`
+	CandidatesHiredSoFar          int `json:"candidatesHiredSoFar",omitempty"`
 	JobsPostedInLastWeek          int `json:"jobsPostedInLastWeek,omitempty"`
 	JobsPostedTillDate            int `json:"jobsPostedTillDate,omitempty"`
+	JobOpeningsInLastMonth        int `json:"jobOpeningsInLastMonth,omitempty"`
+	StudentsPublishedInLastYear   int `json:"studentsPublishedInLastYear,omitempty"`
+	StudentsAwaitingInCurrentYear int `json:"studentsAwaitingInCurrentYear,omitempty"`
 }
 
 // GetRegisteredCounts ...
@@ -204,9 +207,6 @@ func GetRegisteredCounts() RegCount {
 	rc.CurrentlyOnline = 1571
 	rc.JoinedLastWeek = 82
 	rc.GotPlaced = 25152
-	rc.JobOffersMadeInLastMonth = 94
-	rc.ApplicationsReceivedInTwoDays = 49
-	rc.JobOffersMadeInLastMonth = 58
 	return rc
 }
 
@@ -217,6 +217,9 @@ func (rc *RegCount) GetJobsPublishedCount(ID string) {
 	fmt.Printf("Getting Jobs published %s = %v ", dbQuery, rc.JobsPublished)
 	rc.ApplicationsReceived = 647
 	rc.JobOffersMade = 392
+	rc.JobOffersMadeInLastMonth = 94
+	rc.ApplicationsReceivedInTwoDays = 49
+	rc.JobOffersMadeInLastMonth = 58
 	return
 }
 
@@ -228,6 +231,9 @@ func (rc *RegCount) GetUnvStatsCount() {
 	rc.JobOpenings = 647
 	rc.StudentsPlaced = 592
 	rc.StudentsAwaitingJobs = 172
+	rc.JobOpeningsInLastMonth = 151
+	rc.StudentsPublishedInLastYear = 4877
+	rc.StudentsAwaitingInCurrentYear = 247
 	return
 }
 
