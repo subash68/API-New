@@ -103,7 +103,7 @@ func CreateSP() {
 		"UNV_Branches_DELETE_BY_ID":     "DELETE FROM " + dbConfig.DbDatabaseName + "." + dbConfig.UnvBranchDbName + " WHERE Stakeholder_ID= ? ",
 		"Branch_UNV_PRP_DEL":            "DELETE FROM " + dbConfig.DbDatabaseName + "." + dbConfig.UnvBranchDbName + " WHERE id=? AND Stakeholder_ID= ? ",
 		"UNV_Add_Ranking":               "INSERT INTO " + dbConfig.DbDatabaseName + "." + dbConfig.UnvRankDbName + " (Stakeholder_ID,Ranking,IssuingAuthority,AttachFile,AttachFile_Name,YearofRanking) VALUES",
-		"UNV_GET_Ranking":               "SELECT id,Ranking,IssuingAuthority,AttachFile,AttachFile_Name,ifnull(PublishFlag,false),CreationDate,LastUpdatedDate,YearofRanking FROM " + dbConfig.DbDatabaseName + "." + dbConfig.UnvRankDbName + " WHERE Stakeholder_ID=? GROUP BY id,Ranking,IssuingAuthority,AttachFile,AttachFile_Name,PublishFlag,CreationDate,LastUpdatedDate ORDER BY CreationDate",
+		"UNV_GET_Ranking":               "SELECT id,Ranking,IssuingAuthority,AttachFile,AttachFile_Name,ifnull(PublishFlag,false),CreationDate,LastUpdatedDate,ifnull(YearofRanking,0) FROM " + dbConfig.DbDatabaseName + "." + dbConfig.UnvRankDbName + " WHERE Stakeholder_ID=? GROUP BY id,Ranking,IssuingAuthority,AttachFile,AttachFile_Name,PublishFlag,CreationDate,LastUpdatedDate,YearofRanking ORDER BY CreationDate",
 		"UNV_UPDATE_Branch":             "UPDATE " + dbConfig.DbDatabaseName + "." + dbConfig.UnvBranchDbName + " SET ",
 		"UNV_UPDATE_Rank":               "UPDATE " + dbConfig.DbDatabaseName + "." + dbConfig.UnvRankDbName + " SET ",
 		"Ranking_UNV_PRP_DEL":           "DELETE FROM " + dbConfig.DbDatabaseName + "." + dbConfig.UnvRankDbName + " WHERE id=? AND Stakeholder_ID= ? ",
