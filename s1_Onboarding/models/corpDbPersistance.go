@@ -233,23 +233,19 @@ func (data *CorporateMasterDB) VerifyAccountToken() <-chan DbModelError {
 func createCrpSID(crTyp string, crCat string, estYear string) (string, string, DbModelError) {
 
 	fmt.Printf("\n ---> crptype : %v , crpcat: %v yoe: %v\n", crTyp, crCat, estYear)
-	lutSP, _ := RetriveSP("LUT_GET_CRP_TYPE")
-	crpTypeExists, crpCatExists := false, false
+	lutSP, _ := RetriveSP("LUT_GET_CRP_TYPE_CAT")
 	rowCount := 0
 	//var crTyp, crCat string
-	err := Db.QueryRow(lutSP, crTyp).Scan(&crTyp, &crpTypeExists)
+	err := Db.QueryRow(lutSP, crTyp, crCat).Scan(&crTyp, &crCat)
 
-	fmt.Printf("query -> %s \n exi %v \n crp cat %s", lutSP, crpTypeExists, crTyp)
-
-	lutSP, _ = RetriveSP("LUT_GET_CRP_CAT")
-	err = Db.QueryRow(lutSP, crCat).Scan(&crCat, &crpCatExists)
+	fmt.Printf("query -> %s \n exi %v \n crp cat %s", lutSP, crCat, crTyp)
 
 	lutSP, _ = RetriveSP("CORP_ROW_CNT")
 	err = Db.QueryRow(lutSP).Scan(&rowCount)
 
 	fmt.Printf("\n ---> updated crptype : %v , crpcat: %v yoe: %v \n", crTyp, crCat, estYear)
-	fmt.Printf("\n ---> got  crptype : %v , crpcat: %v yoe: %v \n", crpTypeExists, crpCatExists, rowCount)
-	if err != nil || !crpTypeExists || !crpCatExists {
+	// fmt.Printf("\n ---> got  crptype : %v , crpcat: %v yoe: %v \n", crpTypeExists, crpCatExists, rowCount)
+	if err != nil || crTyp == "" || crCat == "" {
 		return "", "", DbModelError{
 			"500", "S1AUT004", fmt.Errorf("Invalid Corporate Type / Sector  %+v", err), map[string]string{},
 		}
