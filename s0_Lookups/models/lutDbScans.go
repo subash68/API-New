@@ -120,7 +120,7 @@ func (ald *AllLutData) ScanCoporateType(rows *sql.Rows, err error) error {
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&ld.Name, &ld.Code, &ld.OneLtrCode)
+		err := rows.Scan(&ld.Code, &ld.Name, &ld.OneLtrCode)
 		if err != nil {
 			log.Fatalf("%s, Error: %v ", ScanError, err)
 			return fmt.Errorf("Failed to get 'corporateType'")
