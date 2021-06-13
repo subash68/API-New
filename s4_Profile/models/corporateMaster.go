@@ -41,9 +41,9 @@ type CorporateMasterDB struct {
 	SecondaryContactDesignation         string    `json:"secondaryContactDesignation,omitempty" `
 	SecondaryContactPhone               string    `json:"secondaryContactPhone,omitempty" `
 	SecondaryContactEmail               string    `json:"secondaryContactEmail,omitempty" `
-	CorporateType                       string    `json:"corporateType" binding:"required" `
-	CorporateCategory                   string    `json:"corporateCategory" binding:"required" `
-	CorporateIndustry                   string    `json:"corporateIndustry" binding:"required" `
+	CorporateType                       string    `json:"corporateType" binding:"required"`
+	CorporateCategory                   string    `json:"corporateCategory" binding:"required"`
+	CorporateIndustry                   string    `json:"corporateIndustry" binding:"required"`
 	CompanyProfile                      string    `json:"companyProfile,omitempty"`
 	Attachment                          []byte    `json:"attachment,omitempty"`
 	AttachmentName                      string    `json:"attachmentName,omitempty"`

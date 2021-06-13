@@ -39,6 +39,10 @@ services:
     build:
       context: ../s2_Auth/.
       target: dev
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     volumes:
       - ../s2_Auth:/cr-auth
       #   - ../s2_Auth/auth
@@ -55,6 +59,10 @@ services:
     build:
       context: ../s3_Publish/.
       target: dev
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     volumes:
       - ../s3_Publish:/cr-publish
       #    - ../s3_Publish/publish
@@ -73,6 +81,10 @@ services:
     build:
       context: ../s4_Profile/.
       target: dev
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     volumes:
       - ../s4_Profile:/cr-profile
       #  - ../s4_Profile/profile
@@ -88,6 +100,10 @@ services:
     image: s1-onboarding:dev
     container_name: onboard_service
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../s1_Onboarding/.
       target: dev
@@ -104,6 +120,10 @@ services:
     image: s5-subcription:dev
     container_name: subscription_service
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../s5_Subcription/.
       target: dev
@@ -117,6 +137,10 @@ services:
     image: s6-token:dev
     container_name: token_service
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../s6_Token/.
       target: dev
@@ -130,6 +154,10 @@ services:
     image: s5-pg:dev
     container_name: pg_service
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../s7_PaymentGateway/.
       target: dev
@@ -143,6 +171,10 @@ services:
     image: s8-notification:dev
     container_name: notification_service
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../s8_Notifications/.
       target: dev
@@ -156,6 +188,10 @@ services:
     image: s0-lut:dev
     container_name: lut_service
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../s0_Lookups/.
       target: dev
@@ -188,6 +224,10 @@ services:
     image: apigateway
     container_name: apigateway
     restart: always
+    logging:
+      options:
+        max-file: "10"
+        max-size: 10m
     build:
       context: ../nginx/.
     ports:
