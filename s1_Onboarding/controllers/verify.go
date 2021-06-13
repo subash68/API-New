@@ -66,13 +66,23 @@ func CommonOTPVerifier(c *gin.Context) {
 		phoneVerified := false
 		emailVerified := false
 		if commonOtpData.Phone != "" && commonOtpData.PhoneOTP != "" {
-			phoneVerified, err = services.ValidateOTP(commonOtpData.PhoneOTP, commonOtpData.Phone)
-			fmt.Printf("\n\n OTP PHONE ERR %v\n\n", err)
+			// TODO : remove this test verification for prod
+			if commonOtpData.PhoneOTP == "000123" {
+				phoneVerified = true
+			} else {
+				phoneVerified, err = services.ValidateOTP(commonOtpData.PhoneOTP, commonOtpData.Phone)
+				fmt.Printf("\n\n OTP PHONE ERR %v\n\n", err)
+			}
 		}
 		if commonOtpData.Email != "" && commonOtpData.EmailOTP != "" {
-			emailVerified, err = services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
+			// TODO : remove this test verification for prod
+			if commonOtpData.EmailOTP == "000123" {
+				emailVerified = true
+			} else {
+				emailVerified, err = services.VerifyEmailOtp(commonOtpData.PlatformUID, commonOtpData.EmailOTP)
+			}
 		}
-		fmt.Printf("\n\nOTP DETAILDS : %v,%v, %+v\n\n", phoneVerified, emailVerified, commonOtpData)
+		fmt.Printf("\n\nOTP Details : %v,%v, %+v\n\n", phoneVerified, emailVerified, commonOtpData)
 		processOtpValidation(ctx, c, err, successResp, commonOtpData.Stakeholder, commonOtpData.PlatformUID, phoneVerified, emailVerified, true)
 	} else {
 		resp := ErrCheck(ctx, models.DbModelError{ErrCode: "S1VRF", ErrTyp: "Required information not found", Err: err, SuccessResp: successResp})
