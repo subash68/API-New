@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	"strings"
 )
 
 // GetCrpPublishedDataByID ...
@@ -21,6 +20,9 @@ func (cp *CorpPushedDataModel) GetCrpPublishedDataByID() ([]CorpPushedDataModel,
 	for hcRows.Next() {
 		var newSA CorpPushedDataModel
 		err = hcRows.Scan(&newSA.PublishID, &newSA.DateOfPublish, &newSA.HiringCriteriaPublished, &newSA.JobsPublished, &newSA.ProfilePublished, &newSA.OtherPublished, &newSA.GeneralNote, &newSA.CreationDate, &newSA.LastUpdatedDate, &newSA.PublishedData)
+		if newSA.PublishID == "PDH200000049" {
+			fmt.Println("Published data for PDH200000049 : ", newSA.PublishedData)
+		}
 		if err != nil {
 			return sa, fmt.Errorf("Cannot read the Rows %v", err.Error())
 		}
@@ -102,18 +104,18 @@ func GetCrpPublishedData(publishID string, isOwner bool, subscriber string, subT
 		resp = map[string]interface{}{"Profile": pd}
 		return customError, resp, "Profile"
 	} else if oi {
-		var jpdh OtherInformationSubModel
-		getByPID, _ := RetriveSP("CRP_GET_OI_BY_PID")
-		getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
-		err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.Title, &jpdh.Information, &jpdh.Attachment)
-		if err != nil {
-			customError.ErrTyp = "S3PJ003"
-			customError.ErrCode = "500"
-			customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
-			return customError, resp, ""
-		}
+		// var jpdh OtherInformationSubModel
+		// getByPID, _ := RetriveSP("CRP_GET_OI_BY_PID")
+		// getByPID = strings.ReplaceAll(getByPID, "34", fmt.Sprint('"'))
+		// err := Db.QueryRow(getByPID, publishID).Scan(&jpdh.Title, &jpdh.Information, &jpdh.Attachment)
+		// if err != nil {
+		// 	customError.ErrTyp = "S3PJ003"
+		// 	customError.ErrCode = "500"
+		// 	customError.Err = fmt.Errorf("Failed to retrieve Published Data : %v , %s ", err.Error(), getByPID)
+		// 	return customError, resp, ""
+		// }
 		//jpdh.Attachment = []byte(fmt.Sprintf("%s", jpdh.tempAttach))
-		resp = map[string]interface{}{"OI": jpdh}
+		resp = map[string]interface{}{"OI": pd}
 		return customError, resp, "OI"
 	}
 

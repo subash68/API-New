@@ -76,7 +76,7 @@ func GetCrpSubscribedData(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, strings.ReplaceAll(resp[respQry].(string), "\\\"", "\""))
+	c.JSON(http.StatusOK, resp[respQry].(string))
 	c.Abort()
 	return
 
@@ -131,7 +131,7 @@ func GetCrpPublishedDataByID(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		c.JSON(http.StatusOK, strings.ReplaceAll(resp[respQry].(string), "\\\"", "\""))
+		c.JSON(http.StatusOK, resp[respQry].(string))
 		c.Abort()
 		return
 	}
@@ -166,7 +166,7 @@ func GetAllCrpPublishedData(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("\n OI : %+v\n", oiArray)
+	//fmt.Printf("\n OI : %+v\n", oiArray)
 
 	c.JSON(http.StatusOK, oiArray)
 	return
